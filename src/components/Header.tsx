@@ -2,6 +2,7 @@ import { Phone, Mail, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import jedLogo from '@/assets/jed-logo.jpeg';
 
 const navLinks = [
   { label: 'Services', href: '#services' },
@@ -19,14 +20,13 @@ export function Header() {
       <header className="sticky-header">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Brand */}
-            <a href="/" className="flex items-center gap-2 md:gap-3">
-              <span className="text-2xl md:text-3xl font-extrabold tracking-tight">
-                <span className="text-gradient">JED</span>
-              </span>
-              <span className="hidden sm:block text-sm md:text-base font-semibold text-foreground">
-                Air Conditioning
-              </span>
+            {/* Logo */}
+            <a href="/" className="flex items-center gap-3">
+              <img 
+                src={jedLogo} 
+                alt="JED Airconditioning" 
+                className="h-12 md:h-16 w-auto"
+              />
             </a>
 
             {/* Desktop Navigation */}
