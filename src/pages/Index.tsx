@@ -1,12 +1,53 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Header from '@/components/Header';
+import HeroSection from '@/components/HeroSection';
+import TrustBar from '@/components/TrustBar';
+import ServicePathways from '@/components/ServicePathways';
+import ServicesGrid from '@/components/ServicesGrid';
+import BrandsSection from '@/components/BrandsSection';
+import ProjectsGallery from '@/components/ProjectsGallery';
+import WhyChooseUs from '@/components/WhyChooseUs';
+import ProcessSection from '@/components/ProcessSection';
+import ReviewsSection from '@/components/ReviewsSection';
+import QuoteForm from '@/components/QuoteForm';
+import Footer from '@/components/Footer';
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      {/* Hero with 3D animation */}
+      <HeroSection />
+      
+      {/* Trust signals immediately after hero */}
+      <TrustBar />
+      
+      {/* Clear pathways for user decision */}
+      <ServicePathways />
+      
+      {/* Brand credibility */}
+      <BrandsSection />
+      
+      {/* Detailed services grid */}
+      <ServicesGrid />
+      
+      {/* Featured projects */}
+      <ProjectsGallery />
+      
+      {/* Why choose us - trust building */}
+      <WhyChooseUs />
+      
+      {/* Process explanation */}
+      <ProcessSection />
+      
+      {/* Social proof */}
+      <ReviewsSection />
+      
+      {/* Primary conversion - quote form */}
+      <QuoteForm />
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
