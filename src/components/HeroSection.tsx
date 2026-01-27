@@ -122,7 +122,23 @@ export function HeroSection() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full text-primary text-sm font-medium mb-8"
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Daikin Certified Dealer • Sydney-Wide Service
+            <span className="flex items-center gap-3">
+              Daikin Certified Dealer • Sydney-Wide Service
+              <span className="inline-flex items-center gap-2 px-2 py-1 bg-card/60 border border-border/40 rounded-md text-foreground">
+                <img
+                  src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
+                  alt="Haier certified"
+                  className="h-10 w-auto object-contain rounded-md"
+                  loading="lazy"
+                />
+                <img
+                  src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
+                  alt="Daikin certified"
+                  className="h-10 w-auto object-contain rounded-md"
+                  loading="lazy"
+                />
+              </span>
+            </span>
           </motion.div>
 
           {/* Headline */}
@@ -167,29 +183,7 @@ export function HeroSection() {
             </Button>
           </motion.div>
 
-          {/* Certification logos */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
-            className="flex items-center gap-4 mb-6"
-          >
-            <span className="text-muted-foreground text-sm">Certified:</span>
-            <div className="flex items-center gap-4">
-              <img
-                src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
-                alt="Haier certified"
-                className="h-8 w-auto object-contain rounded-md"
-                loading="lazy"
-              />
-              <img
-                src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
-                alt="Daikin certified"
-                className="h-8 w-auto object-contain rounded-md"
-                loading="lazy"
-              />
-            </div>
-          </motion.div>
+          {/* Certification logos moved into badge above */}
 
           {/* Quick service selector removed per request */}
           </div>
