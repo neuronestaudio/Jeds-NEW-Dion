@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Phone, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import jedLogo from '@/assets/jed-logo.jpeg';
+import QuoteFormInline from '@/components/QuoteFormInline';
 
 // Lazy load 3D component
 const Hero3DCanvas = () => {
@@ -91,7 +92,9 @@ export function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 pt-20 pb-12">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
+          {/* Left: Hero copy */}
+          <div className="max-w-2xl text-left">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -122,7 +125,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+            className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10"
           >
             Professional installation, service & repairs for residential and commercial properties. 
             5-year workmanship warranty on all installations.
@@ -133,7 +136,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            className="flex flex-col sm:flex-row gap-4 justify-start mb-12"
           >
             <Button variant="hero" size="xl" asChild>
               <a href="#quote" className="flex items-center gap-2">
@@ -154,7 +157,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-3"
+            className="flex flex-wrap justify-start gap-3"
           >
             <span className="text-muted-foreground text-sm">I need:</span>
             {['Installation', 'Repairs', 'Maintenance'].map((service) => (
@@ -167,6 +170,12 @@ export function HeroSection() {
               </a>
             ))}
           </motion.div>
+          </div>
+
+          {/* Right: Inline quote form */}
+          <div className="mt-6 lg:mt-0">
+            <QuoteFormInline />
+          </div>
         </div>
       </div>
 
