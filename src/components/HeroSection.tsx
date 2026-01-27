@@ -80,11 +80,17 @@ export function HeroSection() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
       
-      {/* 3D Background */}
+      {/* Video Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <Suspense fallback={<Hero3DFallback />}>
-          <Hero3DCanvas />
-        </Suspense>
+        <video
+          className="w-full h-full object-cover opacity-80"
+          src="/hero-bg.mp4"
+          poster={jedLogo}
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
       </div>
       
       {/* Gradient overlay for text readability */}
