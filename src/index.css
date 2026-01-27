@@ -2,95 +2,103 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* JED Airconditioning Design System
+   Premium dark aesthetic with arctic blue accents
+   All colors in HSL format
 */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Core Neutrals */
+    --background: 240 7% 6%; /* Jet Black #0F0F12 */
+    --foreground: 0 0% 100%; /* Pure White */
+    
+    --card: 240 5% 11%; /* Carbon Black #1A1A1F */
+    --card-foreground: 0 0% 100%;
+    
+    --popover: 240 5% 11%;
+    --popover-foreground: 0 0% 100%;
+    
+    /* Primary - Arctic Blue */
+    --primary: 197 47% 58%; /* #5FA7C9 */
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Steel Blue */
+    --secondary: 197 42% 43%; /* #3F7F9C */
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Muted */
+    --muted: 240 3% 14%;
+    --muted-foreground: 240 2% 52%; /* #6B6B70 */
+    
+    /* Accent - Ice Tint */
+    --accent: 197 42% 95%; /* #EAF4F9 */
+    --accent-foreground: 240 5% 16%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Borders */
+    --border: 240 4% 19%; /* #2E2E34 on dark */
+    --input: 240 4% 19%;
+    --ring: 197 47% 58%;
+    
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 240 5% 11%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 197 47% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 19%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 4% 19%;
+    --sidebar-ring: 197 47% 58%;
+    
+    /* Extended Palette */
+    --jet: 240 7% 6%;
+    --carbon: 240 5% 11%;
+    --charcoal: 240 5% 16%;
+    --arctic: 197 47% 58%;
+    --steel: 197 42% 43%;
+    --ice: 197 42% 95%;
+    --soft-white: 0 0% 93%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(240 7% 6%) 0%, hsl(240 5% 11%) 50%, hsl(197 47% 58% / 0.1) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(240 5% 13%) 0%, hsl(240 5% 9%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(197 47% 58%) 0%, hsl(197 42% 43%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(197 47% 58% / 0.15) 0%, transparent 70%);
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.4);
+    --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(197 47% 58% / 0.25);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 240 7% 6%;
+    --foreground: 0 0% 100%;
+    --card: 240 5% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 5% 11%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 197 47% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 197 42% 43%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 3% 14%;
+    --muted-foreground: 240 2% 52%;
+    --accent: 197 42% 95%;
+    --accent-foreground: 240 5% 16%;
+    --destructive: 0 62% 31%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 4% 19%;
+    --input: 240 4% 19%;
+    --ring: 197 47% 58%;
   }
 }
 
@@ -98,8 +106,106 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Trust Badge Styles */
+  .trust-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm 
+           border border-border/50 rounded-lg text-sm font-medium;
+  }
+  
+  /* Service Card Hover Effect */
+  .service-card {
+    @apply relative overflow-hidden bg-gradient-to-b from-card to-background 
+           border border-border/30 rounded-2xl p-6 transition-all duration-500
+           hover:border-primary/50 hover:shadow-glow group;
+  }
+  
+  .service-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent 
+           opacity-0 transition-opacity duration-500;
+  }
+  
+  .service-card:hover::before {
+    @apply opacity-100;
+  }
+  
+  /* CTA Button Glow */
+  .btn-glow {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-glow::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
+           -translate-x-full transition-transform duration-700;
+  }
+  
+  .btn-glow:hover::after {
+    @apply translate-x-full;
+  }
+  
+  /* Text Gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+  
+  /* Section Glow Background */
+  .section-glow {
+    @apply relative;
+  }
+  
+  .section-glow::before {
+    content: '';
+    @apply absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] 
+           bg-gradient-to-b from-primary/10 to-transparent rounded-full blur-3xl
+           pointer-events-none;
+  }
+  
+  /* Glass Card */
+  .glass-card {
+    @apply bg-card/60 backdrop-blur-xl border border-border/30 rounded-2xl;
+  }
+  
+  /* Sticky Header */
+  .sticky-header {
+    @apply fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-xl 
+           border-b border-border/30;
+  }
+  
+  /* Mobile Bottom Bar */
+  .mobile-cta-bar {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl 
+           border-t border-border/30 p-4 md:hidden;
+  }
+}
+
+@layer utilities {
+  /* Custom Shadows */
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
