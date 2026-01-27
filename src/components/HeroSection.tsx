@@ -132,7 +132,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
           >
-            Experts in <span className="text-gradient">airconditioning servicing</span>
+            Experts in <span className="text-gradient">Air Conditioning Servicing</span>
           </motion.h1>
 
           {/* Subheadline */}
@@ -179,36 +179,19 @@ export function HeroSection() {
               <img
                 src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
                 alt="Haier certified"
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain rounded-md"
                 loading="lazy"
               />
               <img
                 src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
                 alt="Daikin certified"
-                className="h-8 w-auto object-contain"
+                className="h-8 w-auto object-contain rounded-md"
                 loading="lazy"
               />
             </div>
           </motion.div>
 
-          {/* Quick service selector */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-wrap justify-start gap-3"
-          >
-            <span className="text-muted-foreground text-sm">I need:</span>
-            {['Installation', 'Repairs', 'Maintenance'].map((service) => (
-              <a
-                key={service}
-                href={`#${service.toLowerCase()}`}
-                className="px-4 py-2 bg-card/80 border border-border/50 rounded-lg text-sm font-medium hover:border-primary/50 hover:text-primary transition-all"
-              >
-                {service}
-              </a>
-            ))}
-          </motion.div>
+          {/* Quick service selector removed per request */}
           </div>
 
           {/* Right: Inline quote form */}
