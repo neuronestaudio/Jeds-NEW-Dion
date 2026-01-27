@@ -132,11 +132,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
           >
-            Sydney's Trusted
-            <br />
-            <span className="text-gradient">Air Conditioning</span>
-            <br />
-            Specialists
+            Experts in <span className="text-gradient">airconditioning servicing</span>
           </motion.h1>
 
           {/* Subheadline */}
@@ -169,6 +165,30 @@ export function HeroSection() {
                 0434 308 070
               </a>
             </Button>
+          </motion.div>
+
+          {/* Certification logos */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="flex items-center gap-4 mb-6"
+          >
+            <span className="text-muted-foreground text-sm">Certified:</span>
+            <div className="flex items-center gap-4">
+              <img
+                src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
+                alt="Haier certified"
+                className="h-8 w-auto object-contain"
+                loading="lazy"
+              />
+              <img
+                src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
+                alt="Daikin certified"
+                className="h-8 w-auto object-contain"
+                loading="lazy"
+              />
+            </div>
           </motion.div>
 
           {/* Quick service selector */}
