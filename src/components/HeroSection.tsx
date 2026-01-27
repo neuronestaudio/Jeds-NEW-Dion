@@ -75,22 +75,35 @@ function Hero3DFallback() {
 }
 
 export function HeroSection() {
+  const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
+  const [videoError, setVideoError] = useState(false);
   return (
     <section className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
       
-      {/* Video Background */}
+      {/* Background: Prefer video, fallback to 3D */}
       <div className="absolute inset-0 overflow-hidden">
-        <video
-          className="w-full h-full object-cover opacity-80"
-          src="/hero-bg.mp4"
-          poster={jedLogo}
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
+        {videoError ? (
+          <Suspense fallback={<Hero3DFallback />}>
+            <Hero3DCanvas />
+          </Suspense>
+        ) : (
+          <video
+            className="w-full h-full object-cover opacity-80"
+            poster={jedLogo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onError={() => setVideoError(true)}
+          >
+            <source src={HERO_VIDEO} type="video/mp4" />
+            {/* Optional secondary source if provided in public */}
+            <source src="/hero-bg.webm" type="video/webm" />
+          </video>
+        )}
       </div>
       
       {/* Gradient overlay for text readability */}
