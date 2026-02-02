@@ -19,12 +19,14 @@ export function Header() {
     <>
       <header className="sticky-header">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-18 md:h-24">
-            {/* Logo (text-based brand) */}
-            <a href="/" className="flex items-center gap-3">
-              <span className="leading-none text-2xl md:text-3xl font-extrabold tracking-tight">
-                JED <span className="text-gradient">Air Conditioning</span>
-              </span>
+          <div className="flex items-center justify-between h-18 md:h-24 overflow-visible">
+            {/* Logo */}
+            <a href="/" className="flex items-center gap-3 overflow-visible">
+              <img 
+                src={jedLogo} 
+                alt="JED Airconditioning" 
+                className="h-24 md:h-32 -my-4 md:-my-6 w-auto object-contain"
+              />
             </a>
 
             {/* Desktop Navigation */}
