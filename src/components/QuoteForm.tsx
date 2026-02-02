@@ -19,31 +19,38 @@ export function QuoteForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Honeypot check
-    if (formData.website) {
-      return;
-    }
-    
+    if (formData.website) return;
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Quote Request Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      serviceType: '',
-      message: '',
-      website: '',
-    });
-    setIsSubmitting(false);
+    try {
+      const resp = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, source: 'bottom-quote' }),
+      });
+      if (!resp.ok) {
+        const details = await resp.text();
+        throw new Error(details || 'Submission failed');
+      }
+      toast({
+        title: "Quote Request Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+      setFormData({
+        name: '',
+        phone: '',
+        email: '',
+        serviceType: '',
+        message: '',
+        website: '',
+      });
+    } catch (err: any) {
+      toast({
+        title: 'Submission Error',
+        description: err?.message || 'Please try again or call us directly.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

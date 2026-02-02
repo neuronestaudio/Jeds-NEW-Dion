@@ -19,13 +19,13 @@ export function Header() {
     <>
       <header className="sticky-header">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-18 md:h-24 overflow-visible">
+          <div className="flex items-center justify-between h-18 md:h-24">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-3 overflow-visible">
+            <a href="/" className="flex items-center gap-3">
               <img 
                 src={jedLogo} 
                 alt="JED Airconditioning" 
-                className="h-24 md:h-32 -my-4 md:-my-6 w-auto object-contain"
+                className="h-14 md:h-18 w-auto"
               />
             </a>
 

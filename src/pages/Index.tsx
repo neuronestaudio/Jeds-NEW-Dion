@@ -8,7 +8,7 @@ import ProjectsGallery from '@/components/ProjectsGallery';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import ProcessSection from '@/components/ProcessSection';
 import ReviewsSection from '@/components/ReviewsSection';
-import QuoteForm from '@/components/QuoteForm';
+// Removed standalone QuoteForm since it's now inline in hero
 import Footer from '@/components/Footer';
 
 const Index = () => {
@@ -42,10 +42,7 @@ const Index = () => {
       
       {/* Social proof */}
       <ReviewsSection />
-
-      {/* Secondary conversion - quote form at bottom */}
-      <QuoteForm />
-
+      
       {/* Footer */}
       <Footer />
     </div>
