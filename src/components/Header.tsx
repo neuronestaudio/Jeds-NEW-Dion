@@ -1,6 +1,6 @@
 import { Phone, Mail, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import jedLogo from '@/assets/jed-logo.jpeg';
 
@@ -14,6 +14,23 @@ const navLinks = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const hoverCloseTimer = useRef<number | null>(null);
+
+  const openServices = () => {
+    if (hoverCloseTimer.current) {
+      window.clearTimeout(hoverCloseTimer.current);
+      hoverCloseTimer.current = null;
+    }
+    setServicesOpen(true);
+  };
+
+  const closeServices = () => {
+    if (hoverCloseTimer.current) {
+      window.clearTimeout(hoverCloseTimer.current);
+    }
+    hoverCloseTimer.current = window.setTimeout(() => setServicesOpen(false), 120);
+  };
 
   return (
     <>
@@ -32,15 +49,32 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
               {/* Services dropdown */}
-              <div className="relative group">
+              <div
+                className="relative"
+                onMouseEnter={openServices}
+                onMouseLeave={closeServices}
+                onFocusCapture={openServices}
+                onBlurCapture={closeServices}
+              >
                 <a
                   href="/services"
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  aria-haspopup="menu"
+                  aria-expanded={servicesOpen}
+                  onClick={(e) => {
+                    // Toggle the menu on click; Services page is linked inside the menu
+                    e.preventDefault();
+                    setServicesOpen((v) => !v);
+                  }}
                 >
                   Services
                 </a>
-                <div className="absolute left-0 mt-2 hidden group-hover:block bg-card border border-border/40 rounded-md shadow-md min-w-[240px] p-3 z-40">
+                <div
+                  className={`absolute left-0 mt-2 ${servicesOpen ? 'block' : 'hidden'} bg-card border border-border/40 rounded-md shadow-md min-w-[260px] p-3 z-40`}
+                  role="menu"
+                >
                   <div className="flex flex-col">
+                    <a href="/services" className="px-3 py-2 rounded hover:bg-muted text-sm font-medium">All Services</a>
                     <a href="/service/split-system-installation" className="px-3 py-2 rounded hover:bg-muted text-sm">Split System Installation</a>
                     <a href="/service/ducted-air-conditioning" className="px-3 py-2 rounded hover:bg-muted text-sm">Ducted Air Conditioning</a>
                     <a href="/service/aircon-repair" className="px-3 py-2 rounded hover:bg-muted text-sm">Repairs & Diagnostics</a>
