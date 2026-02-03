@@ -41,6 +41,11 @@ const reviews = [
 ];
 
 export function ReviewsSection() {
+  const REVIEW_URL =
+    import.meta.env.VITE_GBP_REVIEW_URL ||
+    (import.meta.env.VITE_GBP_PLACE_ID
+      ? `https://search.google.com/local/writereview?placeid=${import.meta.env.VITE_GBP_PLACE_ID}`
+      : 'https://g.page/r/YOUR_GOOGLE_BUSINESS_ID/review');
   return (
     <section id="reviews" className="py-16 md:py-24 section-glow">
       <div className="container mx-auto px-4">
@@ -104,7 +109,7 @@ export function ReviewsSection() {
           className="text-center mt-8"
         >
           <a
-            href="https://g.page/r/YOUR_GOOGLE_BUSINESS_ID/review"
+            href={REVIEW_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
