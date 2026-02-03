@@ -31,7 +31,24 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">
-              {navLinks.map((link) => (
+              {/* Services dropdown */}
+              <div className="relative group">
+                <a
+                  href="/services"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Services
+                </a>
+                <div className="absolute left-0 mt-2 hidden group-hover:block bg-card border border-border/40 rounded-md shadow-md min-w-[240px] p-3 z-40">
+                  <div className="flex flex-col">
+                    <a href="/service/split-system-installation" className="px-3 py-2 rounded hover:bg-muted text-sm">Split System Installation</a>
+                    <a href="/service/ducted-air-conditioning" className="px-3 py-2 rounded hover:bg-muted text-sm">Ducted Air Conditioning</a>
+                    <a href="/service/aircon-repair" className="px-3 py-2 rounded hover:bg-muted text-sm">Repairs & Diagnostics</a>
+                  </div>
+                </div>
+              </div>
+              {/* Other links */}
+              {navLinks.filter(l => l.label !== 'Services').map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
