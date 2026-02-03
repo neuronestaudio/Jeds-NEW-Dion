@@ -1,4 +1,4 @@
-import { Phone, Mail, Menu, X } from 'lucide-react';
+import { Phone, Mail, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -56,19 +56,24 @@ export function Header() {
                 onFocusCapture={openServices}
                 onBlurCapture={closeServices}
               >
-                <a
-                  href="/services"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  aria-haspopup="menu"
-                  aria-expanded={servicesOpen}
-                  onClick={(e) => {
-                    // Toggle the menu on click; Services page is linked inside the menu
-                    e.preventDefault();
-                    setServicesOpen((v) => !v);
-                  }}
-                >
-                  Services
-                </a>
+                <div className="flex items-center gap-1">
+                  <a
+                    href="/services"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Services
+                  </a>
+                  <button
+                    type="button"
+                    className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Toggle services menu"
+                    aria-haspopup="menu"
+                    aria-expanded={servicesOpen}
+                    onClick={() => setServicesOpen((v) => !v)}
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
                 <div
                   className={`absolute left-0 mt-2 ${servicesOpen ? 'block' : 'hidden'} bg-card border border-border/40 rounded-md shadow-md min-w-[260px] p-3 z-40`}
                   role="menu"
