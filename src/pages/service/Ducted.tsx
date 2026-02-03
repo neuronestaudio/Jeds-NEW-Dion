@@ -19,6 +19,36 @@ const Ducted = () => {
       { '@type': 'ListItem', position: 2, name: 'Ducted Air Conditioning', item: 'https://jedairconditioning.com.au/service/ducted-air-conditioning' },
     ],
   };
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Can I zone my ducted system?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Zoning allows you to heat/cool selected areas for comfort and efficiency.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How long does installation take?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Typical installations take 1–2 days depending on home layout and capacity.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Is ducted suitable for existing homes?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'In many cases yes. We assess roof space and structure to design a suitable system.'
+        }
+      }
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -28,6 +58,7 @@ const Ducted = () => {
         <link rel="canonical" href="https://jedairconditioning.com.au/service/ducted-air-conditioning" />
         <script type="application/ld+json">{JSON.stringify(serviceLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
       </Helmet>
       <Header />
       <section className="py-16 md:py-24">
@@ -41,6 +72,23 @@ const Ducted = () => {
               <li>Discreet vents and minimal visual impact</li>
               <li>Zoning options for energy efficiency</li>
             </ul>
+          </div>
+          <div className="glass-card p-6 md:p-8 mb-10">
+            <h2 className="text-2xl font-semibold mb-4">FAQs</h2>
+            <div className="space-y-4 text-muted-foreground">
+              <div>
+                <h3 className="font-semibold">Can I zone my ducted system?</h3>
+                <p>Yes. Zoning allows you to heat/cool selected areas for comfort and efficiency.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">How long does installation take?</h3>
+                <p>Typical installations take 1–2 days depending on home layout and capacity.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Is ducted suitable for existing homes?</h3>
+                <p>In many cases yes. We assess roof space and structure to design a suitable system.</p>
+              </div>
+            </div>
           </div>
           <div className="glass-card p-6 md:p-8">
             <h2 className="text-2xl font-semibold mb-4">Request a Quote</h2>

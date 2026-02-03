@@ -19,6 +19,36 @@ const Repair = () => {
       { '@type': 'ListItem', position: 2, name: 'Air Conditioning Repairs', item: 'https://jedairconditioning.com.au/service/aircon-repair' },
     ],
   };
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Do you offer emergency repairs?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. We provide rapid response for urgent breakdowns across Sydney.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What brands do you repair?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'We service and repair most major brands, including Daikin and Haier.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Should I repair or replace?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'We diagnose the issue and provide repair vs replace advice based on age, condition, and cost-effectiveness.'
+        }
+      }
+    ]
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -28,6 +58,7 @@ const Repair = () => {
         <link rel="canonical" href="https://jedairconditioning.com.au/service/aircon-repair" />
         <script type="application/ld+json">{JSON.stringify(serviceLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
       </Helmet>
       <Header />
       <section className="py-16 md:py-24">
@@ -41,6 +72,23 @@ const Repair = () => {
               <li>Unusual noises or vibrations</li>
               <li>Water leaks and drainage issues</li>
             </ul>
+          </div>
+          <div className="glass-card p-6 md:p-8 mb-10">
+            <h2 className="text-2xl font-semibold mb-4">FAQs</h2>
+            <div className="space-y-4 text-muted-foreground">
+              <div>
+                <h3 className="font-semibold">Do you offer emergency repairs?</h3>
+                <p>Yes. We provide rapid response for urgent breakdowns across Sydney.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">What brands do you repair?</h3>
+                <p>We service and repair most major brands, including Daikin and Haier.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Should I repair or replace?</h3>
+                <p>We diagnose the issue and provide repair vs replace advice based on age, condition, and cost-effectiveness.</p>
+              </div>
+            </div>
           </div>
           <div className="glass-card p-6 md:p-8">
             <h2 className="text-2xl font-semibold mb-4">Request a Repair</h2>

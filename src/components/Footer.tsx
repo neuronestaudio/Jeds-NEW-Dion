@@ -3,18 +3,18 @@ import jedLogo from '@/assets/jed-logo.jpeg';
 
 const footerLinks = {
   services: [
-    { label: 'Split Systems', href: '#services' },
-    { label: 'Ducted AC', href: '#services' },
-    { label: 'Commercial', href: '#commercial' },
-    { label: 'Repairs', href: '#services' },
-    { label: 'Maintenance', href: '#services' },
+    { label: 'Split Systems', href: '/service/split-system-installation' },
+    { label: 'Ducted AC', href: '/service/ducted-air-conditioning' },
+    { label: 'Commercial', href: '/services' },
+    { label: 'Repairs', href: '/service/aircon-repair' },
+    { label: 'Maintenance', href: '/services' },
   ],
   company: [
-    { label: 'About Us', href: '#about' },
-    { label: 'Our Work', href: '#projects' },
-    { label: 'Reviews', href: '#reviews' },
-    { label: 'Contact', href: '#contact' },
-    { label: 'FAQs', href: '#faqs' },
+    { label: 'About Us', href: '/#about' },
+    { label: 'Our Work', href: '/#projects' },
+    { label: 'Reviews', href: '/#reviews' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'FAQs', href: '/#faqs' },
   ],
   areas: [
     { label: 'Sydney CBD', href: '#' },
@@ -36,6 +36,8 @@ export function Footer() {
               src={jedLogo} 
               alt="JED Airconditioning" 
               className="h-12 w-auto mb-4"
+              loading="lazy"
+              decoding="async"
             />
             <p className="text-muted-foreground mb-6 max-w-sm">
               Sydney's trusted air conditioning specialists. Daikin certified dealer providing 
