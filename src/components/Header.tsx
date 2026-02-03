@@ -103,6 +103,12 @@ export function Header() {
                     {link.label}
                   </a>
                 ))}
+                <div className="mt-2 pt-2 border-t border-border/30">
+                  <p className="px-4 pb-1 text-xs uppercase tracking-wider text-muted-foreground">Services</p>
+                  <a href="/service/split-system-installation" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Split System Installation</a>
+                  <a href="/service/ducted-air-conditioning" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Ducted Air Conditioning</a>
+                  <a href="/service/aircon-repair" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Repairs & Diagnostics</a>
+                </div>
               </nav>
             </motion.div>
           )}
