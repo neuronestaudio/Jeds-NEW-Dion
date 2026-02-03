@@ -77,6 +77,11 @@ function Hero3DFallback() {
 export function HeroSection() {
   const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
   const [videoError, setVideoError] = useState(false);
+  const [play, setPlay] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setPlay(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <section className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
@@ -84,7 +89,7 @@ export function HeroSection() {
       
       {/* Background: Prefer video, fallback to 3D */}
       <div className="absolute inset-0 overflow-hidden">
-        {videoError ? (
+        {videoError || !play ? (
           <Suspense fallback={<Hero3DFallback />}>
             <Hero3DCanvas />
           </Suspense>
@@ -96,7 +101,7 @@ export function HeroSection() {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="none"
             onError={() => setVideoError(true)}
           >
             <source src={HERO_VIDEO} type="video/mp4" />

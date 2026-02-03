@@ -74,7 +74,49 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    res.status(200).json({ ok: true });
+    // Optionally notify owner via SMS using Twilio if env vars are present
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioFrom = process.env.TWILIO_FROM_NUMBER;
+    const ownerToRaw = process.env.OWNER_SMS_TO;
+
+    let smsError: string | undefined;
+    if (twilioSid && twilioToken && twilioFrom && ownerToRaw) {
+      const normalizeOwner = normalizeAuPhone(String(ownerToRaw));
+      if (normalizeOwner) {
+        try {
+          const params = new URLSearchParams();
+          params.append('To', normalizeOwner);
+          params.append('From', twilioFrom);
+          params.append(
+            'Body',
+            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nMessage: ${payload.message || ''}`
+          );
+
+          const twilioResp = await fetch(
+            `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                Authorization:
+                  'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
+              },
+              body: params.toString(),
+            }
+          );
+          if (!twilioResp.ok) {
+            smsError = `Twilio error: ${await twilioResp.text()}`;
+          }
+        } catch (e: any) {
+          smsError = e?.message || String(e);
+        }
+      } else {
+        smsError = 'OWNER_SMS_TO is not a valid AU number';
+      }
+    }
+
+    res.status(200).json({ ok: true, smsError });
   } catch (err: any) {
     res.status(500).json({ error: 'Unexpected error', details: err?.message || String(err) });
   }

@@ -10,10 +10,37 @@ import ProcessSection from '@/components/ProcessSection';
 import ReviewsSection from '@/components/ReviewsSection';
 // Removed standalone QuoteForm since it's now inline in hero
 import Footer from '@/components/Footer';
+import { Helmet } from 'react-helmet-async';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Air Conditioning Installation, Repairs & Service | JED Airconditioning</title>
+        <meta name="description" content="Professional installation, repairs & maintenance across Sydney. Daikin certified. 5-year workmanship warranty." />
+        <link rel="canonical" href="https://jedairconditioning.com.au/" />
+        <meta property="og:title" content="JED Airconditioning | Sydney Air Conditioning Specialists" />
+        <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_AU" />
+        <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <script type="application/ld+json">
+          {`
+            {
+              "@context":"https://schema.org",
+              "@type":"LocalBusiness",
+              "name":"JED Airconditioning",
+              "telephone":"+61434308070",
+              "email":"JED_AIR@outlook.com",
+              "address":{"@type":"PostalAddress","addressLocality":"Sydney","addressRegion":"NSW","addressCountry":"AU"},
+              "areaServed":{"@type":"City","name":"Sydney"},
+              "priceRange":"$$"
+            }
+          `}
+        </script>
+      </Helmet>
       <Header />
       
       {/* Hero with 3D animation */}
