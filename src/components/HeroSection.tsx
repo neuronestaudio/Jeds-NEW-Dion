@@ -135,12 +135,18 @@ export function HeroSection() {
                   alt="Haier certified"
                   className="h-10 w-auto object-contain rounded-md"
                   loading="lazy"
+                  decoding="async"
+                  width="80"
+                  height="40"
                 />
                 <img
                   src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
                   alt="Daikin certified"
                   className="h-10 w-auto object-contain rounded-md"
                   loading="lazy"
+                  decoding="async"
+                  width="80"
+                  height="40"
                 />
               </span>
             </span>
