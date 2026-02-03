@@ -12,18 +12,30 @@ async function run() {
     const r = data[idx + 0];
     const g = data[idx + 1];
     const b = data[idx + 2];
-    // alpha channel is idx + 3
+    const a = data[idx + 3];
 
-    const diffRG = Math.abs(r - g);
-    const diffGB = Math.abs(g - b);
-    const diffRB = Math.abs(r - b);
-    const isGrayish = diffRG < 12 && diffGB < 12 && diffRB < 12; // low chroma
-    const isWhite = r > 240 && g > 240 && b > 240; // keep pure white strokes
-    const isDark = r < 30 && g < 30 && b < 30; // keep pure dark if any
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const saturation = max - min; // simple chroma proxy
+    const luminance = (r + g + b) / 3;
 
-    if (isGrayish && !isWhite && !isDark) {
-      // Make background pixels transparent
-      data[idx + 3] = 0;
+    const isWhite = luminance > 245; // pure/near white logo strokes
+    const isDark = luminance < 25;   // any solid dark we keep
+
+    // Background heuristic: low saturation (gray) and mid luminance (checkerboard)
+    const isGrayBg = saturation < 18 && luminance > 80 && luminance < 240;
+
+    if (isGrayBg && !isWhite && !isDark) {
+      data[idx + 3] = 0; // transparent
+      return;
+    }
+
+    // Edge cleanup: brighten near-white anti-aliased pixels to solid white
+    if (saturation < 25 && luminance >= 225 && a > 0) {
+      data[idx + 0] = 255;
+      data[idx + 1] = 255;
+      data[idx + 2] = 255;
+      data[idx + 3] = 255;
     }
   });
 
