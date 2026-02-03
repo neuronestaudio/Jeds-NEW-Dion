@@ -2,7 +2,7 @@ import { Phone, Mail, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import jedLogo from '@/assets/jed-logo.jpeg';
+import jedLogo from '@/assets/jed-logo.png';
 
 const navLinks = [
   { label: 'Services', href: '/services' },
