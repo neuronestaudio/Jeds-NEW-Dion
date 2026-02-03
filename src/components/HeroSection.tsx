@@ -175,7 +175,7 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row gap-4 justify-start mb-12"
           >
             <Button variant="hero" size="xl" asChild>
-              <a href="#quote" className="flex items-center gap-2">
+              <a href="/contact#quote" className="flex items-center gap-2">
                 Get a Free Quote
                 <ArrowRight className="w-5 h-5" />
               </a>

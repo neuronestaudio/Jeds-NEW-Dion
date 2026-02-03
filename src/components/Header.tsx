@@ -5,11 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import jedLogo from '@/assets/jed-logo.jpeg';
 
 const navLinks = [
-  { label: 'Services', href: '#services' },
-  { label: 'About', href: '#about' },
-  { label: 'Our Work', href: '#projects' },
-  { label: 'Reviews', href: '#reviews' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Services', href: '/services' },
+  { label: 'About', href: '/#about' },
+  { label: 'Our Work', href: '/#projects' },
+  { label: 'Reviews', href: '/#reviews' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export function Header() {
@@ -51,7 +51,7 @@ export function Header() {
                 </a>
               </Button>
               <Button variant="cta" size="sm" asChild>
-                <a href="#quote">Get a Quote</a>
+                <a href="/contact#quote">Get a Quote</a>
               </Button>
             </div>
 
@@ -102,7 +102,7 @@ export function Header() {
             </a>
           </Button>
           <Button variant="cta" className="flex-1" asChild>
-            <a href="#quote" className="flex items-center justify-center gap-2">
+            <a href="/contact#quote" className="flex items-center justify-center gap-2">
               <Mail className="w-5 h-5" />
               Get Quote
             </a>
