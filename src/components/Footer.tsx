@@ -35,7 +35,7 @@ export function Footer() {
             <img 
               src={jedLogo} 
               alt="JED Airconditioning" 
-              className="h-12 w-auto mb-4"
+              className="h-12 w-auto mb-4 bg-white rounded"
               loading="lazy"
               decoding="async"
             />
