@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import jedLogo from '@/assets/jedlogo-1.png';
+import jedLogo from '@/assets/Jedlogo.jpg';
 
 const footerLinks = {
   services: [
