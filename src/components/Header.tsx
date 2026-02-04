@@ -2,7 +2,7 @@ import { Phone, Mail, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import jedLogo from '@/assets/jedlogo-1.jpg';
+import jedLogo from '@/assets/jedlogo-1.png';
 
 const navLinks = [
   { label: 'Services', href: '/services' },
@@ -42,7 +42,7 @@ export function Header() {
               <img 
                 src={jedLogo} 
                 alt="JED Airconditioning" 
-                className="h-14 md:h-18 w-auto bg-white rounded"
+                className="h-14 md:h-18 w-auto"
               />
             </a>
 

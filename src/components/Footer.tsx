@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import jedLogo from '@/assets/jedlogo-1.jpg';
+import jedLogo from '@/assets/jedlogo-1.png';
 
 const footerLinks = {
   services: [
@@ -35,7 +35,7 @@ export function Footer() {
             <img 
               src={jedLogo} 
               alt="JED Airconditioning" 
-              className="h-12 w-auto mb-4 bg-white rounded"
+              className="h-12 w-auto mb-4"
               loading="lazy"
               decoding="async"
             />
