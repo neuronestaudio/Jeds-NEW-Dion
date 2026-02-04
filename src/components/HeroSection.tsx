@@ -2,7 +2,7 @@ import { Suspense, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Phone, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
-import jedLogo from '@/assets/jedlogo 1.jpg';
+import jedLogo from '@/assets/jedlogo-1.jpg';
 import QuoteFormInline from '@/components/QuoteFormInline';
 
 // Lazy load 3D component
