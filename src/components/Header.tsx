@@ -42,7 +42,7 @@ export function Header() {
               <img 
                 src={jedLogo} 
                 alt="JED Airconditioning" 
-                className="h-14 md:h-18 w-auto"
+                className="h-14 md:h-18 w-auto mix-blend-lighten opacity-95"
               />
             </a>
 
