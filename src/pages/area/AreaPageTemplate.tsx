@@ -8,14 +8,14 @@ type Props = {
 };
 
 export default function AreaPageTemplate({ city, slug, blurb }: Props) {
-  const title = `Air Conditioning Services in ${city} | JED Airconditioning`;
+  const title = `Air Conditioning Services in ${city} | JED Air Conditioning`;
   const description = blurb || `Installation, service and repairs in ${city}. Daikin & Haier certified dealer and manufacturer‑trained service agents.`;
   const canonical = `https://jedairconditioning.com.au/service-area/${slug}`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: 'JED Airconditioning',
+    name: 'JED Air Conditioning',
     url: canonical,
     areaServed: city,
     makesOffer: [

@@ -41,7 +41,7 @@ export function Header() {
             <a href="/" className="flex items-center gap-3">
               <img 
                 src={jedLogo} 
-                alt="JED Airconditioning" 
+                alt="JED Air Conditioning" 
                 className="h-14 md:h-18 w-auto mix-blend-lighten opacity-95"
               />
             </a>

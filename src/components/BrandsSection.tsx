@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 // Brand logos would be replaced with actual brand assets
 const brands = [
-  { name: 'Daikin', featured: true, logo: 'https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png' },
+  { name: 'Daikin', featured: true, note: 'Certified Dealer & Service Agents', logo: 'https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png' },
   { name: 'Haier', featured: true, note: 'Certified Dealer & Service Agents', logo: 'https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg' },
   { name: 'Mitsubishi Electric', featured: false },
   { name: 'Fujitsu', featured: false },
@@ -25,7 +25,7 @@ export function BrandsSection() {
             Trusted Brands We Work With
           </h3>
           <p className="text-primary font-bold text-xl">
-            Daikin & Haier Certified Dealer
+            Daikin & Haier Certified Dealer & Service Agents
           </p>
         </motion.div>
 
@@ -63,7 +63,7 @@ export function BrandsSection() {
                   </span>
                 </div>
                 {brand.featured && (
-                  <span className="block text-xs mt-1 opacity-80">Certified Dealer</span>
+                  <span className="block text-xs mt-1 opacity-80">Certified Dealer & Service Agents</span>
                 )}
                 {brand.note && (
                   <span className="block text-[11px] mt-1 text-muted-foreground">{brand.note}</span>

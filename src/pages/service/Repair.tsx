@@ -8,7 +8,7 @@ const Repair = () => {
     '@context': 'https://schema.org',
     '@type': 'Service',
     serviceType: 'Air Conditioning Repair',
-    provider: { '@type': 'LocalBusiness', name: 'JED Airconditioning' },
+    provider: { '@type': 'LocalBusiness', name: 'JED Air Conditioning' },
     areaServed: { '@type': 'City', name: 'Sydney' },
   };
   const breadcrumbLd = {

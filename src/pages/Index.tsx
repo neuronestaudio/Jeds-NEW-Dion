@@ -16,10 +16,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Air Conditioning Installation, Repairs & Service | JED Airconditioning</title>
+        <title>Air Conditioning Installation, Repairs & Service | JED Air Conditioning</title>
         <meta name="description" content="Professional installation, repairs & maintenance across Sydney. Daikin certified. 5-year workmanship warranty." />
         <link rel="canonical" href="https://jedairconditioning.com.au/" />
-        <meta property="og:title" content="JED Airconditioning | Sydney Air Conditioning Specialists" />
+        <meta property="og:title" content="JED Air Conditioning | Sydney Air Conditioning Specialists" />
         <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_AU" />
@@ -31,7 +31,7 @@ const Index = () => {
             {
               "@context":"https://schema.org",
               "@type":"LocalBusiness",
-              "name":"JED Airconditioning",
+              "name":"JED Air Conditioning",
               "telephone":"+61434308070",
               "email":"JED_AIR@outlook.com",
               "address":{"@type":"PostalAddress","addressLocality":"Sydney","addressRegion":"NSW","addressCountry":"AU"},

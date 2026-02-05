@@ -57,13 +57,13 @@ export function WhyChooseUs() {
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               Why Sydney Chooses
-              <span className="text-gradient"> JED Airconditioning</span>
+              <span className="text-gradient"> JED Air Conditioning</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
               For over a decade, we've built our reputation on quality workmanship,
-              honest pricing, and exceptional customer service. As authorised <strong>Daikin & Haier dealers</strong>
+              honest pricing, and exceptional customer service. As authorised <strong>Daikin & Haier dealers</strong> 
               and <strong>manufacturer‑trained service agents</strong>, we install new systems and perform repairs
-              quickly with genuine parts and factory‑approved processes—backed by industry‑leading warranties.
+              quickly with genuine parts and factory‑approved processes backed by industry‑leading warranties.
             </p>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">

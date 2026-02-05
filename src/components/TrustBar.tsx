@@ -1,4 +1,4 @@
-import { Star, Shield, Award, Clock } from 'lucide-react';
+import { Shield, Award, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const trustItems = [
@@ -22,11 +22,7 @@ const trustItems = [
     label: '10+ Years',
     sublabel: 'Experience',
   },
-  {
-    icon: Star,
-    label: '5.0 Rating',
-    sublabel: 'Google Reviews',
-  },
+  
 ];
 
 export function TrustBar() {

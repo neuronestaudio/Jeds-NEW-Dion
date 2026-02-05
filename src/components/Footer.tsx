@@ -35,7 +35,7 @@ export function Footer() {
           <div className="lg:col-span-2">
             <img 
               src={jedLogo} 
-              alt="JED Airconditioning" 
+              alt="JED Air Conditioning" 
               className="h-12 w-auto mb-4 mix-blend-lighten opacity-95"
               loading="lazy"
               decoding="async"
@@ -146,7 +146,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} JED Airconditioning. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} JED Air Conditioning. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>

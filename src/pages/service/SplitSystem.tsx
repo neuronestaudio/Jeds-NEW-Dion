@@ -8,7 +8,7 @@ const SplitSystem = () => {
     '@context': 'https://schema.org',
     '@type': 'Service',
     serviceType: 'Split System Installation',
-    provider: { '@type': 'LocalBusiness', name: 'JED Airconditioning' },
+    provider: { '@type': 'LocalBusiness', name: 'JED Air Conditioning' },
     areaServed: { '@type': 'City', name: 'Sydney' },
   };
   const breadcrumbLd = {
