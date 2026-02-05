@@ -50,7 +50,6 @@ export function Footer() {
                 href="https://www.facebook.com/jed.airconditioning/" 
                 className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="Facebook"
-                target="_blank" rel="noopener noreferrer"
               >
                 <Facebook className="w-5 h-5" />
               </a>
@@ -58,7 +57,6 @@ export function Footer() {
                 href="https://www.instagram.com/jed_airconditioning/" 
                 className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="Instagram"
-                target="_blank" rel="noopener noreferrer"
               >
                 <Instagram className="w-5 h-5" />
               </a>

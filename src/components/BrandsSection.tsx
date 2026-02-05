@@ -1,9 +1,13 @@
 import { motion } from 'framer-motion';
 
-// Show only logos for Daikin and Haier
+// Brand logos would be replaced with actual brand assets
 const brands = [
-  { name: 'Daikin', logo: 'https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png' },
-  { name: 'Haier', logo: 'https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg' },
+  { name: 'Daikin', featured: true, note: 'Certified Dealer & Service Agents', logo: 'https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png' },
+  { name: 'Haier', featured: true, note: 'Certified Dealer & Service Agents', logo: 'https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg' },
+  { name: 'Mitsubishi Electric', featured: false },
+  { name: 'Fujitsu', featured: false },
+  { name: 'Samsung', featured: false },
+  { name: 'LG', featured: false },
 ];
 
 export function BrandsSection() {
@@ -18,8 +22,11 @@ export function BrandsSection() {
           className="text-center mb-8"
         >
           <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-            Daikin & Haier
+            Trusted Brands We Work With — Daikin & Haier
           </h3>
+          <p className="text-muted-foreground">
+            We are certified dealers and service agents for both brands.
+          </p>
         </motion.div>
 
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
@@ -30,19 +37,33 @@ export function BrandsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="flex flex-col items-center"
+              className={`flex flex-col items-center ${brand.featured ? 'order-first' : ''}`}
             >
-              <div className="px-6 py-4 rounded-xl border bg-card/50 border-border/30">
-                {brand.logo && (
-                  <img
-                    src={brand.logo}
-                    alt={`${brand.name} logo`}
-                    className="h-10 w-auto object-contain rounded"
-                    loading="lazy"
-                    decoding="async"
-                    width="80"
-                    height="40"
-                  />
+              <div 
+                className={`px-6 py-4 rounded-xl border transition-colors ${
+                  brand.featured 
+                    ? 'bg-primary/10 border-primary/30 text-primary' 
+                    : 'bg-card/50 border-border/30 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {brand.logo && (
+                    <img
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      className="h-8 w-auto object-contain rounded"
+                      loading="lazy"
+                      decoding="async"
+                      width="80"
+                      height="32"
+                    />
+                  )}
+                  <span className={`font-semibold ${brand.featured ? 'text-lg' : 'text-base'}`}>
+                    {brand.name}
+                  </span>
+                </div>
+                {brand.featured && (
+                  <span className="block text-xs mt-1 opacity-80">Certified Dealer & Service Agents</span>
                 )}
               </div>
             </motion.div>
