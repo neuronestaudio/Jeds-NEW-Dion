@@ -32,15 +32,15 @@ export default function ResidentialCarousel() {
   useEffect(() => () => stop(), []);
 
   return (
-    <div onMouseEnter={start} onMouseLeave={stop} onTouchStart={start} onTouchEnd={stop}>
-      <Carousel setApi={setApi} className="relative">
-        <CarouselContent className="aspect-[4/3]">
+    <div onMouseEnter={start} onMouseLeave={stop} onTouchStart={start} onTouchEnd={stop} className="relative w-full aspect-[4/3]">
+      <Carousel setApi={setApi} className="absolute inset-0">
+        <CarouselContent className="h-full">
           {residentialImages.map((src, i) => (
             <CarouselItem key={i} className="">
               <img
                 src={src}
                 alt={`Residential project ${i + 1}`}
-                className="w-full h-full object-cover rounded-2xl"
+                className="w-full h-full object-cover"
                 loading="lazy"
                 decoding="async"
                 width={400}
