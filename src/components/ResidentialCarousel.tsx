@@ -43,7 +43,7 @@ export default function ResidentialCarousel() {
       onMouseLeave={stop}
       onTouchStart={start}
       onTouchEnd={stop}
-      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
+      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-muted"
     >
       <Carousel setApi={setApi} className="absolute inset-0">
         <CarouselContent className="h-full">
@@ -52,7 +52,7 @@ export default function ResidentialCarousel() {
               <img
                 src={src}
                 alt={`Residential project ${i + 1}`}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center"
                 loading="lazy"
                 decoding="async"
                 width={400}
