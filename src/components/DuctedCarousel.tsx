@@ -3,14 +3,12 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
-const residentialImages = [
-  'Residential 1.jpeg',
-  'Residential 2.jpeg',
-  'Residential 3.jpeg',
-  'Residential 5.jpeg',
+const ductedImages = [
+  'Ducted system install 1.jpeg',
+  'Ducted system install 2.jpeg',
 ].map(resolveAsset);
 
-export default function ResidentialCarousel() {
+export default function DuctedCarousel() {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -21,7 +19,7 @@ export default function ResidentialCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 1200);
+    }, 1400);
   };
   const stop = () => {
     if (timer.current) {
@@ -32,7 +30,6 @@ export default function ResidentialCarousel() {
 
   useEffect(() => () => stop(), []);
   useEffect(() => {
-    // Auto-play on touch devices where hover isn't available
     if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
       start();
       return () => stop();
@@ -49,7 +46,7 @@ export default function ResidentialCarousel() {
     >
       <Carousel setApi={setApi} className="absolute inset-0">
         <CarouselContent className="h-full">
-          {residentialImages.map((src, i) => (
+          {ductedImages.map((src, i) => (
             <CarouselItem
               key={i}
               className="cursor-zoom-in"
@@ -60,7 +57,7 @@ export default function ResidentialCarousel() {
             >
               <img
                 src={src}
-                alt={`Residential project ${i + 1}`}
+                alt={`Ducted system install ${i + 1}`}
                 className="w-full h-full object-contain object-center"
                 loading="lazy"
                 decoding="async"
@@ -76,8 +73,8 @@ export default function ResidentialCarousel() {
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
         <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-[95vw]">
           <img
-            src={residentialImages[lightboxIndex]}
-            alt={`Residential project ${lightboxIndex + 1} enlarged`}
+            src={ductedImages[lightboxIndex]}
+            alt={`Ducted system install ${lightboxIndex + 1} enlarged`}
             className="w-[95vw] max-w-5xl max-h-[85vh] object-contain rounded-lg"
           />
         </DialogContent>

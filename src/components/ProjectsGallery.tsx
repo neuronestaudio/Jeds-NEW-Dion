@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import ResidentialCarousel from './ResidentialCarousel';
+import DuctedCarousel from './DuctedCarousel';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
@@ -135,6 +136,8 @@ export function ProjectsGallery() {
             >
               {index === 0 ? (
                 <ResidentialCarousel />
+              ) : project.title === 'Ducted System Installation' ? (
+                <DuctedCarousel />
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
