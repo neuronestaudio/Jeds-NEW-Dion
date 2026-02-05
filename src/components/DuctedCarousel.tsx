@@ -7,6 +7,10 @@ const ductedImages = [
   'Ducted system install 1.jpeg',
   'Ducted system install 2.jpeg',
 ].map(resolveAsset);
+const positions = [
+  'object-[50%_40%]', // fine-tune crop for photo 1
+  'object-center',
+];
 
 export default function DuctedCarousel() {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
@@ -58,7 +62,7 @@ export default function DuctedCarousel() {
               <img
                 src={src}
                 alt={`Ducted system install ${i + 1}`}
-                className="w-full h-full object-cover object-center"
+                className={`w-full h-full object-cover ${positions[i]}`}
                 loading="lazy"
                 decoding="async"
                 width={400}

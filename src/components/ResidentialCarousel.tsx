@@ -9,6 +9,12 @@ const residentialImages = [
   'Residential 3.jpeg',
   'Residential 5.jpeg',
 ].map(resolveAsset);
+const positions = [
+  'object-center',
+  'object-center',
+  'object-center',
+  'object-[50%_40%]', // fine-tune crop for photo 5
+];
 
 export default function ResidentialCarousel() {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
@@ -61,7 +67,7 @@ export default function ResidentialCarousel() {
               <img
                 src={src}
                 alt={`Residential project ${i + 1}`}
-                className="w-full h-full object-cover object-center"
+                className={`w-full h-full object-cover ${positions[i]}`}
                 loading="lazy"
                 decoding="async"
                 width={400}
