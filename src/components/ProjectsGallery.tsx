@@ -38,14 +38,14 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
       onMouseLeave={stop}
       onTouchStart={start}
       onTouchEnd={stop}
-      className="relative w-full aspect-[4/3] overflow-hidden bg-muted"
+      className="relative w-full aspect-[4/3] overflow-hidden"
     >
       <AnimatePresence initial={false} mode="wait">
         <motion.img
           key={idx}
           src={images[idx]}
           alt={alt}
-          className="absolute inset-0 w-full h-full object-contain object-center"
+          className="absolute inset-0 w-full h-full object-cover object-center"
           loading="lazy"
           decoding="async"
           initial={{ x: 40, opacity: 0 }}
@@ -141,17 +141,15 @@ export function ProjectsGallery() {
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
-                <div className="w-full aspect-[4/3] bg-muted">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-contain object-center"
-                    loading="lazy"
-                    decoding="async"
-                    width="400"
-                    height="300"
-                  />
-                </div>
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full aspect-[4/3] object-cover object-center"
+                  loading="lazy"
+                  decoding="async"
+                  width="400"
+                  height="300"
+                />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
