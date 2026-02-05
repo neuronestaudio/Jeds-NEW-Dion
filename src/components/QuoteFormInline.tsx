@@ -15,6 +15,8 @@ export function QuoteFormInline() {
     message: '',
     website: '',
   });
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoMeta, setPhotoMeta] = useState<{ name: string; type: string; size: number; dataUrl: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ export function QuoteFormInline() {
       const resp = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, source: 'hero-inline' }),
+        body: JSON.stringify({ ...formData, source: 'hero-inline', photo: photoMeta || undefined }),
       });
       if (!resp.ok) {
         const details = await resp.text();
@@ -42,6 +44,8 @@ export function QuoteFormInline() {
         message: '',
         website: '',
       });
+      setPhotoPreview(null);
+      setPhotoMeta(null);
     } catch (err: any) {
       toast({
         title: 'Submission Error',
@@ -50,6 +54,30 @@ export function QuoteFormInline() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({ title: 'Invalid file type', description: 'Please upload an image.' });
+      return;
+    }
+    const MAX_BYTES = 10 * 1024 * 1024;
+    if (file.size > MAX_BYTES) {
+      toast({ title: 'File too large', description: 'Please select an image under 10MB.' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setPhotoPreview(dataUrl);
+      setPhotoMeta({ name: file.name, type: file.type, size: file.size, dataUrl });
+    };
+    reader.onerror = () => {
+      toast({ title: 'Could not read file', description: 'Please try a different image.' });
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -157,6 +185,26 @@ export function QuoteFormInline() {
             className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors resize-none"
             placeholder="Brief description of your needs..."
           />
+        </div>
+
+        <div>
+          <label htmlFor="photo-inline" className="block text-xs font-medium mb-2">
+            Upload a Photo (Optional)
+          </label>
+          <input
+            id="photo-inline"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handlePhotoChange}
+            className="block w-full text-xs text-muted-foreground file:mr-4 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-primary/10 file:text-xs file:font-semibold file:text-primary hover:file:bg-primary/20"
+          />
+          {photoPreview && (
+            <div className="mt-2">
+              <img src={photoPreview} alt="Selected preview" className="h-24 w-auto rounded-md border border-border/50 object-cover" />
+            </div>
+          )}
+          <p className="mt-2 text-[10px] text-muted-foreground">Max 10MB. Helps us assess installations or repairs.</p>
         </div>
 
         <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>

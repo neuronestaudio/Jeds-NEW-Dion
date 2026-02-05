@@ -1,15 +1,15 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
 const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
 const modernImages = [
-  'WhatsApp Image 2026-02-04 at 21.32.23 (2).jpeg',
-  'WhatsApp Image 2026-02-04 at 21.32.23 (3).jpeg',
-  'WhatsApp Image 2026-02-04 at 21.32.23 (4).jpeg',
-  'WhatsApp Image 2026-02-04 at 21.32.23 (5).jpeg',
-  'WhatsApp Image 2026-02-04 at 21.32.23 (10).jpeg',
-  'WhatsApp Image 2026-02-04 at 22.25.19 (1).jpeg',
+  'Residential 1.jpeg',
+  'Residential 2.jpeg',
+  'Residential 3.jpeg',
+  'Residential 4.jpeg',
+  'Residential 5.jpeg',
+  'Residential 6.jpeg',
 ].map(resolveAsset);
 
 function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
@@ -36,20 +36,22 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
       onMouseLeave={stop}
       onTouchStart={start}
       onTouchEnd={stop}
-      className="relative w-full"
+      className="relative w-full aspect-[4/3] overflow-hidden"
     >
-      <img
-        src={images[idx]}
-        alt={`${alt} ${idx + 1}`}
-        className="w-full aspect-[4/3] object-cover"
-        loading="lazy"
-        decoding="async"
-        width={400}
-        height={300}
-      />
-      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/40 text-white text-[10px]">
-        {idx + 1}/{images.length}
-      </div>
+      <AnimatePresence initial={false} mode="wait">
+        <motion.img
+          key={idx}
+          src={images[idx]}
+          alt={alt}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+          initial={{ x: 40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -40, opacity: 0 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+        />
+      </AnimatePresence>
     </div>
   );
 }
