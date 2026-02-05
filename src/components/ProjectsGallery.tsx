@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import ResidentialCarousel from './ResidentialCarousel';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
@@ -132,7 +133,9 @@ export function ProjectsGallery() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group relative overflow-hidden rounded-2xl"
             >
-              {Array.isArray((project as any).images) && (project as any).images.length ? (
+              {index === 0 ? (
+                <ResidentialCarousel />
+              ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
                 <img
