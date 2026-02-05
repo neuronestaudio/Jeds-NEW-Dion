@@ -76,6 +76,10 @@ function Hero3DFallback() {
 
 export function HeroSection() {
   const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
+  const DAIKIN_LOGO_LOCAL = '/brands/daikin.png';
+  const HAIER_LOGO_LOCAL = '/brands/haier.png';
+  const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
+  const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
   const [videoError, setVideoError] = useState(false);
   const [play, setPlay] = useState(false);
   useEffect(() => {
@@ -124,29 +128,31 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full text-primary text-sm font-medium mb-8"
+            className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-primary text-xs sm:text-sm font-medium mb-6 max-w-full"
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="flex items-center gap-3">
-              Daikin & Haier Certified Dealer • Manufacturer‑Trained Service Agents
-              <span className="inline-flex items-center gap-2 px-2 py-1 bg-card/60 border border-border/40 rounded-md text-foreground">
+            <span className="flex items-center gap-2 flex-wrap">
+              Daikin & Haier Certified Dealer / Trained Service Agents
+              <span className="inline-flex items-center gap-1.5 sm:gap-2 px-1.5 py-0.5 bg-card/60 border border-border/40 rounded-md text-foreground h-7 sm:h-8">
                 <img
-                  src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
-                  alt="Haier certified"
-                  className="h-10 w-auto object-contain rounded-md"
+                  src={DAIKIN_LOGO_LOCAL}
+                  alt="Daikin logo"
+                  className="h-5 sm:h-6 w-auto object-contain"
                   loading="lazy"
                   decoding="async"
-                  width="80"
-                  height="40"
+                  width="72"
+                  height="24"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
                 />
                 <img
-                  src="https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png"
-                  alt="Daikin certified"
-                  className="h-10 w-auto object-contain rounded-md"
+                  src={HAIER_LOGO_LOCAL}
+                  alt="Haier logo"
+                  className="h-5 sm:h-6 w-auto object-contain"
                   loading="lazy"
                   decoding="async"
-                  width="80"
-                  height="40"
+                  width="72"
+                  height="24"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}
                 />
               </span>
             </span>

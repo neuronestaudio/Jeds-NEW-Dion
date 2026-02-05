@@ -3,6 +3,11 @@ import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-
 
 const reasons = [
   {
+    icon: Shield,
+    title: 'Manufacturer‑Trained Service Agents',
+    description: 'Daikin & Haier authorised service agents for faster diagnostics and repairs using genuine parts',
+  },
+  {
     icon: Award,
     title: 'Daikin Certified Dealer',
     description: 'Authorised dealer with access to full Daikin product range and genuine parts',
@@ -28,11 +33,6 @@ const reasons = [
     description: 'Qualified technicians with all required licences and comprehensive insurance',
   },
   {
-    icon: Shield,
-    title: 'Manufacturer‑Trained Service Agents',
-    description: 'Daikin & Haier authorised service agents for faster diagnostics and repairs using genuine parts',
-  },
-  {
     icon: CheckCircle,
     title: 'Upfront Pricing',
     description: 'No surprises - detailed quotes before any work begins with no hidden fees',
@@ -56,8 +56,7 @@ export function WhyChooseUs() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Why Sydney Chooses
-              <span className="text-gradient"> JED Air Conditioning</span>
+              Why Choose <span className="text-gradient">JED Air Conditioning</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
               For over a decade, we've built our reputation on quality workmanship,

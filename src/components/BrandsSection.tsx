@@ -22,11 +22,8 @@ export function BrandsSection() {
           className="text-center mb-8"
         >
           <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-            Trusted Brands We Work With — Daikin & Haier
+            Trusted Brands We Work With
           </h3>
-          <p className="text-muted-foreground">
-            We are certified dealers and service agents for both brands.
-          </p>
         </motion.div>
 
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
