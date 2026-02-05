@@ -17,12 +17,12 @@ const footerLinks = {
     { label: 'FAQs', href: '/#faqs' },
   ],
   areas: [
-    { label: 'Newcastle', href: '#' },
-    { label: 'Central Coast', href: '#' },
-    { label: 'Sydney (All Regions)', href: '#' },
-    { label: 'Blue Mountains', href: '#' },
-    { label: 'Wollongong/Illawarra', href: '#' },
-    { label: 'Canberra', href: '#' },
+    { label: 'Newcastle', href: '/service-area/newcastle' },
+    { label: 'Central Coast', href: '/service-area/central-coast' },
+    { label: 'Sydney (All Regions)', href: '/service-area/sydney' },
+    { label: 'Blue Mountains', href: '/service-area/blue-mountains' },
+    { label: 'Wollongong/Illawarra', href: '/service-area/wollongong' },
+    { label: 'Canberra', href: '/service-area/canberra' },
   ],
 };
 

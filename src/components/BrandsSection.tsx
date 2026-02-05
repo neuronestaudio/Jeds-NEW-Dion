@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 
 // Brand logos would be replaced with actual brand assets
 const brands = [
-  { name: 'Daikin', featured: true },
-  { name: 'Haier', featured: true, note: 'Certified Dealer & Service Agents' },
+  { name: 'Daikin', featured: true, logo: 'https://www.clipartmax.com/png/middle/83-836729_lopez-refrigeration-airconditioning-logo-daikin-png.png' },
+  { name: 'Haier', featured: true, note: 'Certified Dealer & Service Agents', logo: 'https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg' },
   { name: 'Mitsubishi Electric', featured: false },
   { name: 'Fujitsu', featured: false },
   { name: 'Samsung', featured: false },
@@ -46,9 +46,22 @@ export function BrandsSection() {
                     : 'bg-card/50 border-border/30 text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 }`}
               >
-                <span className={`font-semibold ${brand.featured ? 'text-lg' : 'text-base'}`}>
-                  {brand.name}
-                </span>
+                <div className="flex items-center gap-3">
+                  {brand.logo && (
+                    <img
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      className="h-8 w-auto object-contain rounded"
+                      loading="lazy"
+                      decoding="async"
+                      width="80"
+                      height="32"
+                    />
+                  )}
+                  <span className={`font-semibold ${brand.featured ? 'text-lg' : 'text-base'}`}>
+                    {brand.name}
+                  </span>
+                </div>
                 {brand.featured && (
                   <span className="block text-xs mt-1 opacity-80">Certified Dealer</span>
                 )}

@@ -26,4 +26,29 @@
     <loc>https://jedairconditioning.com.au/contact</loc>
     <priority>0.7</priority>
   </url>
-</urlset>
+    <url>
+      <loc>https://jedairconditioning.com.au/service-area/newcastle</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+    <url>
+      <loc>https://jedairconditioning.com.au/service-area/central-coast</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+    <url>
+      <loc>https://jedairconditioning.com.au/service-area/blue-mountains</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+    <url>
+      <loc>https://jedairconditioning.com.au/service-area/wollongong</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+    <url>
+      <loc>https://jedairconditioning.com.au/service-area/canberra</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+  </urlset>
