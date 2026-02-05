@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
 const residentialImages = [
@@ -13,6 +14,8 @@ const residentialImages = [
 export default function ResidentialCarousel() {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const start = () => {
     if (!api) return;
@@ -48,7 +51,14 @@ export default function ResidentialCarousel() {
       <Carousel setApi={setApi} className="absolute inset-0">
         <CarouselContent className="h-full">
           {residentialImages.map((src, i) => (
-            <CarouselItem key={i} className="">
+            <CarouselItem
+              key={i}
+              className="cursor-zoom-in"
+              onClick={() => {
+                setLightboxIndex(i);
+                setLightboxOpen(true);
+              }}
+            >
               <img
                 src={src}
                 alt={`Residential project ${i + 1}`}
@@ -64,6 +74,15 @@ export default function ResidentialCarousel() {
         <CarouselPrevious className="hidden sm:flex -left-2 md:-left-3 top-1/2 -translate-y-1/2" />
         <CarouselNext className="hidden sm:flex -right-2 md:-right-3 top-1/2 -translate-y-1/2" />
       </Carousel>
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-[95vw]">
+          <img
+            src={residentialImages[lightboxIndex]}
+            alt={`Residential project ${lightboxIndex + 1} enlarged`}
+            className="w-[95vw] max-w-5xl max-h-[85vh] object-contain rounded-lg"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
