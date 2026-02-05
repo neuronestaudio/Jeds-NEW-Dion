@@ -17,11 +17,12 @@ const footerLinks = {
     { label: 'FAQs', href: '/#faqs' },
   ],
   areas: [
-    { label: 'Sydney CBD', href: '#' },
-    { label: 'North Sydney', href: '#' },
-    { label: 'Eastern Suburbs', href: '#' },
-    { label: 'Western Sydney', href: '#' },
-    { label: 'Sutherland Shire', href: '#' },
+    { label: 'Newcastle', href: '#' },
+    { label: 'Central Coast', href: '#' },
+    { label: 'Sydney (All Regions)', href: '#' },
+    { label: 'Blue Mountains', href: '#' },
+    { label: 'Wollongong/Illawarra', href: '#' },
+    { label: 'Canberra', href: '#' },
   ],
 };
 
@@ -40,8 +41,9 @@ export function Footer() {
               decoding="async"
             />
             <p className="text-muted-foreground mb-6 max-w-sm">
-              Sydney's trusted air conditioning specialists. Daikin certified dealer providing 
-              professional installation, service, and repairs for residential and commercial properties.
+              Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
+              <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs
+              for residential and commercial properties.
             </p>
             <div className="flex gap-4">
               <a 
@@ -157,6 +159,8 @@ export function Footer() {
             <span>✓ Fully Licensed</span>
             <span>✓ Fully Insured</span>
             <span>✓ Daikin Certified Dealer</span>
+            <span>✓ Haier Certified Dealer</span>
+            <span>✓ Manufacturer‑Trained Service Agents</span>
             <span>✓ 5-Year Workmanship Warranty</span>
             <span>✓ 10+ Years Experience</span>
           </div>

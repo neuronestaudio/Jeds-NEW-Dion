@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 // Brand logos would be replaced with actual brand assets
 const brands = [
   { name: 'Daikin', featured: true },
-  { name: 'Haier', featured: false, note: 'We install and service Haier systems' },
+  { name: 'Haier', featured: true, note: 'Certified Dealer & Service Agents' },
   { name: 'Mitsubishi Electric', featured: false },
   { name: 'Fujitsu', featured: false },
   { name: 'Samsung', featured: false },
@@ -25,7 +25,7 @@ export function BrandsSection() {
             Trusted Brands We Work With
           </h3>
           <p className="text-primary font-bold text-xl">
-            Daikin Certified Dealer
+            Daikin & Haier Certified Dealer
           </p>
         </motion.div>
 
@@ -51,6 +51,9 @@ export function BrandsSection() {
                 </span>
                 {brand.featured && (
                   <span className="block text-xs mt-1 opacity-80">Certified Dealer</span>
+                )}
+                {brand.note && (
+                  <span className="block text-[11px] mt-1 text-muted-foreground">{brand.note}</span>
                 )}
               </div>
             </motion.div>

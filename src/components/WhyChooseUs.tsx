@@ -8,6 +8,11 @@ const reasons = [
     description: 'Authorised dealer with access to full Daikin product range and genuine parts',
   },
   {
+    icon: Award,
+    title: 'Haier Certified Dealer',
+    description: 'Authorised Haier dealer with genuine parts and product support',
+  },
+  {
     icon: Shield,
     title: '5-Year Workmanship Warranty',
     description: 'Complete peace of mind with our comprehensive labour warranty on all installations',
@@ -21,6 +26,11 @@ const reasons = [
     icon: BadgeCheck,
     title: 'Fully Licensed & Insured',
     description: 'Qualified technicians with all required licences and comprehensive insurance',
+  },
+  {
+    icon: Shield,
+    title: 'Manufacturer‑Trained Service Agents',
+    description: 'Daikin & Haier authorised service agents for faster diagnostics and repairs using genuine parts',
   },
   {
     icon: CheckCircle,
@@ -50,10 +60,10 @@ export function WhyChooseUs() {
               <span className="text-gradient"> JED Airconditioning</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              For over a decade, we've built our reputation on quality workmanship, 
-              honest pricing, and exceptional customer service. As authorised Daikin 
-              dealers, we bring you the best in air conditioning technology backed by 
-              industry-leading warranties.
+              For over a decade, we've built our reputation on quality workmanship,
+              honest pricing, and exceptional customer service. As authorised <strong>Daikin & Haier dealers</strong>
+              and <strong>manufacturer‑trained service agents</strong>, we install new systems and perform repairs
+              quickly with genuine parts and factory‑approved processes—backed by industry‑leading warranties.
             </p>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">

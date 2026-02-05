@@ -4,8 +4,13 @@ import { motion } from 'framer-motion';
 const trustItems = [
   {
     icon: Award,
-    label: 'Daikin Certified',
+    label: 'Daikin & Haier Certified',
     sublabel: 'Authorised Dealer',
+  },
+  {
+    icon: Shield,
+    label: 'Service Agents',
+    sublabel: 'Daikin & Haier',
   },
   {
     icon: Shield,

@@ -128,7 +128,7 @@ export function HeroSection() {
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="flex items-center gap-3">
-              Daikin Certified Dealer • Sydney-Wide Service
+              Daikin & Haier Certified Dealer • Manufacturer‑Trained Service Agents
               <span className="inline-flex items-center gap-2 px-2 py-1 bg-card/60 border border-border/40 rounded-md text-foreground">
                 <img
                   src="https://i.pinimg.com/736x/48/08/48/480848b5bb5e5cede91ee85dd253b176.jpg"
