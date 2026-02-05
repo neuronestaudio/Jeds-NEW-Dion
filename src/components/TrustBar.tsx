@@ -1,4 +1,4 @@
-import { Shield, Award, Clock } from 'lucide-react';
+import { Shield, Award, Clock, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const trustItems = [
@@ -8,7 +8,7 @@ const trustItems = [
     sublabel: 'Authorised Dealer',
   },
   {
-    icon: Shield,
+    icon: Wrench,
     label: 'Service Agents',
     sublabel: 'Daikin & Haier',
   },

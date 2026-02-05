@@ -4,6 +4,8 @@ import { ArrowRight, Phone, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import jedLogo from '@/assets/Jedlogo.jpg';
 import QuoteFormInline from '@/components/QuoteFormInline';
+import daikinLogo from '@/assets/Daikin.png';
+import haierLogo from '@/assets/Haier.png';
 
 // Lazy load 3D component
 const Hero3DCanvas = () => {
@@ -76,8 +78,7 @@ function Hero3DFallback() {
 
 export function HeroSection() {
   const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
-  const DAIKIN_LOGO_LOCAL = '/brands/daikin.png';
-  const HAIER_LOGO_LOCAL = '/brands/haier.png';
+  // Prefer local bundled assets; fall back to remote SVGs if they fail to load
   const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
   const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
   const [videoError, setVideoError] = useState(false);
@@ -133,9 +134,9 @@ export function HeroSection() {
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="flex items-center gap-2 flex-wrap">
               Daikin & Haier Certified Dealer / Trained Service Agents
-              <span className="inline-flex items-center gap-1.5 sm:gap-2 px-1.5 py-0.5 bg-card/60 border border-border/40 rounded-md text-foreground h-7 sm:h-8">
+              <span className="inline-flex items-center gap-1.5 sm:gap-2 px-1.5 py-0.5 rounded-md text-foreground h-7 sm:h-8">
                 <img
-                  src={DAIKIN_LOGO_LOCAL}
+                  src={daikinLogo}
                   alt="Daikin logo"
                   className="h-5 sm:h-6 w-auto object-contain"
                   loading="lazy"
@@ -145,7 +146,7 @@ export function HeroSection() {
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
                 />
                 <img
-                  src={HAIER_LOGO_LOCAL}
+                  src={haierLogo}
                   alt="Haier logo"
                   className="h-5 sm:h-6 w-auto object-contain"
                   loading="lazy"

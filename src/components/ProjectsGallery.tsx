@@ -1,4 +1,58 @@
 import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+
+// Resolve local project photos (filenames contain spaces/parentheses)
+const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
+const modernImages = [
+  'WhatsApp Image 2026-02-04 at 21.32.23 (2).jpeg',
+  'WhatsApp Image 2026-02-04 at 21.32.23 (3).jpeg',
+  'WhatsApp Image 2026-02-04 at 21.32.23 (4).jpeg',
+  'WhatsApp Image 2026-02-04 at 21.32.23 (5).jpeg',
+  'WhatsApp Image 2026-02-04 at 21.32.23 (10).jpeg',
+  'WhatsApp Image 2026-02-04 at 22.25.19 (1).jpeg',
+].map(resolveAsset);
+
+function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
+  const [idx, setIdx] = useState(0);
+  const timer = useRef<number | null>(null);
+
+  const next = () => setIdx((i) => (i + 1) % images.length);
+  const start = () => {
+    if (timer.current) return;
+    timer.current = window.setInterval(next, 900);
+  };
+  const stop = () => {
+    if (timer.current) {
+      window.clearInterval(timer.current);
+      timer.current = null;
+    }
+  };
+
+  useEffect(() => () => stop(), []);
+
+  return (
+    <div
+      onMouseEnter={start}
+      onMouseLeave={stop}
+      onTouchStart={start}
+      onTouchEnd={stop}
+      className="relative w-full"
+    >
+      <img
+        src={images[idx]}
+        alt={`${alt} ${idx + 1}`}
+        className="w-full aspect-[4/3] object-cover"
+        loading="lazy"
+        decoding="async"
+        width={400}
+        height={300}
+      />
+      <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/40 text-white text-[10px]">
+        {idx + 1}/{images.length}
+      </div>
+    </div>
+  );
+}
 
 // Placeholder project images - these would be replaced with actual project photos
 const projects = [
@@ -7,7 +61,8 @@ const projects = [
     title: 'Modern Home Split System',
     location: 'Parramatta',
     type: 'Residential',
-    image: 'https://images.unsplash.com/photo-1631545806609-35d4ae440431?w=400&h=300&fit=crop',
+    images: modernImages,
+    image: modernImages[0],
   },
   {
     id: 2,
@@ -75,15 +130,19 @@ export function ProjectsGallery() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group relative overflow-hidden rounded-2xl"
             >
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
-                decoding="async"
-                width="400"
-                height="300"
-              />
+              {Array.isArray((project as any).images) && (project as any).images.length ? (
+                <HoverCycle images={(project as any).images} alt={project.title} />
+              ) : (
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
+                  width="400"
+                  height="300"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                 <span className="inline-block px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full mb-2">
