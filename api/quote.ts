@@ -78,6 +78,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const twilioSid = process.env.TWILIO_ACCOUNT_SID;
     const twilioToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioFrom = process.env.TWILIO_FROM_NUMBER;
+      const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '');
+    const twilioServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID; // optional: use Messaging Service
     const ownerToRaw = process.env.OWNER_SMS_TO;
 
     let smsError: string | undefined;
@@ -87,7 +89,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         try {
           const params = new URLSearchParams();
           params.append('To', normalizeOwner);
-          params.append('From', twilioFrom);
+          if (twilioServiceSid) {
+            params.append('MessagingServiceSid', twilioServiceSid);
+          } else {
+            params.append('From', twilioFrom);
+                    params.append('From', twilioFromClean);
+            params.append('From', twilioFromClean);
+          }
           params.append(
             'Body',
             `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nMessage: ${payload.message || ''}`
@@ -117,14 +125,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Optionally send confirmation SMS to the submitting customer's phone
-    const sendCustomerFlag = (process.env.TWILIO_SEND_CUSTOMER_SMS || process.env.SEND_CUSTOMER_SMS || '').toString().toLowerCase();
+    const sendCustomerFlag = (process.env.TWILIO_SEND_CUSTOMER_SMS || process.env.SEND_CUSTOMER_SMS || 'true').toString().toLowerCase();
     const shouldSendCustomer = ['true', '1', 'yes', 'on'].includes(sendCustomerFlag);
     let customerSmsError: string | undefined;
     if (twilioSid && twilioToken && twilioFrom && shouldSendCustomer && normalizedPhone) {
       try {
         const params = new URLSearchParams();
         params.append('To', normalizedPhone);
-        params.append('From', twilioFrom);
+        if (twilioServiceSid) {
+          params.append('MessagingServiceSid', twilioServiceSid);
+        } else {
+          params.append('From', twilioFrom);
+        }
         params.append(
           'Body',
           `Thanks ${name}, we received your request for "${serviceType}". We'll contact you shortly. - JED Air Conditioning`
