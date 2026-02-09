@@ -78,11 +78,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const twilioSid = process.env.TWILIO_ACCOUNT_SID;
     const twilioToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioFrom = process.env.TWILIO_FROM_NUMBER;
-      const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '');
+    const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '');
     const twilioServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID; // optional: use Messaging Service
     const ownerToRaw = process.env.OWNER_SMS_TO;
 
     let smsError: string | undefined;
+    let ownerSmsSid: string | undefined;
     if (twilioSid && twilioToken && twilioFrom && ownerToRaw) {
       const normalizeOwner = normalizeAuPhone(String(ownerToRaw));
       if (normalizeOwner) {
@@ -92,8 +93,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           if (twilioServiceSid) {
             params.append('MessagingServiceSid', twilioServiceSid);
           } else {
-            params.append('From', twilioFrom);
-                    params.append('From', twilioFromClean);
             params.append('From', twilioFromClean);
           }
           params.append(
@@ -113,7 +112,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               body: params.toString(),
             }
           );
-          if (!twilioResp.ok) {
+          if (twilioResp.ok) {
+            const data = await twilioResp.json();
+            ownerSmsSid = data?.sid;
+          } else {
             smsError = `Twilio error: ${await twilioResp.text()}`;
           }
         } catch (e: any) {
@@ -128,6 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const sendCustomerFlag = (process.env.TWILIO_SEND_CUSTOMER_SMS || process.env.SEND_CUSTOMER_SMS || 'true').toString().toLowerCase();
     const shouldSendCustomer = ['true', '1', 'yes', 'on'].includes(sendCustomerFlag);
     let customerSmsError: string | undefined;
+    let customerSmsSid: string | undefined;
     if (twilioSid && twilioToken && twilioFrom && shouldSendCustomer && normalizedPhone) {
       try {
         const params = new URLSearchParams();
@@ -135,7 +138,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (twilioServiceSid) {
           params.append('MessagingServiceSid', twilioServiceSid);
         } else {
-          params.append('From', twilioFrom);
+          params.append('From', twilioFromClean);
         }
         params.append(
           'Body',
@@ -154,7 +157,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             body: params.toString(),
           }
         );
-        if (!twilioResp.ok) {
+        if (twilioResp.ok) {
+          const data = await twilioResp.json();
+          customerSmsSid = data?.sid;
+        } else {
           customerSmsError = `Twilio customer SMS error: ${await twilioResp.text()}`;
         }
       } catch (e: any) {
@@ -162,7 +168,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    res.status(200).json({ ok: true, smsError, customerSmsError });
+    res.status(200).json({ ok: true, smsError, customerSmsError, ownerSmsSid, customerSmsSid });
   } catch (err: any) {
     res.status(500).json({ error: 'Unexpected error', details: err?.message || String(err) });
   }
