@@ -116,7 +116,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    res.status(200).json({ ok: true, smsError });
+    // Optionally send confirmation SMS to the submitting customer's phone
+    const sendCustomerFlag = (process.env.TWILIO_SEND_CUSTOMER_SMS || process.env.SEND_CUSTOMER_SMS || '').toString().toLowerCase();
+    const shouldSendCustomer = ['true', '1', 'yes', 'on'].includes(sendCustomerFlag);
+    let customerSmsError: string | undefined;
+    if (twilioSid && twilioToken && twilioFrom && shouldSendCustomer && normalizedPhone) {
+      try {
+        const params = new URLSearchParams();
+        params.append('To', normalizedPhone);
+        params.append('From', twilioFrom);
+        params.append(
+          'Body',
+          `Thanks ${name}, we received your request for "${serviceType}". We'll contact you shortly. - JED Air Conditioning`
+        );
+
+        const twilioResp = await fetch(
+          `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization:
+                'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
+            },
+            body: params.toString(),
+          }
+        );
+        if (!twilioResp.ok) {
+          customerSmsError = `Twilio customer SMS error: ${await twilioResp.text()}`;
+        }
+      } catch (e: any) {
+        customerSmsError = e?.message || String(e);
+      }
+    }
+
+    res.status(200).json({ ok: true, smsError, customerSmsError });
   } catch (err: any) {
     res.status(500).json({ error: 'Unexpected error', details: err?.message || String(err) });
   }
