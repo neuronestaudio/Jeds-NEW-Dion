@@ -54,7 +54,7 @@ export default function ResidentialCarousel() {
       className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
     >
       <Carousel setApi={setApi} className="absolute inset-0">
-        <CarouselContent className="h-full">
+        <CarouselContent className="h-full cursor-grab active:cursor-grabbing select-none">
           {residentialImages.map((src, i) => (
             <CarouselItem
               key={i}
@@ -76,16 +76,17 @@ export default function ResidentialCarousel() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden sm:flex -left-2 md:-left-3 top-1/2 -translate-y-1/2" />
-        <CarouselNext className="hidden sm:flex -right-2 md:-right-3 top-1/2 -translate-y-1/2" />
+        {/* Drag to scroll; arrows hidden intentionally */}
       </Carousel>
       <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
-        <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-[95vw]">
-          <img
-            src={residentialImages[lightboxIndex]}
-            alt={`Residential project ${lightboxIndex + 1} enlarged`}
-            className="w-[95vw] max-w-5xl max-h-[85vh] object-contain rounded-lg"
-          />
+        <DialogContent className="bg-transparent border-none shadow-none p-0 max-w-[95vw] w-auto">
+          <div className="flex items-center justify-center w-[95vw] h-[85vh]">
+            <img
+              src={residentialImages[lightboxIndex]}
+              alt={`Residential project ${lightboxIndex + 1} enlarged`}
+              className="max-w-full max-h-full object-contain rounded-lg"
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://jedairconditioning.com.au/sitemap.xml
+Sitemap: https://www.jedairconditioning.com.au/sitemap.xml

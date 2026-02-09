@@ -18,7 +18,7 @@ const Index = () => {
       <Helmet>
         <title>Air Conditioning Installation, Repairs & Service | JED Air Conditioning</title>
         <meta name="description" content="Professional installation, repairs & maintenance across Sydney. Daikin certified. 5-year workmanship warranty." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/" />
         <meta property="og:title" content="JED Air Conditioning | Sydney Air Conditioning Specialists" />
         <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
         <meta property="og:type" content="website" />

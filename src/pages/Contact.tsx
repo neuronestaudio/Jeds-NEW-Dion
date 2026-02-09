@@ -39,7 +39,7 @@ const Contact = () => {
       <Helmet>
         <title>Get a Free Air Conditioning Quote | Sydney</title>
         <meta name="description" content="Request a free quote for air conditioning installation, repairs, or maintenance in Sydney." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/contact" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/contact" />
         <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
       </Helmet>
       <Header />

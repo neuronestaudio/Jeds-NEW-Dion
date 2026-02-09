@@ -15,8 +15,8 @@ const Ducted = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://jedairconditioning.com.au/services' },
-      { '@type': 'ListItem', position: 2, name: 'Ducted Air Conditioning', item: 'https://jedairconditioning.com.au/service/ducted-air-conditioning' },
+      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://www.jedairconditioning.com.au/services' },
+      { '@type': 'ListItem', position: 2, name: 'Ducted Air Conditioning', item: 'https://www.jedairconditioning.com.au/service/ducted-air-conditioning' },
     ],
   };
   const faqLd = {
@@ -55,7 +55,7 @@ const Ducted = () => {
       <Helmet>
         <title>Ducted Air Conditioning Installation & Upgrades | Sydney</title>
         <meta name="description" content="Whole-home ducted air conditioning installation and upgrades in Sydney. Discreet, powerful climate control with professional design." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/service/ducted-air-conditioning" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/service/ducted-air-conditioning" />
         <script type="application/ld+json">{JSON.stringify(serviceLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqLd)}</script>

@@ -12,7 +12,7 @@ const Services = () => {
         '@type': 'ListItem',
         position: 1,
         name: 'Services',
-        item: 'https://jedairconditioning.com.au/services',
+        item: 'https://www.jedairconditioning.com.au/services',
       },
     ],
   };
@@ -52,7 +52,7 @@ const Services = () => {
       <Helmet>
         <title>Air Conditioning Services in Sydney | Installation, Repairs & Maintenance</title>
         <meta name="description" content="Comprehensive air conditioning services across Sydney: split system installation, ducted systems, and fast repairs." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/services" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/services" />
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
       </Helmet>

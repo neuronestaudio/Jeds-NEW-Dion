@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jedairconditioning.com.au/</loc>
+    <loc>https://www.jedairconditioning.com.au/</loc>
     <priority>1.0</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://jedairconditioning.com.au/services</loc>
+    <loc>https://www.jedairconditioning.com.au/services</loc>
     <priority>0.9</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://jedairconditioning.com.au/service/split-system-installation</loc>
+    <loc>https://www.jedairconditioning.com.au/service/split-system-installation</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jedairconditioning.com.au/service/ducted-air-conditioning</loc>
+    <loc>https://www.jedairconditioning.com.au/service/ducted-air-conditioning</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jedairconditioning.com.au/service/aircon-repair</loc>
+    <loc>https://www.jedairconditioning.com.au/service/aircon-repair</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jedairconditioning.com.au/contact</loc>
+    <loc>https://www.jedairconditioning.com.au/contact</loc>
     <priority>0.7</priority>
   </url>
     <url>
-      <loc>https://jedairconditioning.com.au/service-area/newcastle</loc>
+      <loc>https://www.jedairconditioning.com.au/service-area/newcastle</loc>
       <changefreq>weekly</changefreq>
       <priority>0.6</priority>
     </url>
     <url>
-      <loc>https://jedairconditioning.com.au/service-area/central-coast</loc>
+      <loc>https://www.jedairconditioning.com.au/service-area/central-coast</loc>
       <changefreq>weekly</changefreq>
       <priority>0.6</priority>
     </url>
     <url>
-      <loc>https://jedairconditioning.com.au/service-area/blue-mountains</loc>
+      <loc>https://www.jedairconditioning.com.au/service-area/blue-mountains</loc>
       <changefreq>weekly</changefreq>
       <priority>0.6</priority>
     </url>
     <url>
-      <loc>https://jedairconditioning.com.au/service-area/wollongong</loc>
+      <loc>https://www.jedairconditioning.com.au/service-area/wollongong</loc>
       <changefreq>weekly</changefreq>
       <priority>0.6</priority>
     </url>
     <url>
-      <loc>https://jedairconditioning.com.au/service-area/canberra</loc>
+      <loc>https://www.jedairconditioning.com.au/service-area/canberra</loc>
       <changefreq>weekly</changefreq>
       <priority>0.6</priority>
     </url>

@@ -18,6 +18,14 @@ export function QuoteForm() {
   });
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoMeta, setPhotoMeta] = useState<{ name: string; type: string; size: number; dataUrl: string } | null>(null);
+  const fileInputId = 'quote-photo-input';
+
+  const handlePhotoRemove = () => {
+    setPhotoPreview(null);
+    setPhotoMeta(null);
+    const el = document.getElementById(fileInputId) as HTMLInputElement | null;
+    if (el) el.value = '';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,18 +205,31 @@ export function QuoteForm() {
               </div>
 
               <div>
-                <label htmlFor="photo" className="block text-sm font-medium mb-2">
+                <label htmlFor={fileInputId} className="block text-sm font-medium mb-2">
                   Upload a Photo (Optional)
                 </label>
                 <div className="flex items-center gap-4">
                   <input
-                    id="photo"
+                    id={fileInputId}
                     type="file"
                     accept="image/*"
                     capture="environment"
                     onChange={handlePhotoChange}
                     className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-primary/10 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20"
                   />
+                  {photoPreview && (
+                    <div className="flex items-center gap-2">
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        const el = document.getElementById(fileInputId);
+                        (el as HTMLInputElement | null)?.click();
+                      }}>
+                        Change Photo
+                      </Button>
+                      <Button type="button" variant="destructive" size="sm" onClick={handlePhotoRemove}>
+                        Remove
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 {photoPreview && (
                   <div className="mt-3">

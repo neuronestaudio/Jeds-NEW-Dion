@@ -15,8 +15,8 @@ const Repair = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://jedairconditioning.com.au/services' },
-      { '@type': 'ListItem', position: 2, name: 'Air Conditioning Repairs', item: 'https://jedairconditioning.com.au/service/aircon-repair' },
+      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://www.jedairconditioning.com.au/services' },
+      { '@type': 'ListItem', position: 2, name: 'Air Conditioning Repairs', item: 'https://www.jedairconditioning.com.au/service/aircon-repair' },
     ],
   };
   const faqLd = {
@@ -55,7 +55,7 @@ const Repair = () => {
       <Helmet>
         <title>Air Conditioning Repairs & Maintenance | Sydney</title>
         <meta name="description" content="Fast, reliable air conditioning repairs and maintenance across Sydney. Diagnostics for all major brands." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/service/aircon-repair" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/service/aircon-repair" />
         <script type="application/ld+json">{JSON.stringify(serviceLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqLd)}</script>

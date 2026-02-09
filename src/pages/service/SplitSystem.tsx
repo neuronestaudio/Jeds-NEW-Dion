@@ -15,8 +15,8 @@ const SplitSystem = () => {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://jedairconditioning.com.au/services' },
-      { '@type': 'ListItem', position: 2, name: 'Split System Installation', item: 'https://jedairconditioning.com.au/service/split-system-installation' },
+      { '@type': 'ListItem', position: 1, name: 'Services', item: 'https://www.jedairconditioning.com.au/services' },
+      { '@type': 'ListItem', position: 2, name: 'Split System Installation', item: 'https://www.jedairconditioning.com.au/service/split-system-installation' },
     ],
   };
   const faqLd = {
@@ -55,7 +55,7 @@ const SplitSystem = () => {
       <Helmet>
         <title>Split System Air Conditioning Installation | Sydney</title>
         <meta name="description" content="Energy-efficient split system air conditioning installation across Sydney. Professional advice and warranty-backed workmanship." />
-        <link rel="canonical" href="https://jedairconditioning.com.au/service/split-system-installation" />
+        <link rel="canonical" href="https://www.jedairconditioning.com.au/service/split-system-installation" />
         <script type="application/ld+json">{JSON.stringify(serviceLd)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqLd)}</script>

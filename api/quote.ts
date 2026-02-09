@@ -84,6 +84,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     let smsError: string | undefined;
     let ownerSmsSid: string | undefined;
+    const statusCallbackUrl = (
+      process.env.TWILIO_STATUS_CALLBACK_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/twilio-status` : undefined)
+    );
     if (twilioSid && twilioToken && twilioFrom && ownerToRaw) {
       const normalizeOwner = normalizeAuPhone(String(ownerToRaw));
       if (normalizeOwner) {
@@ -94,6 +98,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             params.append('MessagingServiceSid', twilioServiceSid);
           } else {
             params.append('From', twilioFromClean);
+          }
+          if (statusCallbackUrl) {
+            params.append('StatusCallback', statusCallbackUrl);
           }
           params.append(
             'Body',
@@ -139,6 +146,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           params.append('MessagingServiceSid', twilioServiceSid);
         } else {
           params.append('From', twilioFromClean);
+        }
+        if (statusCallbackUrl) {
+          params.append('StatusCallback', statusCallbackUrl);
         }
         params.append(
           'Body',
