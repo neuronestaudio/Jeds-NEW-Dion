@@ -1,6 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+const allowOrigin = process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*';
+const setCors = (res: VercelResponse) => {
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  setCors(res);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
@@ -12,10 +24,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // common alternate naming observed in projects
     process.env.GHL_webhook_url ||
     process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL;
-  if (!webhookUrl) {
-    res.status(500).json({ error: 'Missing GHL_WEBHOOK_URL environment variable' });
-    return;
-  }
+  const skipForwardFlag = (process.env.SKIP_GHL_FORWARD || 'false').toString().toLowerCase();
+  const shouldSkipForward = ['true', '1', 'yes', 'on'].includes(skipForwardFlag);
 
   try {
     const payload = req.body || {};
@@ -54,33 +64,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    // Forward to GoHighLevel Inbound Webhook
-    const forward = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...payload,
-        phone: normalizedPhone,
-        source: payload.source || 'website',
-        submittedAt: new Date().toISOString(),
-      }),
-    });
+    // Forward to GoHighLevel Inbound Webhook if configured
+    if (webhookUrl && !shouldSkipForward) {
+      const forward = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...payload,
+          phone: normalizedPhone,
+          source: payload.source || 'website',
+          submittedAt: new Date().toISOString(),
+        }),
+      });
 
-    if (!forward.ok) {
-      const text = await forward.text();
-      res.status(forward.status).json({ error: 'Forward failed', details: text });
-      return;
+      if (!forward.ok) {
+        const text = await forward.text();
+        res.status(forward.status).json({ error: 'Forward failed', details: text });
+        return;
+      }
     }
 
     // Optionally notify owner via SMS using Twilio if env vars are present
-    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
-    const twilioToken = process.env.TWILIO_AUTH_TOKEN;
-    const twilioFrom = process.env.TWILIO_FROM_NUMBER;
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID || process.env.twilio_account_sid;
+    const twilioToken = process.env.TWILIO_AUTH_TOKEN || process.env.twilio_auth_token;
+    const twilioFrom = process.env.TWILIO_FROM_NUMBER || process.env.twilio_from_number;
     const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '');
-    const twilioServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID; // optional: use Messaging Service
-    const ownerToRaw = process.env.OWNER_SMS_TO;
+    const twilioServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID || process.env.twilio_messaging_service_sid; // optional: use Messaging Service
+    const ownerToRaw = process.env.OWNER_SMS_TO || process.env.owner_sms_to;
 
     let smsError: string | undefined;
     let ownerSmsSid: string | undefined;

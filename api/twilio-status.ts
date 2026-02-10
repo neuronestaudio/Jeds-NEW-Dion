@@ -1,9 +1,21 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+const allowOrigin = process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*';
+const setCors = (res: VercelResponse) => {
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+};
+
 // Twilio will POST delivery status updates to this endpoint.
 // It typically uses application/x-www-form-urlencoded with fields like:
 // MessageSid, MessageStatus, To, From, ErrorCode, Body, AccountSid, SmsSid
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  setCors(res);
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;

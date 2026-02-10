@@ -32,7 +32,9 @@ export function QuoteForm() {
     if (formData.website) return;
     setIsSubmitting(true);
     try {
-      const resp = await fetch('/api/quote', {
+      const apiBase = import.meta.env.VITE_API_BASE || '';
+      const url = apiBase ? `${apiBase}/api/quote` : '/api/quote';
+      const resp = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...formData, source: 'bottom-quote', photo: photoMeta || undefined }),
