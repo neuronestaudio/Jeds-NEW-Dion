@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>JED Air Conditioning | Sydney Air Conditioning Installation, Repairs & Service</title>
@@ -29,6 +29,37 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@jedaircon" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Prevent pinch-zoom and double-tap zoom on mobile -->
+    <script>
+      (function () {
+        // iOS Safari: prevent pinch (gesturestart) zoom
+        window.addEventListener('gesturestart', function (e) {
+          e.preventDefault();
+        });
+        // Prevent ctrl+wheel zoom (some mobile browsers / desktop)
+        document.addEventListener(
+          'wheel',
+          function (e) {
+            if (e.ctrlKey) e.preventDefault();
+          },
+          { passive: false }
+        );
+        // Prevent double-tap to zoom
+        var lastTouchEnd = 0;
+        document.addEventListener(
+          'touchend',
+          function (e) {
+            var now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+              e.preventDefault();
+            }
+            lastTouchEnd = now;
+          },
+          { passive: false }
+        );
+      })();
+    </script>
 
     <script type="application/ld+json">
     {
