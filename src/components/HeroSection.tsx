@@ -83,6 +83,7 @@ export function HeroSection() {
   const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
   const [videoError, setVideoError] = useState(false);
   const [play, setPlay] = useState(false);
+  const [videoVisible, setVideoVisible] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setPlay(true), 500);
     return () => clearTimeout(timer);
@@ -100,7 +101,7 @@ export function HeroSection() {
           </Suspense>
         ) : (
           <video
-            className="w-full h-full object-cover opacity-80"
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-80' : 'opacity-0'}`}
             poster={jedLogo}
             autoPlay
             muted
@@ -108,6 +109,9 @@ export function HeroSection() {
             playsInline
             preload="none"
             onError={() => setVideoError(true)}
+            onLoadedData={() => setVideoVisible(true)}
+            onCanPlay={() => setVideoVisible(true)}
+            onPlay={() => setVideoVisible(true)}
           >
             <source src={HERO_VIDEO} type="video/mp4" />
             {/* Optional secondary source if provided in public */}

@@ -2,10 +2,21 @@ import { motion } from 'framer-motion';
 import daikinLogo from '@/assets/Daikin.png';
 import haierLogo from '@/assets/Haier.png';
 
-// Only show current official logos (local assets)
+// Featured hero brands with local approved logos
 const brands = [
   { name: 'Daikin', featured: true, logo: daikinLogo },
   { name: 'Haier', featured: true, logo: haierLogo },
+  // Additional reputable brands (text-only, non-highlighted)
+  { name: 'Fujitsu General', featured: false },
+  { name: 'Mitsubishi Electric', featured: false },
+  { name: 'Panasonic', featured: false },
+  { name: 'Samsung', featured: false },
+  { name: 'LG', featured: false },
+  { name: 'Carrier', featured: false },
+  { name: 'Toshiba', featured: false },
+  { name: 'Hitachi', featured: false },
+  { name: 'ActronAir', featured: false },
+  { name: 'Braemar', featured: false },
 ];
 
 export function BrandsSection() {
@@ -34,15 +45,16 @@ export function BrandsSection() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className={`flex flex-col items-center ${brand.featured ? 'order-first' : ''}`}
             >
-              <div 
+              <div
                 className={`px-6 py-4 rounded-xl border transition-colors ${
-                  brand.featured 
-                    ? 'bg-primary/10 border-primary/30 text-primary' 
+                  brand.featured
+                    ? 'bg-primary/10 border-primary/30 text-primary'
                     : 'bg-card/50 border-border/30 text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 }`}
+                aria-label={brand.featured ? `${brand.name} (featured)` : brand.name}
               >
-                <div className="flex items-center justify-center">
-                  {brand.logo && (
+                <div className="flex items-center justify-center min-w-[140px]">
+                  {brand.logo ? (
                     <img
                       src={brand.logo}
                       alt={`${brand.name} logo`}
@@ -52,6 +64,8 @@ export function BrandsSection() {
                       width="100"
                       height="40"
                     />
+                  ) : (
+                    <span className="font-medium text-sm md:text-base">{brand.name}</span>
                   )}
                 </div>
                 {brand.featured && (

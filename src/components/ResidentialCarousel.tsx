@@ -38,22 +38,16 @@ export default function ResidentialCarousel() {
 
   useEffect(() => () => stop(), []);
   useEffect(() => {
-    // Auto-play on touch devices where hover isn't available
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+    // Always auto-cycle infinitely once the carousel API is ready
+    if (api) {
       start();
       return () => stop();
     }
   }, [api]);
 
   return (
-    <div
-      onMouseEnter={start}
-      onMouseLeave={stop}
-      onTouchStart={start}
-      onTouchEnd={stop}
-      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
-    >
-      <Carousel setApi={setApi} className="absolute inset-0">
+    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
+      <Carousel setApi={setApi} opts={{ loop: true }} className="absolute inset-0">
         <CarouselContent className="h-full cursor-grab active:cursor-grabbing select-none">
           {residentialImages.map((src, i) => (
             <CarouselItem

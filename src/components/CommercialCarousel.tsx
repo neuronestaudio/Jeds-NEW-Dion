@@ -23,15 +23,8 @@ const fallbackImages = [
 export default function CommercialCarousel() {
   const images = commercialImages.length ? commercialImages : fallbackImages;
 
-  const positions = images.map((_, i) => 'object-center');
-  if (positions.length) {
-    if (positions[0] !== undefined) positions[0] = 'object-[40%_50%]';
-    if (positions[1] !== undefined) positions[1] = 'object-[60%_50%]';
-    if (positions[2] !== undefined) positions[2] = 'object-center';
-    if (positions[3] !== undefined) positions[3] = 'object-[50%_45%]';
-    if (positions[4] !== undefined) positions[4] = 'object-[50%_55%]';
-    if (positions[5] !== undefined) positions[5] = 'object-center';
-  }
+  // Pin focal point to bottom-center for all images
+  const positions = images.map(() => 'object-[50%_100%]');
 
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);
@@ -54,21 +47,16 @@ export default function CommercialCarousel() {
 
   useEffect(() => () => stop(), []);
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+    // Always auto-cycle infinitely once the carousel API is ready
+    if (api) {
       start();
       return () => stop();
     }
   }, [api]);
 
   return (
-    <div
-      onMouseEnter={start}
-      onMouseLeave={stop}
-      onTouchStart={start}
-      onTouchEnd={stop}
-      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
-    >
-      <Carousel setApi={setApi} className="absolute inset-0">
+    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
+      <Carousel setApi={setApi} opts={{ loop: true }} className="absolute inset-0">
         <CarouselContent className="h-full cursor-grab active:cursor-grabbing select-none">
           {images.map((src, i) => (
             <CarouselItem
