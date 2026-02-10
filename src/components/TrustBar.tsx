@@ -25,18 +25,17 @@ const trustItems = [
 ];
 
 // General brands (exclude Daikin & Haier). Logos will be auto-detected from src/assets/brands
+// Display names match user list exactly; slug helps matching filenames
 const brandItems = [
+  { name: 'Fujitsu', slug: 'fujitsu' },
+  { name: 'Mitsubishi', slug: 'mitsubishi' },
+  { name: 'Panasonic', slug: 'panasonic' },
+  { name: 'LG', slug: 'lg' },
+  { name: 'Carrier', slug: 'carrier' },
+  { name: 'Toshiba', slug: 'toshiba' },
+  { name: 'Hitachi', slug: 'hitachi' },
   { name: 'ActronAir', slug: 'actronair' },
   { name: 'Braemar', slug: 'braemar' },
-  { name: 'Carrier', slug: 'carrier' },
-  { name: 'Hitachi', slug: 'hitachi' },
-  { name: 'LG', slug: 'lg' },
-  { name: 'Mitsubishi Electric', slug: 'mitsubishi-electric' },
-  { name: 'Panasonic', slug: 'panasonic' },
-  { name: 'Samsung', slug: 'samsung' },
-  { name: 'Toshiba', slug: 'toshiba' },
-  // Keep text-only if no logo provided yet
-  { name: 'Fujitsu General', slug: 'fujitsu' },
 ] as const;
 
 // Eagerly import any brand logos dropped into src/assets/brands

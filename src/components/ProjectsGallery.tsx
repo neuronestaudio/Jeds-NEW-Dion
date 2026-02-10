@@ -87,7 +87,7 @@ const projects = [
   },
   {
     id: 4,
-    title: 'Apartment',
+    title: 'Apartment HVAC Fitout – Daikin VRV / VRF System (R410A)',
     location: 'Chatswood',
     type: 'Commercial',
     image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
@@ -147,7 +147,7 @@ export function ProjectsGallery() {
                 <MultiHeadCarousel />
               ) : project.title === 'JED in Action' ? (
                 <JEDActionCarousel />
-              ) : project.title === 'Apartment' ? (
+              ) : project.title === 'Apartment HVAC Fitout – Daikin VRV / VRF System (R410A)' ? (
                 <ApartmentCarousel />
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
