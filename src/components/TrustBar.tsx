@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 const trustItems = [
   {
     icon: Award,
-    label: 'Daikin & Haier Certified',
-    sublabel: 'Authorised Dealer',
+    label: 'Certified Technicians',
+    sublabel: 'Licensed & Insured',
   },
   {
     icon: Wrench,
     label: 'Service Agents',
-    sublabel: 'Daikin & Haier',
+    sublabel: 'All Major Brands',
   },
   {
     icon: Shield,
@@ -22,7 +22,20 @@ const trustItems = [
     label: '10+ Years',
     sublabel: 'Experience',
   },
-  
+];
+
+// General brands (exclude Daikin & Haier)
+const generalBrands = [
+  'Fujitsu General',
+  'Mitsubishi Electric',
+  'Panasonic',
+  'Samsung',
+  'LG',
+  'Carrier',
+  'Toshiba',
+  'Hitachi',
+  'ActronAir',
+  'Braemar',
 ];
 
 export function TrustBar() {
@@ -48,6 +61,28 @@ export function TrustBar() {
             </motion.div>
           ))}
         </div>
+
+        {/* General brands chips (exclude Daikin & Haier) */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mt-6"
+          aria-label="Brands we service"
+        >
+          <div className="overflow-x-auto">
+            <div className="flex items-center gap-2 md:gap-3 whitespace-nowrap pb-1">
+              {generalBrands.map((name) => (
+                <span
+                  key={name}
+                  className="inline-flex px-3 py-1 rounded-full border border-border/40 bg-card/60 text-xs md:text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

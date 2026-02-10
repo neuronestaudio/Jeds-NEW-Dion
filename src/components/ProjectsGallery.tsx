@@ -2,6 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ResidentialCarousel from './ResidentialCarousel';
 import DuctedCarousel from './DuctedCarousel';
 import CommercialCarousel from './CommercialCarousel';
+import MultiHeadCarousel from './MultiHeadCarousel';
+import JEDActionCarousel from './JEDActionCarousel';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
@@ -22,7 +24,8 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
   const next = () => setIdx((i) => (i + 1) % images.length);
   const start = () => {
     if (timer.current) return;
-    timer.current = window.setInterval(next, 900);
+    // Half the previous speed for a slower, smoother cycle
+    timer.current = window.setInterval(next, 2400);
   };
   const stop = () => {
     if (timer.current) {
@@ -37,8 +40,6 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
     <div
       onMouseEnter={start}
       onMouseLeave={stop}
-      onTouchStart={start}
-      onTouchEnd={stop}
       className="relative w-full aspect-[4/3] overflow-hidden"
     >
       <AnimatePresence initial={false} mode="wait">
@@ -99,7 +100,7 @@ const projects = [
   },
   {
     id: 6,
-    title: 'Warehouse Climate Control',
+    title: 'JED in Action',
     location: 'Western Sydney',
     type: 'Commercial',
     image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop',
@@ -141,6 +142,10 @@ export function ProjectsGallery() {
                 <DuctedCarousel />
               ) : project.title === 'Commercial Fitout' ? (
                 <CommercialCarousel />
+              ) : project.title === 'Multi-Head Split System' ? (
+                <MultiHeadCarousel />
+              ) : project.title === 'JED in Action' ? (
+                <JEDActionCarousel />
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
