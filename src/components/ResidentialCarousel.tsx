@@ -27,7 +27,7 @@ export default function ResidentialCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 2400);
+    }, 1920);
   };
   const stop = () => {
     if (timer.current) {

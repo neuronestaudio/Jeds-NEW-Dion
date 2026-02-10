@@ -24,8 +24,8 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
   const next = () => setIdx((i) => (i + 1) % images.length);
   const start = () => {
     if (timer.current) return;
-    // Half the previous speed for a slower, smoother cycle
-    timer.current = window.setInterval(next, 2400);
+    // Increase cycle speed by 25% (reduce interval)
+    timer.current = window.setInterval(next, 1920);
   };
   const stop = () => {
     if (timer.current) {
