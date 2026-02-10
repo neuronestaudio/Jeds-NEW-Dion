@@ -23,7 +23,7 @@ const fallbackImages = [
 
 export default function MultiHeadCarousel() {
   const images = multiHeadImages.length ? multiHeadImages : fallbackImages;
-  const positions = images.map(() => 'object-center');
+  const positions = images.map(() => 'object-[50%_100%]');
 
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);

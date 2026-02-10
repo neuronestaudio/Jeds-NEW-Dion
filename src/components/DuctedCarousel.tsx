@@ -8,8 +8,8 @@ const ductedImages = [
   'Ducted system install 2.jpeg',
 ].map(resolveAsset);
 const positions = [
-  'object-[50%_40%]', // fine-tune crop for photo 1
-  'object-center',
+  'object-[50%_100%]',
+  'object-[50%_100%]',
 ];
 
 export default function DuctedCarousel() {

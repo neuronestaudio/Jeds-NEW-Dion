@@ -10,10 +10,10 @@ const residentialImages = [
   'Residential 5.jpeg',
 ].map(resolveAsset);
 const positions = [
-  'object-center',
-  'object-center',
-  'object-center',
-  'object-[50%_40%]', // fine-tune crop for photo 5
+  'object-[50%_100%]',
+  'object-[50%_100%]',
+  'object-[50%_100%]',
+  'object-[50%_100%]',
 ];
 
 export default function ResidentialCarousel() {

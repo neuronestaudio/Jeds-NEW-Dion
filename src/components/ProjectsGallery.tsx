@@ -48,7 +48,7 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
           key={idx}
           src={images[idx]}
           alt={alt}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-cover object-[50%_100%]"
           loading="lazy"
           decoding="async"
           initial={{ x: 40, opacity: 0 }}
@@ -155,7 +155,7 @@ export function ProjectsGallery() {
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full aspect-[4/3] object-cover object-center"
+                  className="w-full aspect-[4/3] object-cover object-[50%_100%]"
                   loading="lazy"
                   decoding="async"
                   width="400"
