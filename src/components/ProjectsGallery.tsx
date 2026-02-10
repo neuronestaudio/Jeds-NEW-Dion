@@ -4,6 +4,7 @@ import DuctedCarousel from './DuctedCarousel';
 import CommercialCarousel from './CommercialCarousel';
 import MultiHeadCarousel from './MultiHeadCarousel';
 import JEDActionCarousel from './JEDActionCarousel';
+import ApartmentCarousel from './ApartmentCarousel';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
@@ -24,8 +25,8 @@ function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
   const next = () => setIdx((i) => (i + 1) % images.length);
   const start = () => {
     if (timer.current) return;
-    // Increase cycle speed by 25% (reduce interval)
-    timer.current = window.setInterval(next, 1920);
+    // Increase cycle speed further: set to 75% of previous interval
+    timer.current = window.setInterval(next, 1440);
   };
   const stop = () => {
     if (timer.current) {
@@ -86,7 +87,7 @@ const projects = [
   },
   {
     id: 4,
-    title: 'Retail Space Cooling',
+    title: 'Apartment',
     location: 'Chatswood',
     type: 'Commercial',
     image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
@@ -146,6 +147,8 @@ export function ProjectsGallery() {
                 <MultiHeadCarousel />
               ) : project.title === 'JED in Action' ? (
                 <JEDActionCarousel />
+              ) : project.title === 'Apartment' ? (
+                <ApartmentCarousel />
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (

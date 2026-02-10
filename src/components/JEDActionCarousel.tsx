@@ -31,7 +31,7 @@ export default function JEDActionCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 2240);
+    }, 1680);
   };
   const stop = () => {
     if (timer.current) {

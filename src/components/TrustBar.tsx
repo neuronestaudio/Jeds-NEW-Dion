@@ -24,19 +24,47 @@ const trustItems = [
   },
 ];
 
-// General brands (exclude Daikin & Haier)
-const generalBrands = [
-  'Fujitsu General',
-  'Mitsubishi Electric',
-  'Panasonic',
-  'Samsung',
-  'LG',
-  'Carrier',
-  'Toshiba',
-  'Hitachi',
-  'ActronAir',
-  'Braemar',
-];
+// General brands (exclude Daikin & Haier). Logos will be auto-detected from src/assets/brands
+const brandItems = [
+  { name: 'ActronAir', slug: 'actronair' },
+  { name: 'Braemar', slug: 'braemar' },
+  { name: 'Carrier', slug: 'carrier' },
+  { name: 'Hitachi', slug: 'hitachi' },
+  { name: 'LG', slug: 'lg' },
+  { name: 'Mitsubishi Electric', slug: 'mitsubishi-electric' },
+  { name: 'Panasonic', slug: 'panasonic' },
+  { name: 'Samsung', slug: 'samsung' },
+  { name: 'Toshiba', slug: 'toshiba' },
+  // Keep text-only if no logo provided yet
+  { name: 'Fujitsu General', slug: 'fujitsu' },
+] as const;
+
+// Eagerly import any brand logos dropped into src/assets/brands
+const logoModules = import.meta.glob('../assets/brands/*.{png,jpg,jpeg,svg,webp}', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+// Also look in src/assets root to support existing logo placement
+const logoModulesRoot = import.meta.glob('../assets/*.{png,jpg,jpeg,svg,webp}', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+const logoByFile: Record<string, string> = {};
+for (const [path, url] of Object.entries({ ...logoModules, ...logoModulesRoot })) {
+  const base = path.split('/').pop()?.toLowerCase() || '';
+  logoByFile[base] = url;
+}
+
+function findLogo(slug: string, name: string): string | undefined {
+  const normalizedSlug = slug.replace(/[^a-z0-9]/g, '').toLowerCase();
+  const normalizedName = name.replace(/[^a-z0-9]/g, '').toLowerCase();
+  for (const [base, url] of Object.entries(logoByFile)) {
+    const b = base.replace(/[^a-z0-9]/g, '');
+    if (b.includes(normalizedSlug) || b.includes(normalizedName)) return url;
+  }
+  return undefined;
+}
 
 export function TrustBar() {
   return (
@@ -62,7 +90,7 @@ export function TrustBar() {
           ))}
         </div>
 
-        {/* General brands chips (exclude Daikin & Haier) */}
+        {/* General brands chips (exclude Daikin & Haier). Auto-render logos when available. */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -72,14 +100,30 @@ export function TrustBar() {
         >
           <div className="overflow-x-auto">
             <div className="flex items-center gap-2 md:gap-3 whitespace-nowrap pb-1">
-              {generalBrands.map((name) => (
-                <span
-                  key={name}
-                  className="inline-flex px-3 py-1 rounded-full border border-border/40 bg-card/60 text-xs md:text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
-                >
-                  {name}
-                </span>
-              ))}
+              {brandItems.map(({ name, slug }) => {
+                const logo = findLogo(slug, name);
+                return (
+                  <span
+                    key={name}
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border/40 bg-card/60 text-xs md:text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
+                    title={name}
+                  >
+                    {logo ? (
+                      <img
+                        src={logo}
+                        alt={`${name} logo`}
+                        className="h-6 md:h-8 w-auto object-contain"
+                        loading="lazy"
+                        decoding="async"
+                        width={68}
+                        height={24}
+                      />
+                    ) : (
+                      <span className="font-medium">{name}</span>
+                    )}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </motion.div>

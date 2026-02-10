@@ -2,27 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-// Attempt to auto-import local images that match common naming for multi-head split systems
-const globMSCase = import.meta.glob('../assets/*MS*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
-const globMSLower = import.meta.glob('../assets/*ms*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
-const globMultiHead = import.meta.glob('../assets/*Multi*Head*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
+// Auto-import Apartment images (case-insensitive) e.g., "Apartment 1.jpeg", "apartment-2.png"
+const globbedCase = import.meta.glob('../assets/*Apartment*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
+const globbedLower = import.meta.glob('../assets/*apartment*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
 const rawEntries = [
-  ...Object.entries(globMSCase),
-  ...Object.entries(globMSLower),
-  ...Object.entries(globMultiHead),
+  ...Object.entries(globbedCase),
+  ...Object.entries(globbedLower),
 ];
 rawEntries.sort((a, b) => a[0].localeCompare(b[0]));
-const multiHeadImages = Array.from(new Set(rawEntries.map(([, v]) => v)));
+const apartmentImages = Array.from(new Set(rawEntries.map(([, v]) => v)));
 
-// Fallback remote images (replace with provided assets when available)
+// Fallback remote images until assets are present
 const fallbackImages = [
-  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1600585154160-4f3d78b2b151?w=800&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1531788989007-9f0955d91f6f?w=800&auto=format&fit=crop',
 ];
 
-export default function MultiHeadCarousel() {
-  const images = multiHeadImages.length ? multiHeadImages : fallbackImages;
+export default function ApartmentCarousel() {
+  const images = apartmentImages.length ? apartmentImages : fallbackImages;
   const positions = images.map(() => 'object-center');
 
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
@@ -35,7 +32,7 @@ export default function MultiHeadCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 1680);
+    }, 2240); // match site-wide cadence (hover-only, faster by 25%)
   };
   const stop = () => {
     if (timer.current) {
@@ -65,7 +62,7 @@ export default function MultiHeadCarousel() {
             >
               <img
                 src={src}
-                alt={`Multi-head split system ${i + 1}`}
+                alt={`Apartment install ${i + 1}`}
                 className={`w-full h-full object-cover ${positions[i]}`}
                 loading="lazy"
                 decoding="async"
@@ -81,7 +78,7 @@ export default function MultiHeadCarousel() {
           <div className="flex items-center justify-center w-[95vw] h-[85vh]">
             <img
               src={images[lightboxIndex]}
-              alt={`Multi-head split system ${lightboxIndex + 1} enlarged`}
+              alt={`Apartment install ${lightboxIndex + 1} enlarged`}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
           </div>
