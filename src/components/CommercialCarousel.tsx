@@ -23,8 +23,8 @@ const fallbackImages = [
 export default function CommercialCarousel() {
   const images = commercialImages.length ? commercialImages : fallbackImages;
 
-  // Align focal point to 50% vertically (center) for all images
-  const positions = images.map(() => 'object-[50%_50%]');
+  // Align focal point to bottom-center (vertical 100%) for all images
+  const positions = images.map(() => 'object-[50%_100%]');
 
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);
