@@ -2,13 +2,46 @@ import { motion } from 'framer-motion';
 import daikinLogo from '@/assets/Daikin.png';
 import haierLogo from '@/assets/Haier.png';
 
-// Featured hero brands with local approved logos
+// Eagerly import brand logos placed under src/assets/brands
+const logoModules = import.meta.glob('../assets/brands/*.{png,jpg,jpeg,svg,webp}', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+
+const logoByFile: Record<string, string> = {};
+for (const [path, url] of Object.entries(logoModules)) {
+  const base = path.split('/').pop()?.toLowerCase() || '';
+  logoByFile[base] = url;
+}
+
+function findLogo(slug: string, name: string): string | undefined {
+  const exactCandidates = [
+    `${slug}.png`,
+    `${slug}.jpg`,
+    `${slug}.jpeg`,
+    `${slug}.svg`,
+    `${slug}.webp`,
+  ];
+  for (const file of exactCandidates) {
+    if (logoByFile[file]) return logoByFile[file];
+  }
+  const normalizedSlug = slug.replace(/[^a-z0-9]/g, '').toLowerCase();
+  const normalizedName = name.replace(/[^a-z0-9]/g, '').toLowerCase();
+  for (const [base, url] of Object.entries(logoByFile)) {
+    const b = base.replace(/[^a-z0-9]/g, '');
+    if (b.includes(normalizedSlug) || b.includes(normalizedName)) return url;
+  }
+  return undefined;
+}
+
+// Featured hero brands with local approved logos (Daikin & Haier)
+// General brands below will try to use matching logos from src/assets/brands
 const brands = [
   { name: 'Daikin', featured: true, logo: daikinLogo },
   { name: 'Haier', featured: true, logo: haierLogo },
-  // Additional reputable brands (text-only, non-highlighted)
-  { name: 'Fujitsu General', featured: false },
-  { name: 'Mitsubishi Electric', featured: false },
+  // Trusted brands we work with (exact filename match preferred)
+  { name: 'Fujitsu', featured: false },
+  { name: 'Mitsubishi', featured: false },
   { name: 'Panasonic', featured: false },
   { name: 'Samsung', featured: false },
   { name: 'LG', featured: false },
@@ -54,19 +87,23 @@ export function BrandsSection() {
                 aria-label={brand.featured ? `${brand.name} (featured)` : brand.name}
               >
                 <div className="flex items-center justify-center min-w-[140px]">
-                  {brand.logo ? (
-                    <img
-                      src={brand.logo}
-                      alt={`${brand.name} logo`}
-                      className="h-8 md:h-10 w-auto object-contain"
-                      loading="lazy"
-                      decoding="async"
-                      width="100"
-                      height="40"
-                    />
-                  ) : (
-                    <span className="font-medium text-sm md:text-base">{brand.name}</span>
-                  )}
+                  {(() => {
+                    const slug = brand.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const autoLogo = brand.logo || findLogo(slug, brand.name);
+                    return autoLogo ? (
+                      <img
+                        src={autoLogo}
+                        alt={`${brand.name} logo`}
+                        className="h-8 md:h-10 w-auto object-contain"
+                        loading="lazy"
+                        decoding="async"
+                        width="100"
+                        height="40"
+                      />
+                    ) : (
+                      <span className="font-medium text-sm md:text-base">{brand.name}</span>
+                    );
+                  })()}
                 </div>
                 {brand.featured && (
                   <span className="block text-xs mt-1 opacity-80">Certified Dealer & Service Agents</span>
