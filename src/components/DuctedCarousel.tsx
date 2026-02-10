@@ -23,7 +23,7 @@ export default function DuctedCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 1400);
+    }, 2800);
   };
   const stop = () => {
     if (timer.current) {
@@ -33,16 +33,13 @@ export default function DuctedCarousel() {
   };
 
   useEffect(() => () => stop(), []);
-  useEffect(() => {
-    // Always auto-cycle infinitely once the carousel API is ready
-    if (api) {
-      start();
-      return () => stop();
-    }
-  }, [api]);
 
   return (
-    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
+    <div
+      onMouseEnter={start}
+      onMouseLeave={stop}
+      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
+    >
       <Carousel setApi={setApi} opts={{ loop: true }} className="absolute inset-0">
         <CarouselContent className="h-full cursor-grab active:cursor-grabbing select-none">
           {ductedImages.map((src, i) => (

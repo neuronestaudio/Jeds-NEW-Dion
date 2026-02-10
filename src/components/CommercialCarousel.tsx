@@ -36,7 +36,7 @@ export default function CommercialCarousel() {
     if (timer.current) return;
     timer.current = window.setInterval(() => {
       api?.scrollNext();
-    }, 1400);
+    }, 2800);
   };
   const stop = () => {
     if (timer.current) {
@@ -46,16 +46,14 @@ export default function CommercialCarousel() {
   };
 
   useEffect(() => () => stop(), []);
-  useEffect(() => {
-    // Always auto-cycle infinitely once the carousel API is ready
-    if (api) {
-      start();
-      return () => stop();
-    }
-  }, [api]);
+  useEffect(() => () => stop(), []);
 
   return (
-    <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden">
+    <div
+      onMouseEnter={start}
+      onMouseLeave={stop}
+      className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden"
+    >
       <Carousel setApi={setApi} opts={{ loop: true }} className="absolute inset-0">
         <CarouselContent className="h-full cursor-grab active:cursor-grabbing select-none">
           {images.map((src, i) => (
