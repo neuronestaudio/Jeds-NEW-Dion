@@ -2,12 +2,32 @@ import puppeteer from 'puppeteer';
 
 const SITE_URL = 'https://jedairconditioning.com.au/';
 
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const out = {};
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a.startsWith('--')) {
+      const key = a.replace(/^--/, '');
+      const val = args[i + 1] && !args[i + 1].startsWith('--') ? args[++i] : 'true';
+      out[key] = val;
+    }
+  }
+  return out;
+}
+
 async function run() {
   const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
   page.setDefaultTimeout(30000);
 
   const ts = new Date().toISOString();
+  const args = parseArgs();
+  const phoneArg = process.env.TEST_CUSTOMER_PHONE || args.phone || '+61420806960';
+  const emailArg = args.email || 'copilot-ui-test@example.com';
+  const serviceArg = args.service || 'repair';
+  const nameArg = args.name || `UI Form Test ${ts}`;
+  const messageArg = args.message || `Automated UI submission at ${ts}`;
 
   try {
     console.log('Navigating to site...');
@@ -27,15 +47,14 @@ async function run() {
     await page.waitForSelector('#message', { visible: true });
 
     console.log('Filling form fields...');
-    await page.type('#name', `UI Form Test ${ts}`);
-    // Use owner's AU number as customer phone to validate receipt
-    await page.type('#phone', '+61420806960');
-    await page.type('#email', 'copilot-ui-test@example.com');
+    await page.type('#name', nameArg);
+    await page.type('#phone', phoneArg);
+    await page.type('#email', emailArg);
 
     // Select service type (repair)
-    await page.select('#serviceType', 'repair');
+    await page.select('#serviceType', serviceArg);
 
-    await page.type('#message', `Automated UI submission at ${ts}`);
+    await page.type('#message', messageArg);
 
     console.log('Submitting form...');
     await page.click('form button[type="submit"]');

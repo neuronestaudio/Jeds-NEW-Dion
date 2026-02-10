@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import ResidentialCarousel from './ResidentialCarousel';
 import DuctedCarousel from './DuctedCarousel';
+import CommercialCarousel from './CommercialCarousel';
 import { useEffect, useRef, useState } from 'react';
 
 // Resolve local project photos (filenames contain spaces/parentheses)
@@ -70,10 +71,10 @@ const projects = [
   },
   {
     id: 2,
-    title: 'Office Fit-out',
+    title: 'Commercial Fitout',
     location: 'North Sydney',
     type: 'Commercial',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop',
+    images: [],
   },
   {
     id: 3,
@@ -138,6 +139,8 @@ export function ProjectsGallery() {
                 <ResidentialCarousel />
               ) : project.title === 'Ducted System Installation' ? (
                 <DuctedCarousel />
+              ) : project.title === 'Commercial Fitout' ? (
+                <CommercialCarousel />
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
