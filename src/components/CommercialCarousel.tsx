@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-// Auto-import all images placed under src/assets/commercial
-const globbed = import.meta.glob('../assets/commercial/*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
-const commercialImages = Object.values(globbed);
+// Auto-import all images in src/assets whose filename contains "Commercial" (case-insensitive)
+const globbedCase = import.meta.glob('../assets/*Commercial*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
+const globbedLower = import.meta.glob('../assets/*commercial*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
+const rawEntries = [
+  ...Object.entries(globbedCase),
+  ...Object.entries(globbedLower),
+];
+// Sort by filename for stable order
+rawEntries.sort((a, b) => a[0].localeCompare(b[0]));
+const commercialImages = Array.from(new Set(rawEntries.map(([, v]) => v)));
 
 // Fallback remote images if none present to avoid blank UI
 const fallbackImages = [
