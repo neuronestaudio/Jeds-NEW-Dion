@@ -10,7 +10,7 @@ const rawEntries = [
   ...Object.entries(globMSCase),
   ...Object.entries(globMSLower),
   ...Object.entries(globMultiHead),
-];
+].filter(([path]) => !/samsung/i.test(path));
 rawEntries.sort((a, b) => a[0].localeCompare(b[0]));
 const multiHeadImages = Array.from(new Set(rawEntries.map(([, v]) => v)));
 
@@ -23,7 +23,7 @@ const fallbackImages = [
 
 export default function MultiHeadCarousel() {
   const images = multiHeadImages.length ? multiHeadImages : fallbackImages;
-  const positions = images.map(() => 'object-[50%_100%]');
+  const positionClass = 'object-contain object-center';
 
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const timer = useRef<number | null>(null);
@@ -66,7 +66,7 @@ export default function MultiHeadCarousel() {
               <img
                 src={src}
                 alt={`Multi-head split system ${i + 1}`}
-                className={`w-full h-full object-cover ${positions[i]}`}
+                className={`w-full h-full ${positionClass}`}
                 loading="lazy"
                 decoding="async"
                 width={400}

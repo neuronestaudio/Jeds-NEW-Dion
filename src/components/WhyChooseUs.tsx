@@ -56,13 +56,12 @@ export function WhyChooseUs() {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
-              Why Choose <span className="text-gradient">JED Air Conditioning</span>
+              Sydney’s Trusted <span className="text-gradient">Daikin & Haier Installation Experts</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              For over a decade, we've built our reputation on quality workmanship,
-              honest pricing, and exceptional customer service. As authorised <strong>Daikin & Haier dealers</strong> 
-              and <strong>manufacturer‑trained service agents</strong>, we install new systems and perform repairs
-              quickly with genuine parts and factory‑approved processes backed by industry‑leading warranties.
+              When choosing air conditioning installation in Sydney, brand expertise matters.
+              As certified Daikin and Haier dealers and authorised service agents, we install systems to manufacturer standards — ensuring warranty protection, optimal performance and long-term reliability.
+              Whether you're installing a new ducted system, upgrading an older split system, or fitting out an apartment or commercial property, our licensed technicians deliver compliant, energy-efficient installations tailored to your space.
             </p>
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">

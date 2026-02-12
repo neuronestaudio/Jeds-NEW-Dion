@@ -1,4 +1,6 @@
-const allowOrigin = process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*';
+const allowOrigin = (process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*')
+  .split(',')[0]
+  .trim();
 const setCors = (res: any) => {
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -6,27 +8,39 @@ const setCors = (res: any) => {
 };
 
 export default async function handler(req: any, res: any) {
-  setCors(res);
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method Not Allowed' });
-    return;
-  }
-
-  // Accept multiple possible env var names to avoid casing mismatches
-  const webhookUrl =
-    process.env.GHL_WEBHOOK_URL ||
-    // common alternate naming observed in projects
-    process.env.GHL_webhook_url ||
-    process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL;
-  const skipForwardFlag = (process.env.SKIP_GHL_FORWARD || 'false').toString().toLowerCase();
-  const shouldSkipForward = ['true', '1', 'yes', 'on'].includes(skipForwardFlag);
-
+  console.log('[Quote] handler start');
   try {
-    const payload = req.body || {};
+    if (typeof res?.setHeader === 'function') {
+      setCors(res);
+    }
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+    if (req.method !== 'POST') {
+      res.status(405).json({ error: 'Method Not Allowed' });
+      return;
+    }
+
+    // Accept multiple possible env var names to avoid casing mismatches
+    const webhookUrl =
+      process.env.GHL_WEBHOOK_URL ||
+      // common alternate naming observed in projects
+      process.env.GHL_webhook_url ||
+      process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL;
+    const skipForwardFlag = (process.env.SKIP_GHL_FORWARD || 'false').toString().toLowerCase();
+    const shouldSkipForward = ['true', '1', 'yes', 'on'].includes(skipForwardFlag);
+
+    let payload: any = req.body || {};
+    if (typeof payload === 'string') {
+      try {
+        payload = JSON.parse(payload);
+      } catch (parseError: any) {
+        console.error('[Quote] Invalid JSON body', parseError?.message || parseError);
+        res.status(400).json({ error: 'Invalid JSON body' });
+        return;
+      }
+    }
 
     // Basic validation
     const { name, phone, email, serviceType } = payload;
@@ -88,22 +102,27 @@ export default async function handler(req: any, res: any) {
     const twilioSid = process.env.TWILIO_ACCOUNT_SID || process.env.twilio_account_sid;
     const twilioToken = process.env.TWILIO_AUTH_TOKEN || process.env.twilio_auth_token;
     const twilioFrom = process.env.TWILIO_FROM_NUMBER || process.env.twilio_from_number;
-    const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '');
-    const twilioServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID || process.env.twilio_messaging_service_sid; // optional: use Messaging Service
+    const twilioFromClean = (twilioFrom || '').replace(/\s+/g, '').trim();
+    const twilioServiceSid =
+      (process.env.TWILIO_MESSAGING_SERVICE_SID || process.env.twilio_messaging_service_sid || '').trim();
     const ownerToRaw = process.env.OWNER_SMS_TO || process.env.owner_sms_to;
 
+    const debugTwilio = (process.env.DEBUG_TWILIO || 'false').toString().toLowerCase() === 'true';
     let smsError: string | undefined;
     let ownerSmsSid: string | undefined;
-    const statusCallbackUrl = (
+    let ownerToNormalized: string | undefined;
+    let ownerSmsRequest: Record<string, string> | undefined;
+    let ownerSmsResponse: string | undefined;
+    const statusCallbackUrlRaw =
       process.env.TWILIO_STATUS_CALLBACK_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/twilio-status` : undefined)
-    );
-    if (twilioSid && twilioToken && twilioFrom && ownerToRaw) {
-      const normalizeOwner = normalizeAuPhone(String(ownerToRaw));
-      if (normalizeOwner) {
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/twilio-status` : undefined);
+    const statusCallbackUrl = statusCallbackUrlRaw ? String(statusCallbackUrlRaw).trim() : undefined;
+    if (twilioSid && twilioToken && twilioFromClean && ownerToRaw) {
+      ownerToNormalized = normalizeAuPhone(String(ownerToRaw)) || undefined;
+      if (ownerToNormalized) {
         try {
           const params = new URLSearchParams();
-          params.append('To', normalizeOwner);
+          params.append('To', ownerToNormalized);
           if (twilioServiceSid) {
             params.append('MessagingServiceSid', twilioServiceSid);
           } else {
@@ -116,6 +135,14 @@ export default async function handler(req: any, res: any) {
             'Body',
             `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nMessage: ${payload.message || ''}`
           );
+          if (debugTwilio) {
+            ownerSmsRequest = {
+              To: ownerToNormalized,
+              From: twilioServiceSid ? '' : twilioFromClean,
+              MessagingServiceSid: twilioServiceSid || '',
+              StatusCallback: statusCallbackUrl || '',
+            };
+          }
 
           const twilioResp = await fetch(
             `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
@@ -123,8 +150,7 @@ export default async function handler(req: any, res: any) {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                Authorization:
-                  'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
+                Authorization: 'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
               },
               body: params.toString(),
             }
@@ -133,7 +159,8 @@ export default async function handler(req: any, res: any) {
             const data = await twilioResp.json();
             ownerSmsSid = data?.sid;
           } else {
-            smsError = `Twilio error: ${await twilioResp.text()}`;
+            ownerSmsResponse = await twilioResp.text();
+            smsError = `Twilio error: ${ownerSmsResponse}`;
           }
         } catch (e: any) {
           smsError = e?.message || String(e);
@@ -144,11 +171,19 @@ export default async function handler(req: any, res: any) {
     }
 
     // Optionally send confirmation SMS to the submitting customer's phone
-    const sendCustomerFlag = (process.env.TWILIO_SEND_CUSTOMER_SMS || process.env.SEND_CUSTOMER_SMS || 'true').toString().toLowerCase();
+    const sendCustomerFlag = (
+      process.env.TWILIO_SEND_CUSTOMER_SMS ||
+      process.env.SEND_CUSTOMER_SMS ||
+      'true'
+    )
+      .toString()
+      .toLowerCase();
     const shouldSendCustomer = ['true', '1', 'yes', 'on'].includes(sendCustomerFlag);
     let customerSmsError: string | undefined;
     let customerSmsSid: string | undefined;
-    if (twilioSid && twilioToken && twilioFrom && shouldSendCustomer && normalizedPhone) {
+    let customerSmsRequest: Record<string, string> | undefined;
+    let customerSmsResponse: string | undefined;
+    if (twilioSid && twilioToken && twilioFromClean && shouldSendCustomer && normalizedPhone) {
       try {
         const params = new URLSearchParams();
         params.append('To', normalizedPhone);
@@ -164,6 +199,14 @@ export default async function handler(req: any, res: any) {
           'Body',
           `Thanks ${name}, we received your request for "${serviceType}". We'll contact you shortly. - JED Air Conditioning`
         );
+        if (debugTwilio) {
+          customerSmsRequest = {
+            To: normalizedPhone,
+            From: twilioServiceSid ? '' : twilioFromClean,
+            MessagingServiceSid: twilioServiceSid || '',
+            StatusCallback: statusCallbackUrl || '',
+          };
+        }
 
         const twilioResp = await fetch(
           `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
@@ -171,8 +214,7 @@ export default async function handler(req: any, res: any) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              Authorization:
-                'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
+              Authorization: 'Basic ' + Buffer.from(`${twilioSid}:${twilioToken}`).toString('base64'),
             },
             body: params.toString(),
           }
@@ -181,15 +223,49 @@ export default async function handler(req: any, res: any) {
           const data = await twilioResp.json();
           customerSmsSid = data?.sid;
         } else {
-          customerSmsError = `Twilio customer SMS error: ${await twilioResp.text()}`;
+          customerSmsResponse = await twilioResp.text();
+          customerSmsError = `Twilio customer SMS error: ${customerSmsResponse}`;
         }
       } catch (e: any) {
         customerSmsError = e?.message || String(e);
       }
     }
 
-    res.status(200).json({ ok: true, smsError, customerSmsError, ownerSmsSid, customerSmsSid });
+    const shouldIncludeDebug = debugTwilio || Boolean(smsError || customerSmsError);
+    res.status(200).json({
+      ok: true,
+      smsError,
+      customerSmsError,
+      ownerSmsSid,
+      customerSmsSid,
+      ...(shouldIncludeDebug
+        ? {
+            debugEnabled: debugTwilio,
+            debug: {
+              ownerSmsRequest: ownerSmsRequest || {
+                To: ownerToNormalized || '',
+                From: twilioServiceSid ? '' : twilioFromClean,
+                MessagingServiceSid: twilioServiceSid || '',
+                StatusCallback: statusCallbackUrl || '',
+              },
+              ownerSmsResponse,
+              customerSmsRequest: customerSmsRequest || {
+                To: normalizedPhone || '',
+                From: twilioServiceSid ? '' : twilioFromClean,
+                MessagingServiceSid: twilioServiceSid || '',
+                StatusCallback: statusCallbackUrl || '',
+              },
+              customerSmsResponse,
+            },
+          }
+        : {}),
+    });
   } catch (err: any) {
-    res.status(500).json({ error: 'Unexpected error', details: err?.message || String(err) });
+    console.error('[Quote] Unexpected error', err?.message || err);
+    try {
+      res.status(500).json({ error: 'Unexpected error', details: err?.message || String(err) });
+    } catch {
+      // noop
+    }
   }
 }

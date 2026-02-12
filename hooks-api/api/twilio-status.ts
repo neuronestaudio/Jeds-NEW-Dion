@@ -1,4 +1,6 @@
-const allowOrigin = process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*';
+const allowOrigin = (process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*')
+  .split(',')[0]
+  .trim();
 const setCors = (res: any) => {
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -28,7 +30,11 @@ export default async function handler(req: any, res: any) {
       for (const [k, v] of Object.entries(req.body as Record<string, any>)) {
         data[k] = typeof v === 'string' ? v : JSON.stringify(v);
       }
-    } else if (req.body && typeof req.body === 'string' && contentType.includes('application/x-www-form-urlencoded')) {
+    } else if (
+      req.body &&
+      typeof req.body === 'string' &&
+      contentType.includes('application/x-www-form-urlencoded')
+    ) {
       const params = new URLSearchParams(req.body as string);
       for (const [k, v] of params.entries()) data[k] = v;
     } else {
@@ -51,8 +57,6 @@ export default async function handler(req: any, res: any) {
 
     // Log for observability in Vercel
     console.log('[Twilio Status]', payload);
-
-    // You could forward this to a logging service or store in a DB if desired.
 
     res.status(200).json({ ok: true });
   } catch (err: any) {

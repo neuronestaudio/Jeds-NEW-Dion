@@ -5,32 +5,32 @@ const steps = [
   {
     icon: ClipboardCheck,
     step: '01',
-    title: 'Free Consultation',
-    description: 'We assess your space and discuss your cooling needs',
+    title: 'On-Site Assessment & Sizing',
+    description: 'We assess room size, insulation, layout and usage to determine the correct system capacity.',
   },
   {
     icon: FileText,
     step: '02',
-    title: 'Detailed Quote',
-    description: 'Transparent pricing with no hidden surprises',
+    title: 'System Recommendation',
+    description: 'We recommend the right Daikin or Haier system based on performance, efficiency and budget.',
   },
   {
     icon: Wrench,
     step: '03',
-    title: 'Professional Install',
-    description: 'Clean, efficient installation by qualified technicians',
+    title: 'Professional Installation',
+    description: 'Installed to Australian standards and manufacturer guidelines.',
   },
   {
     icon: ThumbsUp,
     step: '04',
-    title: 'System Commission',
-    description: 'Full testing and handover with user training',
+    title: 'Testing & Commissioning',
+    description: 'Full system testing, airflow balancing and operational walkthrough.',
   },
   {
     icon: CalendarCheck,
     step: '05',
-    title: 'Ongoing Support',
-    description: 'Maintenance plans and rapid response service',
+    title: 'Warranty & Aftercare',
+    description: 'Backed by manufacturer warranty and workmanship guarantee.',
   },
 ];
 
@@ -46,11 +46,8 @@ export function ProcessSection() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            How It Works
+            Our Installation Process
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            From first call to cool comfort - our streamlined process
-          </p>
         </motion.div>
 
         <div className="relative">

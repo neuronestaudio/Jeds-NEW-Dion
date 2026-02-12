@@ -124,7 +124,7 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 pt-20 pb-12">
+      <div className="relative z-10 container mx-auto px-4 pt-24 md:pt-28 pb-12">
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Left: Hero copy */}
           <div className="max-w-2xl text-left">
@@ -180,8 +180,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10"
           >
-            Professional installation, service & repairs for residential and commercial properties. 
-            5-year workmanship warranty on all installations.
+            Authorised Daikin & Haier ducted and split system air conditioning installation for residential, apartment and commercial projects in Sydney.
           </motion.p>
 
           {/* CTAs */}

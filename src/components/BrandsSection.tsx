@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import daikinLogo from '@/assets/Daikin.png';
 import haierLogo from '@/assets/Haier.png';
+import fujitsuLogo from '@/assets/brands/fujitsu.jpg';
 
 // Eagerly import brand logos placed under src/assets/brands
 const logoModules = import.meta.glob('../assets/brands/*.{png,jpg,jpeg,svg,webp}', {
@@ -40,7 +41,7 @@ const brands = [
   { name: 'Daikin', featured: true, logo: daikinLogo },
   { name: 'Haier', featured: true, logo: haierLogo },
   // Trusted brands we work with (exact filename match preferred)
-  { name: 'Fujitsu', featured: false },
+  { name: 'Fujitsu', featured: false, logo: fujitsuLogo },
   { name: 'Mitsubishi', featured: false },
   { name: 'Panasonic', featured: false },
   { name: 'Samsung', featured: false },

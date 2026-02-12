@@ -16,8 +16,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Air Conditioning Installation, Repairs & Service | JED Air Conditioning</title>
-        <meta name="description" content="Professional installation, repairs & maintenance across Sydney. Daikin certified. 5-year workmanship warranty." />
+        <title>Daikin & Haier Air Conditioning Installation Sydney | JED Air Conditioning</title>
+        <meta name="description" content="Authorised Daikin & Haier installation specialists in Sydney. Professional ducted & split system air conditioning installs, service & repairs. Get a free quote now." />
         <link rel="canonical" href="https://www.jedairconditioning.com.au/" />
         <meta property="og:title" content="JED Air Conditioning | Sydney Air Conditioning Specialists" />
         <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
