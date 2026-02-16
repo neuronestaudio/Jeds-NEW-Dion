@@ -55,21 +55,21 @@ const brands = [
 
 export function BrandsSection() {
   return (
-    <section className="py-12 md:py-16 bg-card/20 border-y border-border/30">
-      <div className="container mx-auto px-4">
+    <section className="py-10 sm:py-12 md:py-16 bg-card/20 border-y border-border/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-8"
+          className="text-center mb-6 sm:mb-8"
         >
-          <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+          <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">
             Trusted Brands We Work With
           </h3>
         </motion.div>
 
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+        <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-10">
           {brands.map((brand, index) => (
             <motion.div
               key={brand.name}
@@ -80,14 +80,14 @@ export function BrandsSection() {
               className={`flex flex-col items-center ${brand.featured ? 'order-first' : ''}`}
             >
               <div
-                className={`px-6 py-4 rounded-xl border transition-colors ${
+                className={`px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-colors ${
                   brand.featured
                     ? 'bg-primary/10 border-primary/30 text-primary'
                     : 'bg-card/50 border-border/30 text-muted-foreground hover:border-primary/30 hover:text-foreground'
                 }`}
                 aria-label={brand.featured ? `${brand.name} (featured)` : brand.name}
               >
-                <div className="flex items-center justify-center min-w-[140px]">
+                <div className="flex items-center justify-center min-w-[110px] sm:min-w-[140px]">
                   {(() => {
                     const slug = brand.name.toLowerCase().replace(/[^a-z0-9]/g, '');
                     const autoLogo = brand.logo || findLogo(slug, brand.name);
@@ -95,14 +95,14 @@ export function BrandsSection() {
                       <img
                         src={autoLogo}
                         alt={`${brand.name} logo`}
-                        className="h-8 md:h-10 w-auto object-contain"
+                        className="h-6 sm:h-8 md:h-10 w-auto object-contain"
                         loading="lazy"
                         decoding="async"
                         width="100"
                         height="40"
                       />
                     ) : (
-                      <span className="font-medium text-sm md:text-base">{brand.name}</span>
+                      <span className="font-medium text-xs sm:text-sm md:text-base">{brand.name}</span>
                     );
                   })()}
                 </div>

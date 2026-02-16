@@ -46,19 +46,19 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section id="about" className="py-16 md:py-24 bg-card/30">
-      <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section id="about" className="py-12 sm:py-16 md:py-24 bg-card/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 sm:mb-6">
               Sydney’s Trusted <span className="text-gradient">Daikin & Haier Installation Experts</span>
             </h2>
-            <p className="text-muted-foreground text-lg mb-8">
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6 sm:mb-8">
               When choosing air conditioning installation in Sydney, brand expertise matters.
               As certified Daikin and Haier dealers and authorised service agents, we install systems to manufacturer standards — ensuring warranty protection, optimal performance and long-term reliability.
               Whether you're installing a new ducted system, upgrading an older split system, or fitting out an apartment or commercial property, our licensed technicians deliver compliant, energy-efficient installations tailored to your space.
@@ -79,7 +79,7 @@ export function WhyChooseUs() {
             </div>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             {reasons.map((reason, index) => (
               <motion.div
                 key={reason.title}
@@ -87,7 +87,7 @@ export function WhyChooseUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="p-5 bg-card/50 border border-border/30 rounded-xl"
+                className={`p-4 sm:p-5 bg-card/50 border border-border/30 rounded-xl ${index >= 6 ? 'hidden sm:block' : ''}`}
               >
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                   <reason.icon className="w-5 h-5 text-primary" />

@@ -35,14 +35,14 @@ export function Header() {
   return (
     <>
       <header className="sticky-header">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-18 md:h-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-24">
             {/* Logo */}
             <a href="/" className="flex items-center gap-3">
               <img 
                 src={jedLogo} 
                 alt="JED Air Conditioning" 
-                className="h-14 md:h-18 w-auto mix-blend-lighten opacity-95"
+                className="h-10 sm:h-12 md:h-14 lg:h-18 w-auto mix-blend-lighten opacity-95"
               />
             </a>
 

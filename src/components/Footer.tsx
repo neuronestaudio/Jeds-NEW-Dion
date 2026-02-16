@@ -28,19 +28,19 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border/30 pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+    <footer className="bg-card border-t border-border/30 pt-12 sm:pt-16 pb-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <img 
               src={jedLogo} 
               alt="JED Air Conditioning" 
-              className="h-12 w-auto mb-4 mix-blend-lighten opacity-95"
+              className="h-10 sm:h-12 w-auto mb-4 mix-blend-lighten opacity-95"
               loading="lazy"
               decoding="async"
             />
-            <p className="text-muted-foreground mb-6 max-w-sm">
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-sm">
               Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
               <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs
               for residential and commercial properties.
@@ -123,7 +123,7 @@ export function Footer() {
         </div>
 
         {/* Contact Bar */}
-        <div className="flex flex-wrap gap-6 py-6 border-y border-border/30 mb-8">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 py-6 border-y border-border/30 mb-8">
           <a 
             href="tel:0434308070" 
             className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
@@ -145,7 +145,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} JED Air Conditioning. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
@@ -155,7 +155,7 @@ export function Footer() {
 
         {/* Trust Badges */}
         <div className="mt-8 pt-8 border-t border-border/30">
-          <div className="flex flex-wrap justify-center gap-6 text-xs text-muted-foreground">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-[11px] sm:text-xs text-muted-foreground">
             <span>✓ Fully Licensed</span>
             <span>✓ Fully Insured</span>
             <span>✓ Daikin Certified Dealer</span>

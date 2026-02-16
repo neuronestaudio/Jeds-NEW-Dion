@@ -21,7 +21,7 @@ export function HeroSection() {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <section className="relative min-h-[90vh] md:min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] sm:min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
       
@@ -51,8 +51,8 @@ export function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 pt-24 md:pt-28 pb-12">
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-10 sm:pb-12">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-start">
           {/* Left: Hero copy */}
           <div className="max-w-2xl text-left">
           {/* Badge */}
@@ -60,7 +60,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-primary text-xs sm:text-sm font-medium mb-6 max-w-full"
+            className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-primary text-[11px] sm:text-xs md:text-sm font-medium mb-5 sm:mb-6 max-w-full"
           >
             <span className="flex items-center gap-2 flex-wrap">
               Daikin & Haier Certified Dealer / Trained Service Agents
@@ -68,7 +68,7 @@ export function HeroSection() {
                 <img
                   src={daikinLogo}
                   alt="Daikin logo"
-                  className="h-5 sm:h-6 w-auto object-contain"
+                  className="h-4 sm:h-5 md:h-6 w-auto object-contain"
                   loading="lazy"
                   decoding="async"
                   width="72"
@@ -78,7 +78,7 @@ export function HeroSection() {
                 <img
                   src={haierLogo}
                   alt="Haier logo"
-                  className="h-5 sm:h-6 w-auto object-contain"
+                  className="h-4 sm:h-5 md:h-6 w-auto object-contain"
                   loading="lazy"
                   decoding="async"
                   width="72"
@@ -94,7 +94,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-5 sm:mb-6 leading-tight"
           >
             Experts in <span className="text-gradient">Air Conditioning Servicing</span>
           </motion.h1>
@@ -104,7 +104,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-foreground/85 max-w-2xl mb-10"
+            className="text-base sm:text-lg md:text-xl text-foreground/85 max-w-2xl mb-8 sm:mb-10"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation for residential, apartment and commercial projects in Sydney.
           </motion.p>
@@ -114,16 +114,16 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4 justify-start mb-12"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start mb-10 sm:mb-12"
           >
             <Button variant="hero" size="xl" asChild>
-              <a href="/contact#quote" className="flex items-center gap-2">
+              <a href="/contact#quote" className="flex items-center gap-2 w-full sm:w-auto justify-center">
                 Get a Free Quote
                 <ArrowRight className="w-5 h-5" />
               </a>
             </Button>
             <Button variant="heroOutline" size="xl" asChild>
-              <a href="tel:0434308070" className="flex items-center gap-2">
+              <a href="tel:0434308070" className="flex items-center gap-2 w-full sm:w-auto justify-center">
                 <Phone className="w-5 h-5" />
                 0434 308 070
               </a>

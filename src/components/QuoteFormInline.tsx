@@ -60,14 +60,14 @@ export function QuoteFormInline() {
       initial={{ opacity: 0, x: 30 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.6, delay: 0.2 }}
-      className="relative z-10 p-6 md:p-8 bg-card/80 backdrop-blur border border-border/40 rounded-2xl shadow-sm"
+      className="relative z-10 p-5 sm:p-6 md:p-8 bg-card/80 backdrop-blur border border-border/40 rounded-2xl shadow-sm"
     >
-      <h2 className="text-2xl md:text-3xl font-bold mb-4">Get a Free Quote</h2>
-      <p className="text-muted-foreground mb-6">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">Get a Free Quote</h2>
+      <p className="text-sm sm:text-base text-muted-foreground mb-5 sm:mb-6">
         Tell us about your needs and we’ll respond within 24 hours.
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <input
           type="text"
           name="website"
@@ -78,9 +78,9 @@ export function QuoteFormInline() {
           autoComplete="off"
         />
 
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="name" className="block text-xs font-medium mb-2">
+            <label htmlFor="name" className="block text-[11px] sm:text-xs font-medium mb-2">
               Your Name *
             </label>
             <input
@@ -90,12 +90,12 @@ export function QuoteFormInline() {
               maxLength={100}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
+              className="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
               placeholder="John Smith"
             />
           </div>
           <div>
-            <label htmlFor="phone" className="block text-xs font-medium mb-2">
+            <label htmlFor="phone" className="block text-[11px] sm:text-xs font-medium mb-2">
               Phone Number *
             </label>
             <input
@@ -105,14 +105,14 @@ export function QuoteFormInline() {
               maxLength={20}
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
+              className="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
               placeholder="0400 000 000"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-xs font-medium mb-2">
+          <label htmlFor="email" className="block text-[11px] sm:text-xs font-medium mb-2">
             Email Address *
           </label>
           <input
@@ -122,13 +122,13 @@ export function QuoteFormInline() {
             maxLength={255}
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
+            className="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
             placeholder="john@example.com"
           />
         </div>
 
         <div>
-          <label htmlFor="serviceType" className="block text-xs font-medium mb-2">
+          <label htmlFor="serviceType" className="block text-[11px] sm:text-xs font-medium mb-2">
             Service Required *
           </label>
           <select
@@ -136,7 +136,7 @@ export function QuoteFormInline() {
             required
             value={formData.serviceType}
             onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
-            className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
+            className="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
           >
             <option value="">Select a service...</option>
             <option value="installation">New Installation</option>
@@ -148,7 +148,7 @@ export function QuoteFormInline() {
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-xs font-medium mb-2">
+          <label htmlFor="message" className="block text-[11px] sm:text-xs font-medium mb-2">
             Tell Us More (Optional)
           </label>
           <textarea
@@ -157,7 +157,7 @@ export function QuoteFormInline() {
             maxLength={1000}
             value={formData.message}
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            className="w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors resize-none"
+            className="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors resize-none"
             placeholder="Brief description of your needs..."
           />
         </div>

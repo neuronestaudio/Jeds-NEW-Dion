@@ -27,9 +27,9 @@ const trustItems = [
 
 export function TrustBar() {
   return (
-    <section className="py-6 md:py-8 bg-card/50 border-y border-border/30">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+    <section className="py-5 sm:py-6 md:py-8 bg-card/50 border-y border-border/30">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {trustItems.map((item, index) => (
             <motion.div
               key={item.label}
