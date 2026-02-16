@@ -18,6 +18,25 @@ const modernImages = [
   'Residential 6.jpeg',
 ].map(resolveAsset);
 
+const isUnsplashImage = (url: string) => url.startsWith('https://images.unsplash.com/');
+const buildUnsplashSrcSet = (url: string) => {
+  try {
+    const widths = [400, 800, 1200];
+    return widths
+      .map((width) => {
+        const u = new URL(url);
+        u.searchParams.set('w', String(width));
+        u.searchParams.set('auto', 'format');
+        u.searchParams.set('fit', 'crop');
+        return `${u.toString()} ${width}w`;
+      })
+      .join(', ');
+  } catch {
+    return undefined;
+  }
+};
+const unsplashSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+
 function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
   const [idx, setIdx] = useState(0);
   const timer = useRef<number | null>(null);
@@ -152,15 +171,24 @@ export function ProjectsGallery() {
               ) : Array.isArray((project as any).images) && (project as any).images.length ? (
                 <HoverCycle images={(project as any).images} alt={project.title} />
               ) : (
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full aspect-[4/3] object-cover object-[50%_100%]"
-                  loading="lazy"
-                  decoding="async"
-                  width="400"
-                  height="300"
-                />
+                (() => {
+                  const isUnsplash = typeof project.image === 'string' && isUnsplashImage(project.image);
+                  const srcSet = isUnsplash ? buildUnsplashSrcSet(project.image) : undefined;
+                  return (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full aspect-[4/3] object-cover object-[50%_100%]"
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
+                      srcSet={srcSet}
+                      sizes={srcSet ? unsplashSizes : undefined}
+                      width="400"
+                      height="300"
+                    />
+                  );
+                })()
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">

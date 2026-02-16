@@ -18,6 +18,25 @@ const fallbackImages = [
   'https://images.unsplash.com/photo-1531788989007-9f0955d91f6f?w=800&auto=format&fit=crop',
 ];
 
+const isUnsplashImage = (url: string) => url.startsWith('https://images.unsplash.com/');
+const buildUnsplashSrcSet = (url: string) => {
+  try {
+    const widths = [400, 800, 1200];
+    return widths
+      .map((width) => {
+        const u = new URL(url);
+        u.searchParams.set('w', String(width));
+        u.searchParams.set('auto', 'format');
+        u.searchParams.set('fit', 'crop');
+        return `${u.toString()} ${width}w`;
+      })
+      .join(', ');
+  } catch {
+    return undefined;
+  }
+};
+const unsplashSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+
 export default function ApartmentCarousel() {
   const images = apartmentImages.length ? apartmentImages : fallbackImages;
   const positions = images.map(() => 'object-[50%_100%]');
@@ -61,15 +80,23 @@ export default function ApartmentCarousel() {
                 setLightboxOpen(true);
               }}
             >
-              <img
-                src={src}
-                alt={`Apartment install ${i + 1}`}
-                className={`w-full h-full object-cover ${positions[i]}`}
-                loading="lazy"
-                decoding="async"
-                width={400}
-                height={300}
-              />
+              {(() => {
+                const srcSet = isUnsplashImage(src) ? buildUnsplashSrcSet(src) : undefined;
+                return (
+                  <img
+                    src={src}
+                    alt={`Apartment install ${i + 1}`}
+                    className={`w-full h-full object-cover ${positions[i]}`}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchPriority={i === 0 ? "high" : "low"}
+                    srcSet={srcSet}
+                    sizes={srcSet ? unsplashSizes : undefined}
+                    width={400}
+                    height={300}
+                  />
+                );
+              })()}
             </CarouselItem>
           ))}
         </CarouselContent>

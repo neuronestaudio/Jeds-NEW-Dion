@@ -56,8 +56,10 @@ export default function DuctedCarousel() {
                 src={src}
                 alt={`Ducted system install ${i + 1}`}
                 className={`w-full h-full object-cover ${positions[i]}`}
-                loading="lazy"
+                loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
+                fetchPriority={i === 0 ? "high" : "low"}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 width={400}
                 height={300}
               />
