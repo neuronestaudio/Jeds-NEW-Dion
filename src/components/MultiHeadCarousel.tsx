@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 // Attempt to auto-import local images that match common naming for multi-head split systems
 const globMSCase = import.meta.glob('../assets/*MS*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
@@ -30,7 +29,8 @@ export default function MultiHeadCarousel() {
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const isMobile = useIsMobile();
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const dragged = useRef(false);
 
   const start = () => {
     if (!api) return;
@@ -59,11 +59,28 @@ export default function MultiHeadCarousel() {
           {images.map((src, i) => (
             <CarouselItem
               key={i}
-              className={isMobile ? "cursor-grab" : "cursor-zoom-in"}
-              onClick={() => {
-                if (isMobile) return;
-                setLightboxIndex(i);
-                setLightboxOpen(true);
+              className="cursor-zoom-in"
+              onPointerDown={(e) => {
+                pointerStart.current = { x: e.clientX, y: e.clientY };
+                dragged.current = false;
+              }}
+              onPointerMove={(e) => {
+                if (!pointerStart.current) return;
+                const dx = e.clientX - pointerStart.current.x;
+                const dy = e.clientY - pointerStart.current.y;
+                if (Math.hypot(dx, dy) > 8) dragged.current = true;
+              }}
+              onPointerUp={() => {
+                if (!dragged.current) {
+                  setLightboxIndex(i);
+                  setLightboxOpen(true);
+                }
+                pointerStart.current = null;
+                dragged.current = false;
+              }}
+              onPointerCancel={() => {
+                pointerStart.current = null;
+                dragged.current = false;
               }}
             >
               <img
