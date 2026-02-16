@@ -23,9 +23,9 @@ const Index = () => {
         <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_AU" />
-        <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <meta property="og:image" content="https://jedairconditioning.com.au/favicon-512.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+        <meta name="twitter:image" content="https://jedairconditioning.com.au/favicon-512.png" />
         <script type="application/ld+json">
           {`
             {
