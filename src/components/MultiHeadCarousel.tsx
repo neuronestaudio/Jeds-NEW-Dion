@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Attempt to auto-import local images that match common naming for multi-head split systems
 const globMSCase = import.meta.glob('../assets/*MS*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
@@ -29,6 +30,7 @@ export default function MultiHeadCarousel() {
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const start = () => {
     if (!api) return;
@@ -57,8 +59,9 @@ export default function MultiHeadCarousel() {
           {images.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
+              className={isMobile ? "cursor-grab" : "cursor-zoom-in"}
               onClick={() => {
+                if (isMobile) return;
                 setLightboxIndex(i);
                 setLightboxOpen(true);
               }}

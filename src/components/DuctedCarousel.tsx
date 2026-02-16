@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
 const ductedImages = [
@@ -17,6 +18,7 @@ export default function DuctedCarousel() {
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const start = () => {
     if (!api) return;
@@ -45,8 +47,9 @@ export default function DuctedCarousel() {
           {ductedImages.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
+              className={isMobile ? "cursor-grab" : "cursor-zoom-in"}
               onClick={() => {
+                if (isMobile) return;
                 setLightboxIndex(i);
                 setLightboxOpen(true);
               }}

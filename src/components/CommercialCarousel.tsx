@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Auto-import all images in src/assets whose filename contains "Commercial" (case-insensitive)
 const globbedCase = import.meta.glob('../assets/*Commercial*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
@@ -30,6 +31,7 @@ export default function CommercialCarousel() {
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const start = () => {
     if (!api) return;
@@ -59,8 +61,9 @@ export default function CommercialCarousel() {
           {images.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
+              className={isMobile ? "cursor-grab" : "cursor-zoom-in"}
               onClick={() => {
+                if (isMobile) return;
                 setLightboxIndex(i);
                 setLightboxOpen(true);
               }}

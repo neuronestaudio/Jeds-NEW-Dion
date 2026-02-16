@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Auto-import JED in action local images
 const globJedUpper = import.meta.glob('../assets/*JED*action*.{jpg,jpeg,png}', { eager: true, import: 'default' }) as Record<string, string>;
@@ -25,6 +26,7 @@ export default function JEDActionCarousel() {
   const timer = useRef<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   const start = () => {
     if (!api) return;
@@ -53,8 +55,9 @@ export default function JEDActionCarousel() {
           {images.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
+              className={isMobile ? "cursor-grab" : "cursor-zoom-in"}
               onClick={() => {
+                if (isMobile) return;
                 setLightboxIndex(i);
                 setLightboxOpen(true);
               }}
