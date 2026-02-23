@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "check:cors": "node scripts/check-cors.mjs",
     "rm-logo-bg": "node scripts/remove-black-bg.mjs",
     "generate:favicon": "node scripts/generate-favicon.mjs",
     "generate:favicon:ico": "node scripts/generate-favicon-ico.mjs"

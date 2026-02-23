@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import jedLogo from '@/assets/Jedlogo.jpg';
+import { trackEvent } from '@/lib/analytics';
 
 const navLinks = [
   { label: 'Services', href: '/services' },
@@ -34,6 +35,12 @@ export function Header() {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground"
+      >
+        Skip to content
+      </a>
       <header className="sticky-header">
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-24">
@@ -101,13 +108,19 @@ export function Header() {
             {/* Desktop CTAs */}
             <div className="hidden md:flex items-center gap-3">
               <Button variant="call" size="sm" asChild>
-                <a href="tel:0434308070" className="flex items-center gap-2">
+                <a
+                  href="tel:0434308070"
+                  className="flex items-center gap-2"
+                  onClick={() => trackEvent('cta_click', { location: 'header', type: 'call' })}
+                >
                   <Phone className="w-4 h-4" />
                   <span>0434 308 070</span>
                 </a>
               </Button>
               <Button variant="cta" size="sm" asChild>
-                <a href="/contact#quote">Get a Quote</a>
+                <a href="/contact#quote" onClick={() => trackEvent('cta_click', { location: 'header', type: 'quote' })}>
+                  Get a Quote
+                </a>
               </Button>
             </div>
 
@@ -158,13 +171,21 @@ export function Header() {
       <div className="mobile-cta-bar">
         <div className="flex gap-3">
           <Button variant="call" className="flex-1" asChild>
-            <a href="tel:0434308070" className="flex items-center justify-center gap-2">
+            <a
+              href="tel:0434308070"
+              className="flex items-center justify-center gap-2"
+              onClick={() => trackEvent('cta_click', { location: 'mobile-bar', type: 'call' })}
+            >
               <Phone className="w-5 h-5" />
               Call Now
             </a>
           </Button>
           <Button variant="cta" className="flex-1" asChild>
-            <a href="/contact#quote" className="flex items-center justify-center gap-2">
+            <a
+              href="/contact#quote"
+              className="flex items-center justify-center gap-2"
+              onClick={() => trackEvent('cta_click', { location: 'mobile-bar', type: 'quote' })}
+            >
               <Mail className="w-5 h-5" />
               Get Quote
             </a>

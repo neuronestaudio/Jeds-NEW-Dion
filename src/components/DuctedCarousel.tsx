@@ -45,24 +45,29 @@ export default function DuctedCarousel() {
           {ductedImages.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
-              onClick={() => {
-                if (api && !api.clickAllowed()) return;
-                setLightboxIndex(i);
-                setLightboxOpen(true);
-              }}
             >
-              <img
-                src={src}
-                alt={`Ducted system install ${i + 1}`}
-                className={`w-full h-full object-cover ${positions[i]}`}
-                loading={i === 0 ? "eager" : "lazy"}
-                decoding="async"
-                fetchPriority={i === 0 ? "high" : "low"}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                width={400}
-                height={300}
-              />
+              <button
+                type="button"
+                aria-label={`Zoom ducted system install ${i + 1}`}
+                className="group relative h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={() => {
+                  if (api && !api.clickAllowed()) return;
+                  setLightboxIndex(i);
+                  setLightboxOpen(true);
+                }}
+              >
+                <img
+                  src={src}
+                  alt={`Ducted system install ${i + 1}`}
+                  className={`w-full h-full object-cover ${positions[i]}`}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  width={400}
+                  height={300}
+                />
+              </button>
             </CarouselItem>
           ))}
         </CarouselContent>

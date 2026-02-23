@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { trackEvent } from '@/lib/analytics';
 
 export function QuoteFormInline() {
   const { toast } = useToast();
@@ -35,6 +36,10 @@ export function QuoteFormInline() {
       toast({
         title: 'Quote Request Sent!',
         description: "We'll get back to you within 24 hours.",
+      });
+      trackEvent('quote_submit', {
+        source: 'hero-inline',
+        service_type: formData.serviceType || 'unknown',
       });
       setFormData({
         name: '',

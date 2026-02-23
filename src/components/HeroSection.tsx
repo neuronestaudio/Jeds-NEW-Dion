@@ -6,6 +6,7 @@ import jedLogo from '@/assets/Jedlogo.jpg';
 import QuoteFormInline from '@/components/QuoteFormInline';
 import daikinLogo from '@/assets/Daikin.png';
 import haierLogo from '@/assets/Haier.png';
+import { trackEvent } from '@/lib/analytics';
 
 
 export function HeroSection() {
@@ -16,9 +17,17 @@ export function HeroSection() {
   const [videoError, setVideoError] = useState(false);
   const [play, setPlay] = useState(false);
   const [videoVisible, setVideoVisible] = useState(false);
+  const [allowVideo, setAllowVideo] = useState(true);
   useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setAllowVideo(!media.matches);
+    const handler = () => setAllowVideo(!media.matches);
+    media.addEventListener('change', handler);
     const timer = setTimeout(() => setPlay(true), 500);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      media.removeEventListener('change', handler);
+    };
   }, []);
   return (
     <section className="relative min-h-[85vh] sm:min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
@@ -27,7 +36,7 @@ export function HeroSection() {
       
       {/* Background: Prefer video, no 3D fallback */}
       <div className="absolute inset-0 overflow-hidden">
-        {!videoError && play && (
+        {!videoError && play && allowVideo && (
           <video
             className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-80' : 'opacity-0'}`}
             poster={jedLogo}
@@ -35,7 +44,7 @@ export function HeroSection() {
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             onError={() => setVideoError(true)}
             onLoadedData={() => setVideoVisible(true)}
             onCanPlay={() => setVideoVisible(true)}
@@ -117,13 +126,21 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start mb-10 sm:mb-12"
           >
             <Button variant="hero" size="xl" asChild>
-              <a href="/contact#quote" className="flex items-center gap-2 w-full sm:w-auto justify-center">
+              <a
+                href="/contact#quote"
+                className="flex items-center gap-2 w-full sm:w-auto justify-center"
+                onClick={() => trackEvent('cta_click', { location: 'hero', type: 'quote' })}
+              >
                 Get a Free Quote
                 <ArrowRight className="w-5 h-5" />
               </a>
             </Button>
             <Button variant="heroOutline" size="xl" asChild>
-              <a href="tel:0434308070" className="flex items-center gap-2 w-full sm:w-auto justify-center">
+              <a
+                href="tel:0434308070"
+                className="flex items-center gap-2 w-full sm:w-auto justify-center"
+                onClick={() => trackEvent('cta_click', { location: 'hero', type: 'call' })}
+              >
                 <Phone className="w-5 h-5" />
                 0434 308 070
               </a>

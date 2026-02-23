@@ -18,14 +18,14 @@ const Index = () => {
       <Helmet>
         <title>Daikin & Haier Air Conditioning Installation Sydney | JED Air Conditioning</title>
         <meta name="description" content="Authorised Daikin & Haier installation specialists in Sydney. Professional ducted & split system air conditioning installs, service & repairs. Get a free quote now." />
-        <link rel="canonical" href="https://www.jedairconditioning.com.au/" />
+        <link rel="canonical" href="https://jedairconditioning.com.au/" />
         <meta property="og:title" content="JED Air Conditioning | Sydney Air Conditioning Specialists" />
         <meta property="og:description" content="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty." />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_AU" />
-        <meta property="og:image" content="https://jedairconditioning.com.au/favicon-512.png" />
+        <meta property="og:image" content="https://jedairconditioning.com.au/og-image.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://jedairconditioning.com.au/favicon-512.png" />
+        <meta name="twitter:image" content="https://jedairconditioning.com.au/og-image.png" />
         <script type="application/ld+json">
           {`
             {

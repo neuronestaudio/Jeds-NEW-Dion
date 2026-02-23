@@ -61,9 +61,11 @@ export function Footer() {
                 <Instagram className="w-5 h-5" />
               </a>
               <a 
-                href="#" 
+                href="https://www.linkedin.com/company/jed-air-conditioning/" 
                 className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="LinkedIn"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -148,8 +150,8 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} JED Air Conditioning. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
+            <a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a>
+            <a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a>
           </div>
         </div>
 

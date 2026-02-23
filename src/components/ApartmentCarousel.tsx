@@ -73,28 +73,33 @@ export default function ApartmentCarousel() {
           {images.map((src, i) => (
             <CarouselItem
               key={i}
-              className="cursor-zoom-in"
-              onClick={() => {
-                if (api && !api.clickAllowed()) return;
-                setLightboxIndex(i);
-                setLightboxOpen(true);
-              }}
             >
               {(() => {
                 const srcSet = isUnsplashImage(src) ? buildUnsplashSrcSet(src) : undefined;
                 return (
-                  <img
-                    src={src}
-                    alt={`Apartment install ${i + 1}`}
-                    className={`w-full h-full object-cover ${positions[i]}`}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    fetchPriority={i === 0 ? "high" : "low"}
-                    srcSet={srcSet}
-                    sizes={srcSet ? unsplashSizes : undefined}
-                    width={400}
-                    height={300}
-                  />
+                  <button
+                    type="button"
+                    aria-label={`Zoom apartment install ${i + 1}`}
+                    className="group relative h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    onClick={() => {
+                      if (api && !api.clickAllowed()) return;
+                      setLightboxIndex(i);
+                      setLightboxOpen(true);
+                    }}
+                  >
+                    <img
+                      src={src}
+                      alt={`Apartment install ${i + 1}`}
+                      className={`w-full h-full object-cover ${positions[i]}`}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                      fetchPriority={i === 0 ? "high" : "low"}
+                      srcSet={srcSet}
+                      sizes={srcSet ? unsplashSizes : undefined}
+                      width={400}
+                      height={300}
+                    />
+                  </button>
                 );
               })()}
             </CarouselItem>
