@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { trackEvent } from '@/lib/analytics';
+import { pushDataLayerEvent, trackEvent } from '@/lib/analytics';
 import AddressAutocomplete, { type StructuredAddress } from './AddressAutocomplete';
 
 /**
@@ -162,6 +162,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     setIsSubmitting(true);
     try {
       const apiBase = import.meta.env.VITE_API_BASE || '';
+      const thankYouUrl = import.meta.env.VITE_THANK_YOU_URL || '/thank-you';
       const url = apiBase ? `${apiBase}/api/quote` : '/api/quote';
       const resp = await fetch(url, {
         method: 'POST',
@@ -172,6 +173,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         const details = await resp.text();
         throw new Error(details || 'Submission failed');
       }
+      const result = await resp.json().catch(() => ({} as Record<string, unknown>));
 
       toast({
         title: 'Quote Request Sent!',
@@ -187,6 +189,13 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         address_verified: Boolean(addressDetails),
         suburb: addressDetails?.suburb || 'unknown',
       });
+      pushDataLayerEvent('generate_lead', {
+        source,
+        service_type: formData.serviceType || 'unknown',
+        urgency: formData.urgency || 'unknown',
+        address_verified: Boolean(result?.leadVerified ?? Boolean(addressDetails)),
+        webhook_forwarded: Boolean(result?.webhookForwarded ?? true),
+      });
 
       setFormData({
         name: '',
@@ -201,6 +210,9 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
       setAddressDetails(null);
       setDirection(-1);
       setStep(1);
+      if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
+        window.location.assign(thankYouUrl);
+      }
     } catch (err: unknown) {
       toast({
         title: 'Submission Error',

@@ -1,6 +1,8 @@
 const allowOrigin = (process.env.CORS_ALLOW_ORIGIN || process.env.ALLOWED_ORIGIN || '*')
   .split(',')[0]
   .trim();
+const DEFAULT_GHL_WEBHOOK_URL =
+  'https://services.leadconnectorhq.com/hooks/9xaMmBgvB2Brx7l670cB/webhook-trigger/469c88fa-a552-41f9-be5e-398e6cb92045';
 const setCors = (res: any) => {
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -27,7 +29,8 @@ export default async function handler(req: any, res: any) {
       process.env.GHL_WEBHOOK_URL ||
       // common alternate naming observed in projects
       process.env.GHL_webhook_url ||
-      process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL;
+      process.env.NEXT_PUBLIC_GHL_WEBHOOK_URL ||
+      DEFAULT_GHL_WEBHOOK_URL;
     const skipForwardFlag = (process.env.SKIP_GHL_FORWARD || 'false').toString().toLowerCase();
     const shouldSkipForward = ['true', '1', 'yes', 'on'].includes(skipForwardFlag);
 
@@ -131,6 +134,7 @@ export default async function handler(req: any, res: any) {
           addressVerified: false,
         };
 
+    let webhookForwarded = false;
     // Forward to GoHighLevel Inbound Webhook if configured
     if (webhookUrl && !shouldSkipForward) {
       // Drop the honeypot before forwarding. It is always empty on a real lead,
@@ -160,6 +164,7 @@ export default async function handler(req: any, res: any) {
         res.status(forward.status).json({ error: 'Forward failed', details: text });
         return;
       }
+      webhookForwarded = true;
     }
 
     // Optionally notify owner via SMS using Twilio if env vars are present
@@ -302,6 +307,9 @@ export default async function handler(req: any, res: any) {
     const shouldIncludeDebug = debugTwilio || Boolean(smsError || customerSmsError);
     res.status(200).json({
       ok: true,
+      leadGenerated: true,
+      leadVerified: Boolean(ghlAddress.addressVerified),
+      webhookForwarded,
       smsError,
       customerSmsError,
       ownerSmsSid,

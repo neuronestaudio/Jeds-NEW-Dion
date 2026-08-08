@@ -169,15 +169,15 @@ export function ProcessSection() {
 
         <div className="relative" ref={sectionRef}>
           {/* Unlit rail */}
-          <div className="pointer-events-none absolute left-[10%] right-[10%] top-7 hidden h-0.5 -translate-y-1/2 bg-border/40 lg:block sm:top-8" />
+          <div className="pointer-events-none absolute left-[10%] right-[10%] top-7 z-0 hidden h-0.5 -translate-y-1/2 bg-border/40 lg:block sm:top-8" />
 
           {/* Lit rail, tracking scroll position */}
           <motion.div
-            className="pointer-events-none absolute left-[10%] top-7 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-primary/60 via-primary to-primary shadow-[0_0_12px_hsl(var(--primary)/0.7)] lg:block sm:top-8"
+            className="pointer-events-none absolute left-[10%] top-7 z-0 hidden h-0.5 -translate-y-1/2 bg-gradient-to-r from-primary/60 via-primary to-primary shadow-[0_0_12px_hsl(var(--primary)/0.7)] lg:block sm:top-8"
             style={{ width: railWidth, opacity: glowOpacity }}
           />
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
+          <div className="relative z-10 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
             {steps.map((step, index) => (
               <ProcessStep
                 key={step.step}
