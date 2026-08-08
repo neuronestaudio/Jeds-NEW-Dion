@@ -117,6 +117,35 @@ a stale cached browser that predates the wizard still submits a valid lead, and 
 a lead over a missing value would be far worse than losing the priority flag. When it
 is absent, `urgencyLabel` reads `Not specified`.
 
+### Capturing a sample so GHL can build its mapping
+
+GHL's inbound-webhook trigger learns the payload shape from a real request. To feed
+it one without touching the live site:
+
+```sh
+# 1. GHL > Automation > Workflows > new workflow > Inbound Webhook trigger.
+#    Copy the webhook URL and leave it listening for sample data.
+# 2. Fire a sample:
+node scripts/send-sample-lead.mjs --url "https://services.leadconnectorhq.com/hooks/..."
+
+# Inspect the payload without sending anything
+node scripts/send-sample-lead.mjs --print
+
+# The typed-address shape (no Google details) — fewer keys, addressVerified: false
+node scripts/send-sample-lead.mjs --url "..." --variant unverified
+
+# Exercise the whole chain through the live API instead.
+# WARNING: forwards to the real GHL *and* fires real Twilio SMS.
+node scripts/send-sample-lead.mjs --via-api https://hooks.jedairconditioning.com.au
+```
+
+The script prints which keys land on standard contact fields and which need a custom
+field first. Send **both** variants — the verified payload has ten keys the unverified
+one does not, and mapping built from only one will miss them.
+
+`src/test/quoteForward.test.ts` imports the deployed handler and asserts this exact
+payload, so the script and production cannot silently drift apart.
+
 ### GHL side — what you must configure
 
 1. In the inbound webhook's field mapping, confirm `address1`, `city`, `state`,

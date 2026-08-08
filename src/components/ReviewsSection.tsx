@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Star, MapPin } from 'lucide-react';
+import { Star, MapPin, Quote } from 'lucide-react';
 
 const reviews = [
   {
@@ -40,7 +40,50 @@ const reviews = [
   },
 ];
 
+/** One full pass of the six reviews. Slow enough to read a card as it goes by. */
+const SCROLL_DURATION_S = 55;
+
+function ReviewCard({ review }: { review: (typeof reviews)[number] }) {
+  return (
+    <figure className="mr-4 flex w-[300px] shrink-0 flex-col rounded-2xl border border-border/30 bg-card/50 p-5 transition-colors duration-300 hover:border-primary/30 hover:bg-card/80 sm:mr-5 sm:w-[360px] sm:p-6">
+      <Quote className="mb-3 h-6 w-6 text-primary/20" />
+
+      <div className="mb-3 flex items-center gap-1">
+        {[...Array(review.rating)].map((_, i) => (
+          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+        ))}
+      </div>
+
+      <blockquote className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+        &ldquo;{review.text}&rdquo;
+      </blockquote>
+
+      <figcaption className="flex items-center justify-between border-t border-border/30 pt-4">
+        <span className="text-sm font-semibold">{review.name}</span>
+        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+          <MapPin className="h-3 w-3" />
+          {review.location}
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
 export function ReviewsSection() {
+  /**
+   * Two identical copies sliding by exactly -50%: copy 2 arrives where copy 1
+   * began, so the loop never seams. Cards carry a right margin rather than the
+   * track carrying `gap` — a gap makes the track a half-gap wider than twice a
+   * copy and the loop visibly jumps each pass.
+   */
+  const copy = (hidden: boolean) => (
+    <div className="flex shrink-0 items-stretch" aria-hidden={hidden || undefined}>
+      {reviews.map((review) => (
+        <ReviewCard key={`${review.name}-${hidden ? 'b' : 'a'}`} review={review} />
+      ))}
+    </div>
+  );
+
   return (
     <section id="reviews" className="py-12 sm:py-16 md:py-24 section-glow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
@@ -66,42 +109,34 @@ export function ReviewsSection() {
             Trusted by Sydney homeowners and businesses
           </p>
         </motion.div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {reviews.map((review, index) => (
-            <motion.div
-              key={review.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`p-4 sm:p-6 bg-card/50 border border-border/30 rounded-2xl ${index >= 4 ? 'hidden md:block' : ''}`}
-            >
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(review.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                ))}
-              </div>
-              <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                "{review.text}"
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm">{review.name}</span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <MapPin className="w-3 h-3" />
-                  {review.location}
-                </span>
-              </div>
-            </motion.div>
-          ))}
+      {/* Full-bleed: the row should run past the container edges, so it sits
+          outside the padded container above. Hovering pauses it (see
+          .marquee-strip in index.css) so a card can be read without chasing it. */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="marquee-strip marquee-mask overflow-hidden"
+      >
+        <div
+          className="marquee-track flex w-max animate-marquee-left"
+          style={{ ['--marquee-duration' as string]: `${SCROLL_DURATION_S}s` }}
+        >
+          {copy(false)}
+          {copy(true)}
         </div>
+      </motion.div>
 
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="text-center mt-8"
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-center mt-10"
         >
           <a
             href="https://g.page/r/YOUR_GOOGLE_BUSINESS_ID/review"

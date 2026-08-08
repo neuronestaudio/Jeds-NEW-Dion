@@ -62,7 +62,7 @@ export function ServicePathways() {
             >
               {/* Laps are staggered so the three beams never travel in unison,
                   which reads as decoration rather than three synced widgets. */}
-              <BorderBeam className="h-full" duration={7} delay={index * -2.3}>
+              <BorderBeam className="h-full" duration={17} delay={index * -5.6}>
                 <a
                   href={pathway.href}
                   className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[calc(1rem-1.5px)] bg-gradient-to-b from-card to-background p-6 transition-shadow duration-500 hover:shadow-glow"
