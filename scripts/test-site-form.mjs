@@ -28,6 +28,7 @@ async function run() {
   const serviceArg = args.service || 'repair';
   const nameArg = args.name || `UI Form Test ${ts}`;
   const messageArg = args.message || `Automated UI submission at ${ts}`;
+  const addressArg = args.address || '1 Martin Place, Sydney NSW 2000';
 
   try {
     console.log('Navigating to site...');
@@ -43,6 +44,7 @@ async function run() {
     await page.waitForSelector('#name', { visible: true });
     await page.waitForSelector('#phone', { visible: true });
     await page.waitForSelector('#email', { visible: true });
+    await page.waitForSelector('#address', { visible: true });
     await page.waitForSelector('#serviceType', { visible: true });
     await page.waitForSelector('#message', { visible: true });
 
@@ -50,6 +52,12 @@ async function run() {
     await page.type('#name', nameArg);
     await page.type('#phone', phoneArg);
     await page.type('#email', emailArg);
+
+    // Type the address, then dismiss the Places suggestion list so it cannot
+    // sit over the submit button. Submitting typed-but-unselected text is a
+    // valid path — it arrives in GHL flagged addressVerified: false.
+    await page.type('#address', addressArg);
+    await page.keyboard.press('Escape');
 
     // Select service type (repair)
     await page.select('#serviceType', serviceArg);

@@ -43,9 +43,13 @@ export default async function handler(req: any, res: any) {
     }
 
     // Basic validation
-    const { name, phone, email, serviceType } = payload;
+    const { name, phone, email, serviceType, address } = payload;
     if (!name || !phone || !email || !serviceType) {
       res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+    if (!address || !String(address).trim()) {
+      res.status(400).json({ error: 'Missing service address' });
       return;
     }
 
@@ -76,6 +80,42 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
+    /**
+     * Map the Google Places result onto the keys GoHighLevel's inbound webhook
+     * recognises as *standard* contact fields. Sending `address1` / `city` /
+     * `state` / `postal_code` / `country` lands the job address on the native
+     * contact record, so it shows on the contact card, is usable in workflow
+     * triggers and filters, and merges into SMS/email templates. A single
+     * free-text blob would only ever sit in a custom field.
+     *
+     * `addressVerified` records whether the lead actually picked a Google
+     * suggestion or typed it themselves — worth knowing before a truck is sent.
+     */
+    const details = payload.addressDetails || null;
+    const addressText = String(address).trim();
+    const ghlAddress = details
+      ? {
+          address1: details.addressLine1 || addressText,
+          city: details.suburb || '',
+          state: details.state || '',
+          postal_code: details.postcode || '',
+          country: details.countryCode || 'AU',
+          // camelCase duplicates: GHL accepts either casing depending on how the
+          // inbound webhook's field mapping was configured.
+          postalCode: details.postcode || '',
+          full_address: details.formatted || addressText,
+          latitude: details.lat ?? '',
+          longitude: details.lng ?? '',
+          addressVerified: true,
+          googlePlaceId: details.placeId || '',
+        }
+      : {
+          address1: addressText,
+          full_address: addressText,
+          country: 'AU',
+          addressVerified: false,
+        };
+
     // Forward to GoHighLevel Inbound Webhook if configured
     if (webhookUrl && !shouldSkipForward) {
       const forward = await fetch(webhookUrl, {
@@ -85,6 +125,8 @@ export default async function handler(req: any, res: any) {
         },
         body: JSON.stringify({
           ...payload,
+          ...ghlAddress,
+          address: addressText,
           phone: normalizedPhone,
           source: payload.source || 'website',
           submittedAt: new Date().toISOString(),
@@ -133,7 +175,9 @@ export default async function handler(req: any, res: any) {
           }
           params.append(
             'Body',
-            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nMessage: ${payload.message || ''}`
+            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nAddress: ${ghlAddress.full_address}${
+              details ? '' : ' (unverified)'
+            }\nMessage: ${payload.message || ''}`
           );
           if (debugTwilio) {
             ownerSmsRequest = {

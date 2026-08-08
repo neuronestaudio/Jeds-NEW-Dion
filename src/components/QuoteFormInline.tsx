@@ -4,14 +4,17 @@ import { Send } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent } from '@/lib/analytics';
+import AddressAutocomplete, { type StructuredAddress } from './AddressAutocomplete';
 
 export function QuoteFormInline() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addressDetails, setAddressDetails] = useState<StructuredAddress | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
+    address: '',
     serviceType: '',
     message: '',
     website: '',
@@ -27,7 +30,7 @@ export function QuoteFormInline() {
       const resp = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, source: 'hero-inline' }),
+        body: JSON.stringify({ ...formData, addressDetails, source: 'hero-inline' }),
       });
       if (!resp.ok) {
         const details = await resp.text();
@@ -40,15 +43,19 @@ export function QuoteFormInline() {
       trackEvent('quote_submit', {
         source: 'hero-inline',
         service_type: formData.serviceType || 'unknown',
+        address_verified: Boolean(addressDetails),
+        suburb: addressDetails?.suburb || 'unknown',
       });
       setFormData({
         name: '',
         phone: '',
         email: '',
+        address: '',
         serviceType: '',
         message: '',
         website: '',
       });
+      setAddressDetails(null);
     } catch (err: any) {
       toast({
         title: 'Submission Error',
@@ -131,6 +138,19 @@ export function QuoteFormInline() {
             placeholder="john@example.com"
           />
         </div>
+
+        <AddressAutocomplete
+          id="address-inline"
+          label="Site Address *"
+          required
+          value={formData.address}
+          onChange={(address) => setFormData((prev) => ({ ...prev, address }))}
+          onSelect={setAddressDetails}
+          confirmedAddress={addressDetails}
+          placeholder="Start typing your address…"
+          labelClassName="block text-[11px] sm:text-xs font-medium mb-2"
+          inputClassName="w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors"
+        />
 
         <div>
           <label htmlFor="serviceType" className="block text-[11px] sm:text-xs font-medium mb-2">
