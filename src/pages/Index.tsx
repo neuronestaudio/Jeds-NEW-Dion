@@ -5,6 +5,7 @@ import ServicePathways from '@/components/ServicePathways';
 import ServicesGrid from '@/components/ServicesGrid';
 import BrandsSection from '@/components/BrandsSection';
 import ProjectsGallery from '@/components/ProjectsGallery';
+import SocialReels from '@/components/SocialReels';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import ProcessSection from '@/components/ProcessSection';
 import ReviewsSection from '@/components/ReviewsSection';
@@ -60,7 +61,10 @@ const Index = () => {
       
       {/* Featured projects */}
       <ProjectsGallery />
-      
+
+      {/* Instagram reels - the team and jobs on camera */}
+      <SocialReels />
+
       {/* Why choose us - trust building */}
       <WhyChooseUs />
       
