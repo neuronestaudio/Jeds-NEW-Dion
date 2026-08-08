@@ -46,6 +46,9 @@ const Index = () => {
       
       {/* Hero with 3D animation */}
       <HeroSection />
+
+      {/* Social proof directly after hero */}
+      <ReviewsSection />
       
       {/* Trust signals immediately after hero */}
       <TrustBar />
@@ -70,9 +73,6 @@ const Index = () => {
       
       {/* Process explanation */}
       <ProcessSection />
-      
-      {/* Social proof */}
-      <ReviewsSection />
       
       {/* Footer */}
       <Footer />
