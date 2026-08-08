@@ -22,10 +22,12 @@ let fetchMock: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   fetchMock = vi.fn(() => jsonResponse({ ok: true }));
   vi.stubGlobal('fetch', fetchMock);
+  window.sessionStorage.clear();
 });
 
 afterEach(() => {
   cleanup();
+  window.sessionStorage.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });

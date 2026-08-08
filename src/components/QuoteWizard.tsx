@@ -89,6 +89,7 @@ const URGENCIES = [
 
 const STEP_LABELS = ['Service', 'Timing', 'Details'];
 const TOTAL_STEPS = 3;
+const SUBMIT_LOCK_MS = 10_000;
 
 type Props = {
   /** Distinguishes hero vs page form in GA4 and in the GHL payload. */
@@ -124,6 +125,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unlockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lockTicker = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lockStorageKey = `quote-submit-lock-until:${source}`;
 
   const inSuccessLock = lockSecondsRemaining > 0;
 
@@ -135,6 +137,38 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     },
     []
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = window.sessionStorage.getItem(lockStorageKey);
+      const lockUntil = raw ? Number(raw) : 0;
+      if (!lockUntil || Number.isNaN(lockUntil)) return;
+
+      const remainingMs = Math.max(0, lockUntil - Date.now());
+      if (!remainingMs) {
+        window.sessionStorage.removeItem(lockStorageKey);
+        return;
+      }
+
+      setLockSecondsRemaining(Math.ceil(remainingMs / 1000));
+      if (lockTicker.current) clearInterval(lockTicker.current);
+      lockTicker.current = setInterval(() => {
+        setLockSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            if (lockTicker.current) {
+              clearInterval(lockTicker.current);
+              lockTicker.current = null;
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      // Ignore storage errors; lock still works in-memory.
+    }
+  }, [lockStorageKey]);
 
   // Pull focus into the first text field when the details step arrives, so
   // keyboard and screen-reader users are not dropped at the top of the page.
@@ -220,7 +254,15 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
       setStep(1);
 
       // Keep the confirmation visible for 10 seconds so users can see submit success.
-      setLockSecondsRemaining(10);
+      const lockUntil = Date.now() + SUBMIT_LOCK_MS;
+      setLockSecondsRemaining(Math.ceil(SUBMIT_LOCK_MS / 1000));
+      if (typeof window !== 'undefined') {
+        try {
+          window.sessionStorage.setItem(lockStorageKey, String(lockUntil));
+        } catch {
+          // Ignore storage errors; lock still works in-memory.
+        }
+      }
       if (lockTicker.current) clearInterval(lockTicker.current);
       lockTicker.current = setInterval(() => {
         setLockSecondsRemaining((prev) => {
@@ -228,6 +270,13 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
             if (lockTicker.current) {
               clearInterval(lockTicker.current);
               lockTicker.current = null;
+            }
+            if (typeof window !== 'undefined') {
+              try {
+                window.sessionStorage.removeItem(lockStorageKey);
+              } catch {
+                // Ignore storage errors.
+              }
             }
             return 0;
           }
@@ -240,7 +289,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
           window.location.assign(thankYouUrl);
         }
-      }, 10000);
+      }, SUBMIT_LOCK_MS);
     } catch (err: unknown) {
       toast({
         title: 'Submission Error',
