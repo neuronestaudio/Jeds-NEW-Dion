@@ -43,6 +43,12 @@ type Props = {
 
 export function BorderBeam({ children, className = '', duration = 20, delay = 0 }: Props) {
   const spin: CSSProperties = {
+    // animationDuration is set inline, NOT left to the `--beam-duration` var
+    // alone. tailwindcss-animate makes the `duration-*` utilities set
+    // `animation-duration` as well as `transition-duration`, so a `duration-500`
+    // added for the hover fade silently overrode the lap time and pinned every
+    // beam at 0.5s. An inline style beats the utility class.
+    animationDuration: `${duration}s`,
     animationDelay: `${delay}s`,
     background: BEAM_GRADIENT,
   };
@@ -55,17 +61,19 @@ export function BorderBeam({ children, className = '', duration = 20, delay = 0 
       {/* Static rim so the edge never vanishes between passes. */}
       <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-border/50" />
 
-      {/* Glow pass — blurred, bleeds a halo just outside the rim. */}
+      {/* Glow pass — blurred, bleeds a halo just outside the rim.
+          Note `[transition-duration:500ms]` rather than `duration-500`: the
+          latter would also set animation-duration and pin the lap time. */}
       <span
         aria-hidden
-        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam opacity-60 blur-[6px] transition-opacity duration-500 group-hover/beam:opacity-95"
+        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam opacity-60 blur-[6px] transition-opacity [transition-duration:500ms] group-hover/beam:opacity-95"
         style={spin}
       />
 
       {/* Core pass — sharp, gives the beam a defined leading edge. */}
       <span
         aria-hidden
-        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam transition-opacity duration-500"
+        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam transition-opacity [transition-duration:500ms]"
         style={spin}
       />
 

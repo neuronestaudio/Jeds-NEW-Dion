@@ -42,7 +42,9 @@ const reviews = [
   },
 ];
 
-const AUTOPLAY_MS = 5000;
+// Short enough that the row is visibly moving within a few seconds of landing
+// on it, long enough to read a review before it advances.
+const AUTOPLAY_MS = 3500;
 
 export function ReviewsSection() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
