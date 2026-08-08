@@ -69,32 +69,32 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 bg-primary/10 border border-primary/30 rounded-full text-primary text-[11px] sm:text-xs md:text-sm font-medium mb-5 sm:mb-6 max-w-full"
+            className="inline-flex items-center gap-2.5 px-2.5 py-2 bg-background/70 border border-foreground/15 rounded-full shadow-[0_6px_24px_rgba(0,0,0,0.18)] backdrop-blur-sm mb-5 sm:mb-6"
+            aria-label="Daikin and Haier certified dealer"
           >
-            <span className="flex items-center gap-2 flex-wrap">
-              Daikin & Haier Certified Dealer / Trained Service Agents
-              <span className="inline-flex items-center gap-1.5 sm:gap-2 px-1.5 py-0.5 rounded-md text-foreground h-7 sm:h-8">
-                <img
-                  src={daikinLogo}
-                  alt="Daikin logo"
-                  className="h-4 sm:h-5 md:h-6 w-auto object-contain"
-                  loading="lazy"
-                  decoding="async"
-                  width="72"
-                  height="24"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
-                />
-                <img
-                  src={haierLogo}
-                  alt="Haier logo"
-                  className="h-4 sm:h-5 md:h-6 w-auto object-contain"
-                  loading="lazy"
-                  decoding="async"
-                  width="72"
-                  height="24"
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}
-                />
-              </span>
+            <span className="inline-flex items-center justify-center w-[118px] h-10 sm:w-[130px] sm:h-11 rounded-[10px] bg-white border border-slate-200/90 shadow-sm px-4">
+              <img
+                src={daikinLogo}
+                alt="Daikin logo"
+                className="h-4 sm:h-5 w-auto max-w-[90px] object-contain"
+                loading="lazy"
+                decoding="async"
+                width="90"
+                height="24"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
+              />
+            </span>
+            <span className="inline-flex items-center justify-center w-[118px] h-10 sm:w-[130px] sm:h-11 rounded-[10px] bg-white border border-slate-200/90 shadow-sm px-4">
+              <img
+                src={haierLogo}
+                alt="Haier logo"
+                className="h-4 sm:h-5 w-auto max-w-[90px] object-contain"
+                loading="lazy"
+                decoding="async"
+                width="90"
+                height="24"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}
+              />
             </span>
           </motion.div>
 
