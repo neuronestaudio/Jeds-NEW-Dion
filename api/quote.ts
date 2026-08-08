@@ -29,9 +29,13 @@ export default async function handler(req: any, res: any) {
     const payload = req.body || {};
 
     // Basic validation
-    const { name, phone, email, serviceType } = payload;
+    const { name, phone, email, serviceType, address, urgency } = payload;
     if (!name || !phone || !email || !serviceType) {
       res.status(400).json({ error: 'Missing required fields' });
+      return;
+    }
+    if (!address || !String(address).trim()) {
+      res.status(400).json({ error: 'Missing service address' });
       return;
     }
 
@@ -62,6 +66,45 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
+    /**
+     * Map the Google Places result onto the keys GoHighLevel's inbound webhook
+     * recognises as *standard* contact fields, so the job address lands on the
+     * native contact record rather than in a free-text custom field.
+     * See hooks-api/api/quote.ts — keep the two in sync.
+     */
+    /** Urgency from step 2 of the quote wizard. Not required — see hooks-api copy. */
+    const URGENCY_LABELS: Record<string, string> = {
+      asap: 'ASAP / Today if possible',
+      'few-days': 'Within the next few days',
+      flexible: 'Planning ahead / Flexible',
+    };
+    const urgencyKey = String(urgency || '').trim();
+    const urgencyLabel = URGENCY_LABELS[urgencyKey] || urgencyKey || 'Not specified';
+    const isUrgent = urgencyKey === 'asap';
+
+    const details = payload.addressDetails || null;
+    const addressText = String(address).trim();
+    const ghlAddress = details
+      ? {
+          address1: details.addressLine1 || addressText,
+          city: details.suburb || '',
+          state: details.state || '',
+          postal_code: details.postcode || '',
+          country: details.countryCode || 'AU',
+          postalCode: details.postcode || '',
+          full_address: details.formatted || addressText,
+          latitude: details.lat ?? '',
+          longitude: details.lng ?? '',
+          addressVerified: true,
+          googlePlaceId: details.placeId || '',
+        }
+      : {
+          address1: addressText,
+          full_address: addressText,
+          country: 'AU',
+          addressVerified: false,
+        };
+
     // Forward to GoHighLevel Inbound Webhook if configured
     if (webhookUrl && !shouldSkipForward) {
       const forward = await fetch(webhookUrl, {
@@ -71,7 +114,12 @@ export default async function handler(req: any, res: any) {
         },
         body: JSON.stringify({
           ...payload,
+          ...ghlAddress,
+          address: addressText,
           phone: normalizedPhone,
+          urgency: urgencyKey,
+          urgencyLabel,
+          isUrgent,
           source: payload.source || 'website',
           submittedAt: new Date().toISOString(),
         }),
@@ -114,7 +162,9 @@ export default async function handler(req: any, res: any) {
           }
           params.append(
             'Body',
-            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nMessage: ${payload.message || ''}`
+            `${isUrgent ? '** ASAP JOB **\n' : ''}New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nWhen: ${urgencyLabel}\nAddress: ${ghlAddress.full_address}${
+              details ? '' : ' (unverified)'
+            }\nMessage: ${payload.message || ''}`
           );
 
           const twilioResp = await fetch(

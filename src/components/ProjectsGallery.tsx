@@ -1,131 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import ResidentialCarousel from './ResidentialCarousel';
-import DuctedCarousel from './DuctedCarousel';
-import CommercialCarousel from './CommercialCarousel';
-import MultiHeadCarousel from './MultiHeadCarousel';
-import JEDActionCarousel from './JEDActionCarousel';
-import ApartmentCarousel from './ApartmentCarousel';
-import { useEffect, useRef, useState } from 'react';
-
-// Resolve local project photos (filenames contain spaces/parentheses)
-const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
-const modernImages = [
-  'Residential 1.jpeg',
-  'Residential 2.jpeg',
-  'Residential 3.jpeg',
-  'Residential 4.jpeg',
-  'Residential 5.jpeg',
-  'Residential 6.jpeg',
-].map(resolveAsset);
-
-const isUnsplashImage = (url: string) => url.startsWith('https://images.unsplash.com/');
-const buildUnsplashSrcSet = (url: string) => {
-  try {
-    const widths = [400, 800, 1200];
-    return widths
-      .map((width) => {
-        const u = new URL(url);
-        u.searchParams.set('w', String(width));
-        u.searchParams.set('auto', 'format');
-        u.searchParams.set('fit', 'crop');
-        return `${u.toString()} ${width}w`;
-      })
-      .join(', ');
-  } catch {
-    return undefined;
-  }
-};
-const unsplashSizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
-
-function HoverCycle({ images, alt }: { images: string[]; alt: string }) {
-  const [idx, setIdx] = useState(0);
-  const timer = useRef<number | null>(null);
-
-  const next = () => setIdx((i) => (i + 1) % images.length);
-  const start = () => {
-    if (timer.current) return;
-    // Increase cycle speed further: set to 75% of previous interval
-    timer.current = window.setInterval(next, 1440);
-  };
-  const stop = () => {
-    if (timer.current) {
-      window.clearInterval(timer.current);
-      timer.current = null;
-    }
-  };
-
-  useEffect(() => () => stop(), []);
-
-  return (
-    <div
-      onMouseEnter={start}
-      onMouseLeave={stop}
-      className="relative w-full aspect-[4/3] overflow-hidden"
-    >
-      <AnimatePresence initial={false} mode="wait">
-        <motion.img
-          key={idx}
-          src={images[idx]}
-          alt={alt}
-          className="absolute inset-0 w-full h-full object-cover object-[50%_100%]"
-          loading="lazy"
-          decoding="async"
-          initial={{ x: 40, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -40, opacity: 0 }}
-          transition={{ duration: 0.4, ease: 'easeInOut' }}
-        />
-      </AnimatePresence>
-    </div>
-  );
-}
-
-// Placeholder project images - these would be replaced with actual project photos
-const projects = [
-  {
-    id: 1,
-    title: 'Modern Home Split System',
-    location: 'Parramatta',
-    type: 'Residential',
-    images: modernImages,
-    image: modernImages[0],
-  },
-  {
-    id: 2,
-    title: 'Commercial Fitout',
-    location: 'North Sydney',
-    type: 'Commercial',
-    images: [],
-  },
-  {
-    id: 3,
-    title: 'Ducted System Installation',
-    location: 'Castle Hill',
-    type: 'Residential',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop',
-  },
-  {
-    id: 4,
-    title: 'Apartment HVAC Fitout – Daikin VRV / VRF System (R410A)',
-    location: 'Chatswood',
-    type: 'Commercial',
-    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
-  },
-  {
-    id: 5,
-    title: 'Multi-Head Split System',
-    location: 'Bondi',
-    type: 'Residential',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop',
-  },
-  {
-    id: 6,
-    title: 'JED in Action',
-    location: 'Western Sydney',
-    type: 'Commercial',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop',
-  },
-];
+import { motion } from 'framer-motion';
+import WorkMarquee from './WorkMarquee';
 
 export function ProjectsGallery() {
   return (
@@ -145,63 +19,18 @@ export function ProjectsGallery() {
             Quality installations across Sydney homes and businesses
           </p>
         </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group relative overflow-hidden rounded-2xl"
-            >
-              {index === 0 ? (
-                <ResidentialCarousel />
-              ) : project.title === 'Ducted System Installation' ? (
-                <DuctedCarousel />
-              ) : project.title === 'Commercial Fitout' ? (
-                <CommercialCarousel />
-              ) : project.title === 'Multi-Head Split System' ? (
-                <MultiHeadCarousel />
-              ) : project.title === 'JED in Action' ? (
-                <JEDActionCarousel />
-              ) : project.title === 'Apartment HVAC Fitout – Daikin VRV / VRF System (R410A)' ? (
-                <ApartmentCarousel />
-              ) : Array.isArray((project as any).images) && (project as any).images.length ? (
-                <HoverCycle images={(project as any).images} alt={project.title} />
-              ) : (
-                (() => {
-                  const isUnsplash = typeof project.image === 'string' && isUnsplashImage(project.image);
-                  const srcSet = isUnsplash ? buildUnsplashSrcSet(project.image) : undefined;
-                  return (
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full aspect-[4/3] object-cover object-[50%_100%]"
-                      loading="lazy"
-                      decoding="async"
-                      fetchPriority="low"
-                      srcSet={srcSet}
-                      sizes={srcSet ? unsplashSizes : undefined}
-                      width="400"
-                      height="300"
-                    />
-                  );
-                })()
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <span className="inline-block px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full mb-2">
-                  {project.type}
-                </span>
-                <h3 className="text-lg font-semibold">{project.title}</h3>
-                <p className="text-muted-foreground text-sm">{project.location}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
+
+      {/* Full-bleed: the rows should run past the container edges, so the
+          marquee sits outside the padded container above. */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        <WorkMarquee />
+      </motion.div>
     </section>
   );
 }
