@@ -133,13 +133,17 @@ export default async function handler(req: any, res: any) {
 
     // Forward to GoHighLevel Inbound Webhook if configured
     if (webhookUrl && !shouldSkipForward) {
+      // Drop the honeypot before forwarding. It is always empty on a real lead,
+      // and sending it only puts a junk key in GHL's field-mapping screen.
+      const { website: _honeypot, ...forwardable } = payload;
+
       const forward = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...payload,
+          ...forwardable,
           ...ghlAddress,
           address: addressText,
           phone: normalizedPhone,
