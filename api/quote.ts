@@ -29,7 +29,7 @@ export default async function handler(req: any, res: any) {
     const payload = req.body || {};
 
     // Basic validation
-    const { name, phone, email, serviceType, address } = payload;
+    const { name, phone, email, serviceType, address, urgency } = payload;
     if (!name || !phone || !email || !serviceType) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
@@ -72,6 +72,16 @@ export default async function handler(req: any, res: any) {
      * native contact record rather than in a free-text custom field.
      * See hooks-api/api/quote.ts — keep the two in sync.
      */
+    /** Urgency from step 2 of the quote wizard. Not required — see hooks-api copy. */
+    const URGENCY_LABELS: Record<string, string> = {
+      asap: 'ASAP / Today if possible',
+      'few-days': 'Within the next few days',
+      flexible: 'Planning ahead / Flexible',
+    };
+    const urgencyKey = String(urgency || '').trim();
+    const urgencyLabel = URGENCY_LABELS[urgencyKey] || urgencyKey || 'Not specified';
+    const isUrgent = urgencyKey === 'asap';
+
     const details = payload.addressDetails || null;
     const addressText = String(address).trim();
     const ghlAddress = details
@@ -107,6 +117,9 @@ export default async function handler(req: any, res: any) {
           ...ghlAddress,
           address: addressText,
           phone: normalizedPhone,
+          urgency: urgencyKey,
+          urgencyLabel,
+          isUrgent,
           source: payload.source || 'website',
           submittedAt: new Date().toISOString(),
         }),
@@ -149,7 +162,7 @@ export default async function handler(req: any, res: any) {
           }
           params.append(
             'Body',
-            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nAddress: ${ghlAddress.full_address}${
+            `${isUrgent ? '** ASAP JOB **\n' : ''}New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nWhen: ${urgencyLabel}\nAddress: ${ghlAddress.full_address}${
               details ? '' : ' (unverified)'
             }\nMessage: ${payload.message || ''}`
           );

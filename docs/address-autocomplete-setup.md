@@ -105,9 +105,17 @@ merge fields.
 | `addressVerified` | *custom field* | `true` if picked from Google, `false` if typed |
 | `googlePlaceId` | *custom field* | `ChIJ…` |
 | `latitude` / `longitude` | *custom field* | `-33.9`, `151.2` |
+| `urgency` | *custom field* | `asap` / `few-days` / `flexible` |
+| `urgencyLabel` | *custom field* | `ASAP / Today if possible` |
+| `isUrgent` | *custom field* | `true` only when `urgency` is `asap` |
 
 Unit numbers are reassembled into `address1` as `2/42 Wentworth Ave` — Google returns
 the unit separately as `subpremise` and never as part of the street line.
+
+`urgency` comes from step 2 of the quote wizard. It is **not** required server-side:
+a stale cached browser that predates the wizard still submits a valid lead, and losing
+a lead over a missing value would be far worse than losing the priority flag. When it
+is absent, `urgencyLabel` reads `Not specified`.
 
 ### GHL side — what you must configure
 
@@ -119,6 +127,15 @@ the unit separately as `subpremise` and never as part of the street line.
 3. `addressVerified: false` is worth a workflow condition. It means the customer typed
    an address rather than selecting a real one, so it should be confirmed before a
    truck is dispatched.
+4. `isUrgent: true` is the other condition worth wiring up — route those to an
+   immediate-callback workflow rather than the standard 24-hour nurture. The owner SMS
+   already leads with `** ASAP JOB **` for these.
+
+### GA4 funnel
+
+The wizard emits `quote_step_complete` with `step` (1 or 2) and `choice`, then
+`quote_submit` on success. That makes step-level drop-off visible — e.g. how many
+people pick a service but never finish — which the old single-page form could not show.
 
 ---
 

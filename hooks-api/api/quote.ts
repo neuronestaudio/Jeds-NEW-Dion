@@ -43,7 +43,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // Basic validation
-    const { name, phone, email, serviceType, address } = payload;
+    const { name, phone, email, serviceType, address, urgency } = payload;
     if (!name || !phone || !email || !serviceType) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
@@ -91,6 +91,21 @@ export default async function handler(req: any, res: any) {
      * `addressVerified` records whether the lead actually picked a Google
      * suggestion or typed it themselves — worth knowing before a truck is sent.
      */
+    /**
+     * Urgency comes from step 2 of the quote wizard. Deliberately NOT required:
+     * a stale cached client that predates the wizard still submits a valid lead,
+     * and losing a lead over a missing dropdown value would be far worse than
+     * losing the priority flag.
+     */
+    const URGENCY_LABELS: Record<string, string> = {
+      asap: 'ASAP / Today if possible',
+      'few-days': 'Within the next few days',
+      flexible: 'Planning ahead / Flexible',
+    };
+    const urgencyKey = String(urgency || '').trim();
+    const urgencyLabel = URGENCY_LABELS[urgencyKey] || urgencyKey || 'Not specified';
+    const isUrgent = urgencyKey === 'asap';
+
     const details = payload.addressDetails || null;
     const addressText = String(address).trim();
     const ghlAddress = details
@@ -128,6 +143,9 @@ export default async function handler(req: any, res: any) {
           ...ghlAddress,
           address: addressText,
           phone: normalizedPhone,
+          urgency: urgencyKey,
+          urgencyLabel,
+          isUrgent,
           source: payload.source || 'website',
           submittedAt: new Date().toISOString(),
         }),
@@ -173,9 +191,11 @@ export default async function handler(req: any, res: any) {
           if (statusCallbackUrl) {
             params.append('StatusCallback', statusCallbackUrl);
           }
+          // Urgency leads the message: the owner reads this on a phone, often
+          // on a roof, and needs to know in the first line whether to stop.
           params.append(
             'Body',
-            `New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nAddress: ${ghlAddress.full_address}${
+            `${isUrgent ? '** ASAP JOB **\n' : ''}New Quote\nName: ${name}\nEmail: ${email}\nPhone: ${normalizedPhone}\nService: ${serviceType}\nWhen: ${urgencyLabel}\nAddress: ${ghlAddress.full_address}${
               details ? '' : ' (unverified)'
             }\nMessage: ${payload.message || ''}`
           );

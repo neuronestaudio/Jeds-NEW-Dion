@@ -25,10 +25,12 @@ async function run() {
   const args = parseArgs();
   const phoneArg = process.env.TEST_CUSTOMER_PHONE || args.phone || '+61420806960';
   const emailArg = args.email || 'copilot-ui-test@example.com';
-  const serviceArg = args.service || 'repair';
   const nameArg = args.name || `UI Form Test ${ts}`;
   const messageArg = args.message || `Automated UI submission at ${ts}`;
   const addressArg = args.address || '1 Martin Place, Sydney NSW 2000';
+  // Wizard steps 1 and 2 are chosen by their visible label, not a select value.
+  const serviceLabelArg = args.service || 'Repair / Breakdown';
+  const urgencyLabelArg = args.urgency || 'Within the next few days';
 
   try {
     console.log('Navigating to site...');
@@ -40,29 +42,46 @@ async function run() {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
-    // Wait for form fields
-    await page.waitForSelector('#name', { visible: true });
-    await page.waitForSelector('#phone', { visible: true });
-    await page.waitForSelector('#email', { visible: true });
-    await page.waitForSelector('#address', { visible: true });
-    await page.waitForSelector('#serviceType', { visible: true });
-    await page.waitForSelector('#message', { visible: true });
+    // The form is a 3-step wizard: service -> urgency -> contact details.
+    // Steps 1 and 2 are tap targets, so drive them by their visible label.
+    const clickByText = async (label) => {
+      const clicked = await page.evaluate((text) => {
+        const btn = Array.from(document.querySelectorAll('form button[type="button"]')).find(
+          (el) => (el.textContent || '').includes(text)
+        );
+        if (!btn) return false;
+        btn.click();
+        return true;
+      }, label);
+      if (!clicked) throw new Error(`Could not find wizard option: ${label}`);
+    };
 
-    console.log('Filling form fields...');
-    await page.type('#name', nameArg);
-    await page.type('#phone', phoneArg);
-    await page.type('#email', emailArg);
+    console.log(`Step 1 - service: ${serviceLabelArg}`);
+    await page.waitForSelector('form button[type="button"]', { visible: true });
+    await clickByText(serviceLabelArg);
+
+    console.log(`Step 2 - urgency: ${urgencyLabelArg}`);
+    await page.waitForFunction(
+      () => !!Array.from(document.querySelectorAll('form *')).find((el) =>
+        /How soon do you need it/i.test(el.textContent || '')
+      ),
+      { timeout: 10000 }
+    );
+    await clickByText(urgencyLabelArg);
+
+    console.log('Step 3 - contact details...');
+    await page.waitForSelector('#bottom-quote-name', { visible: true, timeout: 10000 });
+    await page.type('#bottom-quote-name', nameArg);
+    await page.type('#bottom-quote-phone', phoneArg);
+    await page.type('#bottom-quote-email', emailArg);
 
     // Type the address, then dismiss the Places suggestion list so it cannot
     // sit over the submit button. Submitting typed-but-unselected text is a
     // valid path — it arrives in GHL flagged addressVerified: false.
-    await page.type('#address', addressArg);
+    await page.type('#bottom-quote-address', addressArg);
     await page.keyboard.press('Escape');
 
-    // Select service type (repair)
-    await page.select('#serviceType', serviceArg);
-
-    await page.type('#message', messageArg);
+    await page.type('#bottom-quote-message', messageArg);
 
     console.log('Submitting form...');
     await page.click('form button[type="submit"]');
