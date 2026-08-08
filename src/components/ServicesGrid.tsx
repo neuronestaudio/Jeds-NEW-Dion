@@ -73,7 +73,7 @@ export function ServicesGrid() {
               {/* Slower than the three pathway cards above: six beams in one
                   viewport need to be calmer than three, or the grid shimmers.
                   Laps are offset so no two are ever at the same corner. */}
-              <BorderBeam className="h-full" duration={44} delay={index * -7.3}>
+              <BorderBeam className="h-full" duration={22} delay={index * -3.6}>
                 {/* The surface must be fully opaque. A translucent card lets the
                     rotating gradient behind it show through as light wedges
                     across the copy, instead of only at the rim. */}
