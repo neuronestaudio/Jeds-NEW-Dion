@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
-import { 
-  Thermometer, 
-  Wind, 
-  Wrench, 
-  Settings, 
-  Zap, 
-  Building 
+import {
+  Thermometer,
+  Wind,
+  Wrench,
+  Settings,
+  Zap,
+  Building
 } from 'lucide-react';
+import BorderBeam from './BorderBeam';
 
 const services = [
   {
@@ -68,17 +69,24 @@ export function ServicesGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group p-5 sm:p-6 bg-card/50 border border-border/30 rounded-2xl hover:border-primary/30 hover:bg-card/80 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                <service.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-base sm:text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
-                {service.title}
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                {service.description}
-              </p>
+              {/* Slower than the three pathway cards above: six beams in one
+                  viewport need to be calmer than three, or the grid shimmers.
+                  Laps are offset so no two are ever at the same corner. */}
+              <BorderBeam className="h-full" duration={28} delay={index * -4.6}>
+                {/* The surface must be fully opaque. A translucent card lets the
+                    rotating gradient behind it show through as light wedges
+                    across the copy, instead of only at the rim. */}
+                <div className="group h-full rounded-[calc(1rem-1.5px)] bg-card p-5 transition-colors duration-300 hover:bg-charcoal sm:p-6">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                    <service.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="mb-2 text-base font-semibold transition-colors group-hover:text-primary sm:text-lg">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{service.description}</p>
+                </div>
+              </BorderBeam>
             </motion.div>
           ))}
         </div>

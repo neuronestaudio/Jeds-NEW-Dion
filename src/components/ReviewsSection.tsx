@@ -1,5 +1,7 @@
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, MapPin } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { Star, MapPin, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 const reviews = [
   {
@@ -40,7 +42,36 @@ const reviews = [
   },
 ];
 
+const AUTOPLAY_MS = 5000;
+
 export function ReviewsSection() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
+  const [selected, setSelected] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi]);
+
+  // Advance on a timer, but hold while the visitor is hovering or has focus
+  // inside the strip — otherwise it slides away mid-read.
+  useEffect(() => {
+    if (!emblaApi || paused) return;
+    const id = setInterval(() => emblaApi.scrollNext(), AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [emblaApi, paused]);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
   return (
     <section id="reviews" className="py-12 sm:py-16 md:py-24 section-glow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
@@ -67,40 +98,90 @@ export function ReviewsSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {reviews.map((review, index) => (
-            <motion.div
-              key={review.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`p-4 sm:p-6 bg-card/50 border border-border/30 rounded-2xl ${index >= 4 ? 'hidden md:block' : ''}`}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocusCapture={() => setPaused(true)}
+          onBlurCapture={() => setPaused(false)}
+        >
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex touch-pan-y">
+              {reviews.map((review) => (
+                <div
+                  key={review.name}
+                  className="min-w-0 shrink-0 grow-0 basis-full px-2.5 sm:basis-1/2 sm:px-3 lg:basis-1/3"
+                >
+                  <figure className="relative flex h-full flex-col rounded-2xl border border-border/30 bg-card/50 p-5 transition-colors duration-300 hover:border-primary/30 hover:bg-card/80 sm:p-6">
+                    <Quote className="absolute right-5 top-5 h-7 w-7 text-primary/15" />
+
+                    <div className="mb-4 flex items-center gap-1">
+                      {[...Array(review.rating)].map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+
+                    <blockquote className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                      &ldquo;{review.text}&rdquo;
+                    </blockquote>
+
+                    <figcaption className="flex items-center justify-between border-t border-border/30 pt-4">
+                      <span className="text-sm font-semibold">{review.name}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <MapPin className="h-3 w-3" />
+                        {review.location}
+                      </span>
+                    </figcaption>
+                  </figure>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 flex items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={scrollPrev}
+              aria-label="Previous review"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-card/50 transition-all hover:border-primary/50 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <div className="flex items-center gap-1 mb-4">
-                {[...Array(review.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                ))}
-              </div>
-              <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                "{review.text}"
-              </p>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm">{review.name}</span>
-                <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <MapPin className="w-3 h-3" />
-                  {review.location}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-center gap-1.5">
+              {reviews.map((review, i) => (
+                <button
+                  key={review.name}
+                  type="button"
+                  onClick={() => emblaApi?.scrollTo(i)}
+                  aria-label={`Go to review ${i + 1}`}
+                  aria-current={i === selected}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === selected ? 'w-6 bg-primary' : 'w-1.5 bg-border hover:bg-primary/50'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={scrollNext}
+              aria-label="Next review"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-card/50 transition-all hover:border-primary/50 hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
           className="text-center mt-8"
         >
           <a

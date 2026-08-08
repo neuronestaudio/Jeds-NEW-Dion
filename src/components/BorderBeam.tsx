@@ -31,13 +31,17 @@ const BEAM_GRADIENT =
 type Props = {
   children: ReactNode;
   className?: string;
-  /** Seconds for one full lap. Stagger across siblings so they don't pulse in unison. */
+  /**
+   * Seconds for one full lap. Keep this slow — the beam is ambience, not a
+   * loading indicator. Anything under ~15s reads as frantic and pulls the eye
+   * away from the copy it is supposed to be framing.
+   */
   duration?: number;
   /** Negative values start the lap already in progress. */
   delay?: number;
 };
 
-export function BorderBeam({ children, className = '', duration = 6, delay = 0 }: Props) {
+export function BorderBeam({ children, className = '', duration = 20, delay = 0 }: Props) {
   const spin: CSSProperties = {
     animationDelay: `${delay}s`,
     background: BEAM_GRADIENT,

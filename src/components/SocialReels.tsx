@@ -154,7 +154,7 @@ export function SocialReels() {
           </a>
 
           <h2 className="mb-4 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl">
-            Straight From the Van
+            No Shortcuts, From Start to Finish
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base md:text-lg">
             Real jobs, real installs, filmed on site across Sydney
