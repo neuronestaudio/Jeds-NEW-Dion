@@ -110,7 +110,7 @@ describe('QuoteWizard', () => {
     expect(payload.source).toBe('hero-inline');
   });
 
-  it('returns to step one after a successful submission', async () => {
+  it('shows a thank-you confirmation and temporary lock after successful submission', async () => {
     const user = userEvent.setup();
     render(<QuoteWizard source="test" />);
 
@@ -122,7 +122,10 @@ describe('QuoteWizard', () => {
     await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
     await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
 
-    expect(await screen.findByText('What do you need done?')).toBeInTheDocument();
+    expect(await screen.findByText('THANK YOU')).toBeInTheDocument();
+    expect(screen.getByText(/We'll respond to the enquiry ASAP./i)).toBeInTheDocument();
+    expect(screen.getByText(/You can submit another enquiry in/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Get My Free Quote/i })).toBeNull();
   });
 
   it('stays put and reports an error when the API rejects the lead', async () => {

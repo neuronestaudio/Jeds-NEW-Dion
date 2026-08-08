@@ -106,6 +106,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   /** +1 forward, -1 back — drives which way the panels slide. */
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lockSecondsRemaining, setLockSecondsRemaining] = useState(0);
   const [addressDetails, setAddressDetails] = useState<StructuredAddress | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -121,10 +122,16 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const unlockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lockTicker = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const inSuccessLock = lockSecondsRemaining > 0;
 
   useEffect(
     () => () => {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
+      if (unlockTimer.current) clearTimeout(unlockTimer.current);
+      if (lockTicker.current) clearInterval(lockTicker.current);
     },
     []
   );
@@ -157,6 +164,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step !== TOTAL_STEPS) return;
+    if (inSuccessLock) return;
     if (formData.website) return; // honeypot tripped
 
     setIsSubmitting(true);
@@ -210,9 +218,29 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
       setAddressDetails(null);
       setDirection(-1);
       setStep(1);
-      if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
-        window.location.assign(thankYouUrl);
-      }
+
+      // Keep the confirmation visible for 10 seconds so users can see submit success.
+      setLockSecondsRemaining(10);
+      if (lockTicker.current) clearInterval(lockTicker.current);
+      lockTicker.current = setInterval(() => {
+        setLockSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            if (lockTicker.current) {
+              clearInterval(lockTicker.current);
+              lockTicker.current = null;
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      if (unlockTimer.current) clearTimeout(unlockTimer.current);
+      unlockTimer.current = setTimeout(() => {
+        if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
+          window.location.assign(thankYouUrl);
+        }
+      }, 10000);
     } catch (err: unknown) {
       toast({
         title: 'Submission Error',
@@ -316,6 +344,15 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         </div>
       </div>
 
+      {inSuccessLock ? (
+        <div className="rounded-2xl border border-primary/25 bg-primary/10 p-5 text-center sm:p-6" role="status" aria-live="polite">
+          <p className="text-xl font-semibold text-primary">THANK YOU</p>
+          <p className="mt-2 text-sm text-foreground/90 sm:text-base">We&apos;ll respond to the enquiry ASAP.</p>
+          <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
+            You can submit another enquiry in {lockSecondsRemaining}s.
+          </p>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit}>
         {/* Honeypot - hidden from users */}
         <input
@@ -571,6 +608,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
           </AnimatePresence>
         </div>
       </form>
+      )}
     </div>
   );
 }
