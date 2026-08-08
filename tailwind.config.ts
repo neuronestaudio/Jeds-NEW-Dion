@@ -123,6 +123,21 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        /* Marquee tracks hold two identical copies of the tiles, so shifting by
+           exactly -50% lands copy 2 where copy 1 began — a seamless loop. */
+        "marquee-left": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "marquee-right": {
+          from: { transform: "translateX(-50%)" },
+          to: { transform: "translateX(0)" },
+        },
+        /* Drives the conic gradient that reads as a beam travelling the border. */
+        "border-beam": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -134,6 +149,9 @@ export default {
         "float": "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "spin-slow": "spin-slow 20s linear infinite",
+        "marquee-left": "marquee-left var(--marquee-duration, 60s) linear infinite",
+        "marquee-right": "marquee-right var(--marquee-duration, 60s) linear infinite",
+        "border-beam": "border-beam var(--beam-duration, 6s) linear infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

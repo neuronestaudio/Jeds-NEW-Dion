@@ -200,13 +200,58 @@
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
+  /* Fades the marquee tiles out at both ends instead of hard-cropping them */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+  }
+
+  /* Hovering anywhere in the strip holds both rows so a tile can be clicked */
+  .marquee-strip:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
     * {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+    }
+
+    /* The blanket rule above would snap a marquee to its end frame and a beam
+       to a random angle. Both need to stop cleanly instead: the rows become
+       ordinary horizontally-scrollable strips, and the beam simply hides,
+       leaving the static rim. */
+    .marquee-track {
+      animation: none !important;
+      transform: none !important;
+    }
+
+    .marquee-strip {
+      overflow-x: auto;
+    }
+
+    .marquee-track > :nth-child(2) {
+      display: none;
+    }
+
+    .beam-spin {
+      animation: none !important;
+      opacity: 0 !important;
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Home, Building2, Wrench, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Button } from './ui/button';
+import BorderBeam from './BorderBeam';
 
 const pathways = [
   {
@@ -53,45 +53,55 @@ export function ServicePathways() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {pathways.map((pathway, index) => (
-            <motion.a
+            <motion.div
               key={pathway.id}
-              href={pathway.href}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.15, duration: 0.6 }}
-              className="service-card group cursor-pointer"
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${pathway.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />
-              
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                  <pathway.icon className="w-7 h-7 text-primary" />
-                </div>
+              {/* Laps are staggered so the three beams never travel in unison,
+                  which reads as decoration rather than three synced widgets. */}
+              <BorderBeam className="h-full" duration={7} delay={index * -2.3}>
+                <a
+                  href={pathway.href}
+                  className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[calc(1rem-1.5px)] bg-gradient-to-b from-card to-background p-6 transition-shadow duration-500 hover:shadow-glow"
+                >
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${pathway.color} rounded-[calc(1rem-1.5px)] opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
+                  />
 
-                <h3 className="text-xl md:text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
-                  {pathway.title}
-                </h3>
+                  <div className="relative z-10">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
+                      <pathway.icon className="h-7 w-7 text-primary" />
+                    </div>
 
-                <p className="text-muted-foreground mb-6">
-                  {pathway.description}
-                </p>
+                    <h3 className="mb-3 text-xl font-bold transition-colors group-hover:text-primary md:text-2xl">
+                      {pathway.title}
+                    </h3>
 
-                <ul className="space-y-2 mb-6">
-                  {pathway.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                    <p className="mb-6 text-muted-foreground">{pathway.description}</p>
 
-                <div className="flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                  Learn More
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </motion.a>
+                    <ul className="mb-6 space-y-2">
+                      {pathway.features.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-center gap-2 text-sm text-muted-foreground"
+                        >
+                          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="flex items-center gap-2 font-semibold text-primary transition-all group-hover:gap-3">
+                      Learn More
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </div>
+                </a>
+              </BorderBeam>
+            </motion.div>
           ))}
         </div>
       </div>
