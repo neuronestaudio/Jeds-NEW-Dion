@@ -43,12 +43,31 @@ export function Header() {
       </a>
       <header className="sticky-header">
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-          <div className="flex items-center justify-between h-16 sm:h-18 md:h-20 lg:h-24">
+          {/*
+            Below lg this is a three-column grid so the logo is optically
+            centred no matter how wide the side controls are. It used to be
+            `justify-between` with only two children, which flung the logo and
+            the menu button to opposite edges and left dead space between them.
+            The left slot is a call button — it balances the row and puts the
+            highest-intent action inside thumb reach instead of leaving a gap.
+            From lg up it reverts to the usual flex row.
+          */}
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 sm:h-18 md:h-20 lg:h-24 lg:flex lg:justify-between">
+            {/* Mobile: quick-call, left slot */}
+            <a
+              href="tel:0434308070"
+              aria-label="Call JED Air Conditioning on 0434 308 070"
+              onClick={() => trackEvent('cta_click', { location: 'header-mobile', type: 'call' })}
+              className="lg:hidden justify-self-start inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary transition-colors active:bg-primary/20"
+            >
+              <Phone className="w-[18px] h-[18px]" />
+            </a>
+
             {/* Logo */}
-            <a href="/" className="flex items-center gap-3">
-              <img 
-                src={jedLogo} 
-                alt="JED Air Conditioning" 
+            <a href="/" className="flex items-center gap-3 justify-self-center lg:justify-self-start">
+              <img
+                src={jedLogo}
+                alt="JED Air Conditioning"
                 className="h-10 sm:h-12 md:h-14 lg:h-18 w-auto mix-blend-lighten opacity-95"
               />
             </a>
@@ -105,8 +124,9 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Desktop CTAs */}
-            <div className="hidden md:flex items-center gap-3">
+            {/* Desktop CTAs. lg, not md — at md the header is still the
+                three-column mobile grid, and a fourth child would break it. */}
+            <div className="hidden lg:flex items-center gap-3">
               <Button variant="call" size="sm" asChild>
                 <a
                   href="tel:0434308070"
@@ -124,13 +144,16 @@ export function Header() {
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button — same 40px footprint as the call button so
+                the two sides of the grid balance and both clear the 44px
+                touch-target guidance once padding is counted. */}
             <button
-              className="lg:hidden p-2 text-foreground"
+              className="lg:hidden justify-self-end inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors active:bg-foreground/10"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
+              aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>

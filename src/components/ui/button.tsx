@@ -59,10 +59,14 @@ const buttonVariants = cva(
           "hover:shadow-[0_12px_32px_hsl(var(--primary)/0.45)]",
         ctaSecondary:
           "bg-card border border-primary/50 text-primary font-semibold hover:bg-primary/10 hover:border-primary hover:-translate-y-0.5 active:translate-y-0 motion-reduce:hover:translate-y-0",
+        // Deep steel rather than the old green: on-palette with the arctic
+        // theme, while sitting a clear step below the brighter primary
+        // gradient so Call and Get Quote stay visually ranked side by side.
         call:
           `${FLOW} text-white font-bold shadow-lg ` +
-          "bg-[linear-gradient(110deg,#15803d,#22c55e_50%,#15803d)] " +
-          "hover:shadow-[0_12px_32px_rgba(34,197,94,0.45)]",
+          "bg-[linear-gradient(110deg,hsl(200_45%_22%),hsl(var(--secondary))_50%,hsl(200_45%_22%))] " +
+          "ring-1 ring-inset ring-primary/25 " +
+          "hover:shadow-[0_12px_32px_hsl(var(--secondary)/0.5)]",
       },
       size: {
         default: "h-11 px-5 py-2",

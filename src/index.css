@@ -188,10 +188,14 @@
            border-b border-border/30;
   }
   
-  /* Mobile Bottom Bar */
+  /* Mobile Bottom Bar
+     lg:hidden, not md:hidden — the header CTAs only appear from lg, so hiding
+     this at md would leave tablets with no call-to-action at all.
+     The safe-area inset keeps the buttons clear of the iPhone home indicator. */
   .mobile-cta-bar {
-    @apply fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl 
-           border-t border-border/30 p-4 md:hidden;
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl
+           border-t border-border/30 px-4 pt-3 lg:hidden;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
 

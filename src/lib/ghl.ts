@@ -145,6 +145,21 @@ export class GhlNotConfiguredError extends Error {
 }
 
 /**
+ * Fallback destination, used only when `VITE_GHL_WEBHOOK_URL` is unset.
+ *
+ * `VITE_*` values are baked in at build time, so a deploy that runs before the
+ * env var exists would ship a form that silently captures nothing — a
+ * regression from the working server-hop version it replaces. Losing every
+ * lead until someone notices is far worse than hardcoding a URL that is
+ * already public in this bundle by design.
+ *
+ * Mirrors DEFAULT_GHL_WEBHOOK_URL in the previous api/quote.ts handler. Set the
+ * env var anyway; this is a safety net, not the configuration.
+ */
+const DEFAULT_GHL_WEBHOOK_URL =
+  'https://services.leadconnectorhq.com/hooks/9xaMmBgvB2Brx7l670cB/webhook-trigger/469c88fa-a552-41f9-be5e-398e6cb92045';
+
+/**
  * POST the lead to the GHL inbound webhook.
  *
  * GHL answers 200 with `{"status":"Success: request sent to trigger execution
@@ -152,7 +167,11 @@ export class GhlNotConfiguredError extends Error {
  * opportunity was created; those come from the workflow's own actions.
  */
 export async function submitLeadToGhl(lead: LeadInput): Promise<Record<string, unknown>> {
-  const webhookUrl = import.meta.env.VITE_GHL_WEBHOOK_URL as string | undefined;
+  const configured = import.meta.env.VITE_GHL_WEBHOOK_URL as string | undefined;
+  const webhookUrl = configured || DEFAULT_GHL_WEBHOOK_URL;
+  if (!configured) {
+    console.warn('[Quote] VITE_GHL_WEBHOOK_URL is not set — using the built-in fallback.');
+  }
   if (!webhookUrl) throw new GhlNotConfiguredError();
 
   const payload = buildGhlPayload(lead);
