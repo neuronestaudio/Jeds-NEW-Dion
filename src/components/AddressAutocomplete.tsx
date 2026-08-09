@@ -1,27 +1,72 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { MapPin, Loader2, Check } from 'lucide-react';
+import type { StructuredAddress } from '@/lib/ghl';
 
-export type StructuredAddress = {
-  placeId: string;
-  formatted: string;
-  unit: string;
-  streetNumber: string;
-  street: string;
-  addressLine1: string;
-  suburb: string;
-  state: string;
-  postcode: string;
-  country: string;
-  countryCode: string;
-  lat: number | null;
-  lng: number | null;
-};
+export type { StructuredAddress };
+
+/**
+ * Calls Google Places (New) directly from the browser. Places returns proper
+ * CORS headers, so no server hop is needed.
+ *
+ * The key ships in the bundle and is therefore public — that is expected for a
+ * browser key, and the protection is the restrictions set on the key itself,
+ * NOT secrecy. It must be locked to HTTP referrers for this domain and
+ * restricted to the Places API (New) only, or anyone can spend your quota.
+ * See docs/lead-flow-setup.md.
+ */
+
+const AUTOCOMPLETE_URL = 'https://places.googleapis.com/v1/places:autocomplete';
+const DETAILS_URL = 'https://places.googleapis.com/v1/places';
+const REGION_CODES = ['au'];
+const LANGUAGE_CODE = 'en-AU';
 
 type Suggestion = {
   placeId: string;
   primary: string;
   secondary: string;
   full: string;
+};
+
+type AddressComponent = { longText?: string; shortText?: string; types?: string[] };
+
+const pick = (components: AddressComponent[], type: string, short = false): string => {
+  const match = components.find((c) => Array.isArray(c.types) && c.types.includes(type));
+  if (!match) return '';
+  return (short ? match.shortText : match.longText) || '';
+};
+
+/**
+ * Collapse Google's component list into the shape GHL expects. AU addresses put
+ * the unit in `subpremise`, so "12/88 Wentworth Park Rd" has to be reassembled
+ * by hand — Google never returns that as one line.
+ */
+const toStructuredAddress = (place: {
+  id?: string;
+  formattedAddress?: string;
+  addressComponents?: AddressComponent[];
+  location?: { latitude?: number; longitude?: number };
+}): StructuredAddress => {
+  const components = Array.isArray(place?.addressComponents) ? place.addressComponents : [];
+  const unit = pick(components, 'subpremise');
+  const streetNumber = pick(components, 'street_number');
+  const street = pick(components, 'route');
+  const streetPart = [streetNumber, street].filter(Boolean).join(' ');
+
+  return {
+    placeId: place?.id || '',
+    formatted: place?.formattedAddress || '',
+    unit,
+    streetNumber,
+    street,
+    addressLine1: unit && streetPart ? `${unit}/${streetPart}` : streetPart,
+    suburb: pick(components, 'locality') || pick(components, 'sublocality') || '',
+    state: pick(components, 'administrative_area_level_1', true),
+    postcode: pick(components, 'postal_code'),
+    country: pick(components, 'country'),
+    countryCode: pick(components, 'country', true),
+    lat: place?.location?.latitude ?? null,
+    lng: place?.location?.longitude ?? null,
+  };
 };
 
 type Props = {
@@ -51,10 +96,8 @@ const newSessionToken = (): string => {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 };
 
-const placesUrl = (): string => {
-  const apiBase = import.meta.env.VITE_API_BASE || '';
-  return apiBase ? `${apiBase}/api/places` : '/api/places';
-};
+const placesKey = (): string | undefined =>
+  import.meta.env.VITE_GOOGLE_PLACES_API_KEY as string | undefined;
 
 export function AddressAutocomplete({
   id,
@@ -121,21 +164,37 @@ export function AddressAutocomplete({
       const controller = new AbortController();
       abortRef.current = controller;
 
+      const key = placesKey();
+      if (!key) {
+        // No key configured. Degrade to a plain address box rather than leaving
+        // a dead-looking field — a lead must never be blocked by this.
+        setLookupDisabled(true);
+        closeList();
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
       try {
-        const resp = await fetch(placesUrl(), {
+        const resp = await fetch(AUTOCOMPLETE_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': key },
           body: JSON.stringify({
-            action: 'autocomplete',
             input: query,
+            includedRegionCodes: REGION_CODES,
+            includedPrimaryTypes: ['address'],
+            languageCode: LANGUAGE_CODE,
+            // One session token across every keystroke plus the final details
+            // call bills the whole lookup as a single session, not per letter.
             sessionToken: sessionTokenRef.current,
           }),
           signal: controller.signal,
         });
 
-        if (resp.status === 503) {
-          // No key configured server-side. Fall back to a plain address box.
+        if (resp.status === 400 || resp.status === 403) {
+          // Invalid, unrestricted-for-this-origin, or unbilled key. Retrying
+          // every keystroke would just burn quota, so stop asking.
+          console.error('[Places] key rejected', resp.status, await resp.text());
           setLookupDisabled(true);
           closeList();
           return;
@@ -151,7 +210,21 @@ export function AddressAutocomplete({
         const data = await resp.json();
         if (seq !== requestSeqRef.current) return; // a newer keystroke already won
 
-        const next: Suggestion[] = Array.isArray(data?.suggestions) ? data.suggestions : [];
+        const next: Suggestion[] = (data?.suggestions || [])
+          .map((s: { placePrediction?: unknown }) => s?.placePrediction)
+          .filter(Boolean)
+          .map((p: {
+            placeId?: string;
+            text?: { text?: string };
+            structuredFormat?: { mainText?: { text?: string }; secondaryText?: { text?: string } };
+          }) => ({
+            placeId: p.placeId || '',
+            primary: p.structuredFormat?.mainText?.text || p.text?.text || '',
+            secondary: p.structuredFormat?.secondaryText?.text || '',
+            full: p.text?.text || '',
+          }))
+          .filter((s: Suggestion) => s.placeId && s.primary);
+
         setSuggestions(next);
         setActiveIndex(-1);
         setIsOpen(next.length > 0);
@@ -202,21 +275,25 @@ export function AddressAutocomplete({
     setIsLoading(true);
 
     try {
-      const resp = await fetch(placesUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'details',
-          placeId: suggestion.placeId,
-          sessionToken: sessionTokenRef.current,
-        }),
+      const key = placesKey();
+      if (!key) return;
+
+      const url = new URL(`${DETAILS_URL}/${encodeURIComponent(suggestion.placeId)}`);
+      url.searchParams.set('languageCode', LANGUAGE_CODE);
+      url.searchParams.set('sessionToken', sessionTokenRef.current);
+
+      const resp = await fetch(url.toString(), {
+        headers: {
+          'X-Goog-Api-Key': key,
+          // Narrow field mask keeps this on the cheapest Place Details SKU.
+          'X-Goog-FieldMask': 'id,formattedAddress,addressComponents,location',
+        },
       });
       if (resp.ok) {
-        const data = await resp.json();
-        if (data?.address) {
-          onSelect(data.address as StructuredAddress);
-          if (data.address.formatted) onChange(data.address.formatted);
-        }
+        const place = await resp.json();
+        const address = toStructuredAddress(place);
+        onSelect(address);
+        if (address.formatted) onChange(address.formatted);
       }
     } catch {
       // Details lookup failed — the typed text still submits, just unstructured.

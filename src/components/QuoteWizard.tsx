@@ -17,7 +17,14 @@ import {
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { trackEvent } from '@/lib/analytics';
-import AddressAutocomplete, { type StructuredAddress } from './AddressAutocomplete';
+import AddressAutocomplete from './AddressAutocomplete';
+import {
+  GhlNotConfiguredError,
+  MIN_HUMAN_FILL_MS,
+  normaliseAuPhone,
+  submitLeadToGhl,
+  type StructuredAddress,
+} from '@/lib/ghl';
 
 /**
  * Three-step quote wizard.
@@ -121,6 +128,8 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Used to spot bots. Nothing human taps two cards and types four fields in seconds. */
+  const mountedAt = useRef(Date.now());
 
   useEffect(
     () => () => {
@@ -159,19 +168,42 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     if (step !== TOTAL_STEPS) return;
     if (formData.website) return; // honeypot tripped
 
+    /**
+     * Second bot signal, sent as data rather than enforced here.
+     *
+     * Deliberately NOT a hard block: silently discarding a submission because
+     * someone filled the form quickly loses a real lead with no feedback to
+     * them and no record for JED, which is a worse outcome for the business
+     * than a spam lead they can filter. `likelyBot` lets a GHL workflow decide.
+     * The honeypot above stays a hard block — a real user cannot trip it.
+     */
+    const formFillMs = Date.now() - mountedAt.current;
+
+    // Validation that used to live in the serverless handler. GHL will happily
+    // accept a malformed number and create a contact nobody can call, so this
+    // has to be caught here now that nothing sits in front of the webhook.
+    if (!normaliseAuPhone(formData.phone)) {
+      toast({
+        title: 'Check your phone number',
+        description: 'Please enter a valid Australian mobile or landline.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const apiBase = import.meta.env.VITE_API_BASE || '';
-      const url = apiBase ? `${apiBase}/api/quote` : '/api/quote';
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, addressDetails, source }),
+      await submitLeadToGhl({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        serviceType: formData.serviceType,
+        urgency: formData.urgency,
+        message: formData.message,
+        addressDetails,
+        source,
+        formFillMs,
       });
-      if (!resp.ok) {
-        const details = await resp.text();
-        throw new Error(details || 'Submission failed');
-      }
 
       toast({
         title: 'Quote Request Sent!',
@@ -202,13 +234,16 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
       setDirection(-1);
       setStep(1);
     } catch (err: unknown) {
-      toast({
-        title: 'Submission Error',
-        description:
-          err instanceof Error && err.message
-            ? err.message
-            : 'Please try again or call us directly.',
-      });
+      // A missing webhook URL is a deployment fault, not the visitor's problem —
+      // never show them a config error, point them at the phone instead.
+      const description =
+        err instanceof GhlNotConfiguredError || !(err instanceof Error) || !err.message
+          ? 'Please try again, or call us on 0434 308 070.'
+          : err.message;
+      if (err instanceof GhlNotConfiguredError) {
+        console.error('[Quote] VITE_GHL_WEBHOOK_URL is not set — lead was not sent.');
+      }
+      toast({ title: 'Submission Error', description });
     } finally {
       setIsSubmitting(false);
     }
