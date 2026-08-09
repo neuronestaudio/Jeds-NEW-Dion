@@ -400,19 +400,26 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                   }`}
                 >
                   <span
-                    className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold transition-all duration-300 ${
+                    className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
                       done
                         ? 'bg-primary text-primary-foreground'
                         : active
-                          ? 'bg-primary/20 text-primary ring-2 ring-primary/40'
+                          ? 'bg-primary/20 text-primary ring-2 ring-primary/50'
                           : 'bg-card text-muted-foreground ring-1 ring-border/50'
                     }`}
                   >
-                    {done ? <Check className="h-3.5 w-3.5" /> : n}
+                    {done ? <Check className="h-4 w-4" /> : n}
                   </span>
+                  {/* This row is the form's title bar, so the labels carry
+                      heading weight: uppercase, tracked out, and stepped up
+                      from the field labels below rather than matching them. */}
                   <span
-                    className={`hidden text-xs font-medium sm:inline ${
-                      active ? 'text-foreground' : 'text-muted-foreground'
+                    className={`hidden text-sm font-bold uppercase tracking-[0.12em] transition-colors sm:inline ${
+                      active
+                        ? 'text-foreground'
+                        : done
+                          ? 'text-primary/80'
+                          : 'text-muted-foreground/70'
                     }`}
                   >
                     {label}
