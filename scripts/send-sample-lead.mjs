@@ -1,9 +1,10 @@
 /**
  * Fire a sample lead so GoHighLevel can capture it and build its field mapping.
  *
- * The payload here is byte-for-byte the shape `api/quote.ts` forwards to the GHL
- * inbound webhook, so whatever GHL learns from this sample is exactly what it
- * receives from a real submission. Keep the two in sync if either changes.
+ * The payload here is byte-for-byte what `src/lib/ghl.ts` builds and POSTs to
+ * the GHL inbound webhook, so whatever GHL learns from this sample is exactly
+ * what it receives from a real submission. `src/test/ghlPayload.test.ts` pins
+ * that shape — if it changes, update this script to match.
  *
  * Usage
  *   # 1. In GHL: Automation > Workflows > new workflow > Inbound Webhook trigger.
@@ -122,6 +123,10 @@ const ghlPayload = {
   urgencyLabel: URGENCY_LABELS[urgency],
   isUrgent: urgency === 'asap',
   source: clientPayload.source,
+  // Bot signals: advisory only, meant for a GHL workflow filter rather than
+  // blocking in the browser. A real visitor takes tens of seconds.
+  formFillMs: 28400,
+  likelyBot: false,
   submittedAt: new Date().toISOString(),
 };
 

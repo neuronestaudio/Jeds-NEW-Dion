@@ -4,8 +4,11 @@ import { ArrowRight, Phone, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import jedLogo from '@/assets/Jedlogo.jpg';
 import QuoteFormInline from '@/components/QuoteFormInline';
-import daikinLogo from '@/assets/Daikin.png';
-import haierLogo from '@/assets/Haier.png';
+// Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
+// with different built-in padding, which renders as dark boxes at mismatched
+// sizes. Regenerate with: node scripts/clean-brand-logos.mjs
+import daikinLogo from '@/assets/daikin-clean.png';
+import haierLogo from '@/assets/haier-clean.png';
 import { trackEvent } from '@/lib/analytics';
 
 
@@ -69,33 +72,32 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2.5 px-2.5 py-2 bg-background/70 border border-foreground/15 rounded-full shadow-[0_6px_24px_rgba(0,0,0,0.18)] backdrop-blur-sm mb-5 sm:mb-6"
+            className="inline-flex items-center gap-4 sm:gap-5 px-5 sm:px-6 py-2.5 bg-foreground/[0.05] border border-foreground/10 rounded-full shadow-[0_6px_24px_rgba(0,0,0,0.25)] backdrop-blur-md mb-5 sm:mb-6"
             aria-label="Daikin and Haier certified dealer"
           >
-            <span className="inline-flex items-center justify-center w-[118px] h-10 sm:w-[130px] sm:h-11 rounded-[10px] bg-white border border-slate-200/90 shadow-sm px-4">
-              <img
-                src={daikinLogo}
-                alt="Daikin logo"
-                className="h-4 sm:h-5 w-auto max-w-[90px] object-contain"
-                loading="lazy"
-                decoding="async"
-                width="90"
-                height="24"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
-              />
-            </span>
-            <span className="inline-flex items-center justify-center w-[118px] h-10 sm:w-[130px] sm:h-11 rounded-[10px] bg-white border border-slate-200/90 shadow-sm px-4">
-              <img
-                src={haierLogo}
-                alt="Haier logo"
-                className="h-4 sm:h-5 w-auto max-w-[90px] object-contain"
-                loading="lazy"
-                decoding="async"
-                width="90"
-                height="24"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}
-              />
-            </span>
+            {/* Both marks sit on one shared height. Their trimmed artwork is
+                flush to its own ink, so a single height renders them at the
+                same optical weight and the differing widths are just the
+                wordmarks' natural proportions. */}
+            <img
+              src={daikinLogo}
+              alt="Daikin"
+              className="h-[18px] sm:h-[22px] w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = DAIKIN_LOGO_FALLBACK; }}
+            />
+
+            <span aria-hidden className="h-5 sm:h-6 w-px bg-foreground/20" />
+
+            <img
+              src={haierLogo}
+              alt="Haier"
+              className="h-[18px] sm:h-[22px] w-auto object-contain"
+              loading="lazy"
+              decoding="async"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}
+            />
           </motion.div>
 
           {/* Headline */}

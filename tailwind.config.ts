@@ -138,6 +138,12 @@ export default {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        /* Slides an oversized gradient across a button so the colour drifts
+           rather than sitting flat. Paired with bg-[length:200%_100%]. */
+        "gradient-flow": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -152,6 +158,7 @@ export default {
         "marquee-left": "marquee-left var(--marquee-duration, 60s) linear infinite",
         "marquee-right": "marquee-right var(--marquee-duration, 60s) linear infinite",
         "border-beam": "border-beam var(--beam-duration, 6s) linear infinite",
+        "gradient-flow": "gradient-flow 7s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

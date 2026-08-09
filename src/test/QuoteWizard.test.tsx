@@ -17,25 +17,37 @@ const jsonResponse = (body: unknown, status = 200) =>
     text: () => Promise.resolve(JSON.stringify(body)),
   } as Response);
 
+const GHL_HOOK = 'https://services.leadconnectorhq.com/hooks/test/webhook-trigger/abc';
+
 let fetchMock: ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
-  fetchMock = vi.fn(() => jsonResponse({ ok: true }));
+  // The lead now goes straight to GHL from the browser, so the webhook URL is
+  // a build-time env var rather than an API route.
+  vi.stubEnv('VITE_GHL_WEBHOOK_URL', GHL_HOOK);
+  // Left unset so the address field degrades to a plain input; these tests are
+  // about the wizard, not Places.
+  vi.stubEnv('VITE_GOOGLE_PLACES_API_KEY', '');
+  fetchMock = vi.fn(() => jsonResponse({ status: 'Success' }));
   vi.stubGlobal('fetch', fetchMock);
   window.sessionStorage.clear();
 });
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllEnvs();
+  // The submit lock persists in sessionStorage, so it has to be cleared between
+  // tests or the first successful submit blocks every later one.
   window.sessionStorage.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
 
+/** Bodies POSTed to the GHL webhook. */
 const quotePayloads = () =>
   fetchMock.mock.calls
-    .map((c) => JSON.parse(String(c[1].body)))
-    .filter((b) => b.action === undefined); // exclude /api/places calls
+    .filter((c) => String(c[0]) === GHL_HOOK)
+    .map((c) => JSON.parse(String(c[1].body)));
 
 describe('QuoteWizard', () => {
   it('starts on the service step and does not ask for details yet', () => {
@@ -106,10 +118,29 @@ describe('QuoteWizard', () => {
 
     expect(payload.serviceType).toBe('repair');
     expect(payload.urgency).toBe('asap');
+    expect(payload.isUrgent).toBe(true);
     expect(payload.name).toBe('Dion Test');
     expect(payload.email).toBe('dion@example.com');
     expect(payload.address).toBe('1 Martin Place, Sydney');
     expect(payload.source).toBe('hero-inline');
+    // Normalised in the browser now that no server sits in front of GHL.
+    expect(payload.phone).toBe('+61434308070');
+  });
+
+  it('blocks an invalid phone number before it can reach GHL', async () => {
+    const user = userEvent.setup();
+    render(<QuoteWizard source="test" />);
+
+    await user.click(screen.getByText('Repair / Breakdown'));
+    await user.click(await screen.findByText('ASAP / Today if possible'));
+    await user.type(await screen.findByLabelText(/Your Name/), 'Dion Test');
+    await user.type(screen.getByLabelText(/Phone Number/), '12345');
+    await user.type(screen.getByLabelText(/Email Address/), 'dion@example.com');
+    await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
+    await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
+
+    // GHL would happily accept this and create a contact nobody can call.
+    expect(quotePayloads()).toHaveLength(0);
   });
 
   it('shows a thank-you confirmation and temporary lock after successful submission', async () => {
@@ -130,15 +161,15 @@ describe('QuoteWizard', () => {
     expect(screen.queryByRole('button', { name: /Get My Free Quote/i })).toBeNull();
   });
 
-  it('stays put and reports an error when the API rejects the lead', async () => {
+  it('stays put and keeps the data when GHL rejects the lead', async () => {
     const user = userEvent.setup();
-    fetchMock.mockImplementation(() => jsonResponse({ error: 'Invalid Australian phone number' }, 400));
+    fetchMock.mockImplementation(() => jsonResponse({ error: 'nope' }, 500));
 
     render(<QuoteWizard source="test" />);
     await user.click(screen.getByText('Repair / Breakdown'));
     await user.click(await screen.findByText('ASAP / Today if possible'));
     await user.type(await screen.findByLabelText(/Your Name/), 'Dion Test');
-    await user.type(screen.getByLabelText(/Phone Number/), '123');
+    await user.type(screen.getByLabelText(/Phone Number/), '0434308070');
     await user.type(screen.getByLabelText(/Email Address/), 'dion@example.com');
     await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
     await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));

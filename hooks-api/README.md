@@ -16,7 +16,7 @@ This folder is deployed as a **separate Vercel project** and mapped to `hooks.je
 - `CORS_ALLOW_ORIGIN` (recommended: `https://jedairconditioning.com.au`; comma-separated list supported)
 - `GOOGLE_PLACES_API_KEY` — required for address autocomplete. Without it `/api/places`
   returns 503 and the site falls back to a plain typed address field.
-  See [`docs/address-autocomplete-setup.md`](../docs/address-autocomplete-setup.md).
+  See [`docs/lead-flow-setup.md`](../docs/lead-flow-setup.md).
 - `PLACES_REGION_CODES` (optional, default `au`)
 - `PLACES_LANGUAGE_CODE` (optional, default `en-AU`)
 - `OWNER_SMS_TO`
@@ -30,3 +30,21 @@ This folder is deployed as a **separate Vercel project** and mapped to `hooks.je
 - `TWILIO_AUTO_REPLY_BODY` (optional)
 - `GHL_WEBHOOK_URL` (optional)
 - `SKIP_GHL_FORWARD` (optional)
+
+---
+
+## ⚠️ No longer in the lead path
+
+As of the direct-to-GHL change, the quote form POSTs straight to the GoHighLevel
+inbound webhook from the browser. **`/api/quote` and `/api/places` are no longer
+called by the site.**
+
+What this means:
+
+- The two Twilio SMS this handler sent (owner alert + customer confirmation) are now
+  **GoHighLevel workflow actions** off the same inbound webhook. See
+  `docs/lead-flow-setup.md`.
+- This project is still deployed and still serves `/api/twilio-inbound` and
+  `/api/twilio-status`, which the Twilio console points at. **Do not delete the
+  Vercel project** until those webhooks have been repointed or retired.
+- Once Twilio is dealt with, this whole folder and its Vercel project can be removed.
