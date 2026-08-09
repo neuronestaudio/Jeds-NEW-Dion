@@ -41,9 +41,9 @@ called by the site.**
 
 What this means:
 
-- The two Twilio SMS this handler sent (owner alert + customer confirmation) **no
-  longer fire**. They must be rebuilt as GoHighLevel workflow actions off the same
-  inbound webhook. See `docs/lead-flow-setup.md`.
+- The two Twilio SMS this handler sent (owner alert + customer confirmation) are now
+  **GoHighLevel workflow actions** off the same inbound webhook. See
+  `docs/lead-flow-setup.md`.
 - This project is still deployed and still serves `/api/twilio-inbound` and
   `/api/twilio-status`, which the Twilio console points at. **Do not delete the
   Vercel project** until those webhooks have been repointed or retired.

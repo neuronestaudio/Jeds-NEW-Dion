@@ -161,18 +161,34 @@ console, which logs the rejection status.
 
 ---
 
-## 6. What changed, and what broke on purpose
+## 6. What changed
 
 The form used to POST to `hooks.jedairconditioning.com.au/api/quote`, which forwarded to
 GHL **and sent two Twilio SMS** — one alerting the owner, one confirming to the customer.
 
-Going browser-direct removes that server hop, so **both SMS stop firing**. They must be
-rebuilt as GoHighLevel workflow actions off the same inbound webhook. GHL sends SMS
-natively, so this is a like-for-like replacement and arguably where the logic belonged.
+Both SMS are now **GoHighLevel workflow actions** off the same inbound webhook, which is
+where that logic belongs: the CRM owns the messaging, the site just reports the lead.
+Nothing server-side runs on submit anymore.
 
-Until those workflow actions exist, **nobody at JED gets an SMS when a lead arrives.**
+Two things to keep in mind when building those workflow actions:
 
-`hooks-api/` is still in the repo and still deployed. It is no longer in the lead path,
-but it still serves `/api/twilio-inbound` and `/api/twilio-status`, which the Twilio
-console points at. Do not delete that Vercel project until those Twilio webhooks have
-been repointed or retired.
+- **Fire the owner alert before any filter step.** If a `likelyBot` or dedupe condition
+  sits ahead of it, a real lead that trips the condition arrives with no notification.
+- **`{{contact.phone}}` is already E.164** (`+61434308070`). The browser normalises it
+  before sending, so no formatting step is needed and GHL dedupes contacts correctly.
+
+Useful merge fields for the alert: `urgencyLabel`, `serviceType`, `full_address`, and
+`addressVerified` — the last one tells whoever reads it whether the address was picked
+from Google or typed by hand.
+
+### Retiring `hooks-api`
+
+It is no longer in the lead path, but it still serves `/api/twilio-inbound` and
+`/api/twilio-status`, which the Twilio console points at. Sequence for removing it:
+
+1. Move SMS sending to GHL workflows *(done)*.
+2. Repoint or retire the Twilio inbound/status webhooks. If SMS now sends from an LC
+   Phone number, the Twilio number and account may be redundant entirely.
+3. Only then delete the `hooks-api/` folder and its Vercel project.
+
+Deleting it before step 2 breaks inbound SMS handling.
