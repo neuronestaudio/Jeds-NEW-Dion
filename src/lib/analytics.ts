@@ -32,3 +32,9 @@ export function trackEvent(action: string, params: AnalyticsParams = {}) {
   if (typeof window === 'undefined' || !window.gtag) return;
   window.gtag('event', action, params);
 }
+
+export function pushDataLayerEvent(event: string, params: AnalyticsParams = {}) {
+  if (typeof window === 'undefined') return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event, ...params });
+}

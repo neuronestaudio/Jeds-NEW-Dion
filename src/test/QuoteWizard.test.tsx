@@ -30,11 +30,15 @@ beforeEach(() => {
   vi.stubEnv('VITE_GOOGLE_PLACES_API_KEY', '');
   fetchMock = vi.fn(() => jsonResponse({ status: 'Success' }));
   vi.stubGlobal('fetch', fetchMock);
+  window.sessionStorage.clear();
 });
 
 afterEach(() => {
   cleanup();
   vi.unstubAllEnvs();
+  // The submit lock persists in sessionStorage, so it has to be cleared between
+  // tests or the first successful submit blocks every later one.
+  window.sessionStorage.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -139,7 +143,7 @@ describe('QuoteWizard', () => {
     expect(quotePayloads()).toHaveLength(0);
   });
 
-  it('returns to step one after a successful submission', async () => {
+  it('shows a thank-you confirmation and temporary lock after successful submission', async () => {
     const user = userEvent.setup();
     render(<QuoteWizard source="test" />);
 
@@ -151,7 +155,10 @@ describe('QuoteWizard', () => {
     await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
     await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
 
-    expect(await screen.findByText('What do you need done?')).toBeInTheDocument();
+    expect(await screen.findByText('THANK YOU')).toBeInTheDocument();
+    expect(screen.getByText(/We'll respond to the enquiry ASAP./i)).toBeInTheDocument();
+    expect(screen.getByText(/You can submit another enquiry in/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Get My Free Quote/i })).toBeNull();
   });
 
   it('stays put and keeps the data when GHL rejects the lead', async () => {

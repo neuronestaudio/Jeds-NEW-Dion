@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { trackEvent } from '@/lib/analytics';
+import { pushDataLayerEvent, trackEvent } from '@/lib/analytics';
 import AddressAutocomplete from './AddressAutocomplete';
 import {
   GhlNotConfiguredError,
@@ -96,6 +96,7 @@ const URGENCIES = [
 
 const STEP_LABELS = ['Service', 'Timing', 'Details'];
 const TOTAL_STEPS = 3;
+const SUBMIT_LOCK_MS = 10_000;
 
 type Props = {
   /** Distinguishes hero vs page form in GA4 and in the GHL payload. */
@@ -113,6 +114,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   /** +1 forward, -1 back — drives which way the panels slide. */
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lockSecondsRemaining, setLockSecondsRemaining] = useState(0);
   const [addressDetails, setAddressDetails] = useState<StructuredAddress | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -130,13 +132,52 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** Used to spot bots. Nothing human taps two cards and types four fields in seconds. */
   const mountedAt = useRef(Date.now());
+  const unlockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lockTicker = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lockStorageKey = `quote-submit-lock-until:${source}`;
+
+  const inSuccessLock = lockSecondsRemaining > 0;
 
   useEffect(
     () => () => {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
+      if (unlockTimer.current) clearTimeout(unlockTimer.current);
+      if (lockTicker.current) clearInterval(lockTicker.current);
     },
     []
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = window.sessionStorage.getItem(lockStorageKey);
+      const lockUntil = raw ? Number(raw) : 0;
+      if (!lockUntil || Number.isNaN(lockUntil)) return;
+
+      const remainingMs = Math.max(0, lockUntil - Date.now());
+      if (!remainingMs) {
+        window.sessionStorage.removeItem(lockStorageKey);
+        return;
+      }
+
+      setLockSecondsRemaining(Math.ceil(remainingMs / 1000));
+      if (lockTicker.current) clearInterval(lockTicker.current);
+      lockTicker.current = setInterval(() => {
+        setLockSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            if (lockTicker.current) {
+              clearInterval(lockTicker.current);
+              lockTicker.current = null;
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch {
+      // Ignore storage errors; lock still works in-memory.
+    }
+  }, [lockStorageKey]);
 
   // Pull focus into the first text field when the details step arrives, so
   // keyboard and screen-reader users are not dropped at the top of the page.
@@ -166,6 +207,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step !== TOTAL_STEPS) return;
+    if (inSuccessLock) return;
     if (formData.website) return; // honeypot tripped
 
     /**
@@ -192,7 +234,14 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
 
     setIsSubmitting(true);
     try {
-      await submitLeadToGhl({
+      const thankYouUrl = import.meta.env.VITE_THANK_YOU_URL || '/thank-you';
+
+      // `submitLeadToGhl` returns the payload it actually sent, which replaces
+      // the old `leadVerified` / `webhookForwarded` fields the serverless
+      // handler used to echo back. GHL's webhook only answers
+      // {"status":"Success…","id":"…"} — it reports nothing about the lead — so
+      // the values below come from what we sent, not from its reply.
+      const sent = await submitLeadToGhl({
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
@@ -219,6 +268,15 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         address_verified: Boolean(addressDetails),
         suburb: addressDetails?.suburb || 'unknown',
       });
+      pushDataLayerEvent('generate_lead', {
+        source,
+        service_type: formData.serviceType || 'unknown',
+        urgency: formData.urgency || 'unknown',
+        address_verified: Boolean(sent.addressVerified),
+        // Reaching this line means the POST resolved without throwing, so the
+        // webhook did accept the lead.
+        webhook_forwarded: true,
+      });
 
       setFormData({
         name: '',
@@ -233,6 +291,44 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
       setAddressDetails(null);
       setDirection(-1);
       setStep(1);
+
+      // Keep the confirmation visible for 10 seconds so users can see submit success.
+      const lockUntil = Date.now() + SUBMIT_LOCK_MS;
+      setLockSecondsRemaining(Math.ceil(SUBMIT_LOCK_MS / 1000));
+      if (typeof window !== 'undefined') {
+        try {
+          window.sessionStorage.setItem(lockStorageKey, String(lockUntil));
+        } catch {
+          // Ignore storage errors; lock still works in-memory.
+        }
+      }
+      if (lockTicker.current) clearInterval(lockTicker.current);
+      lockTicker.current = setInterval(() => {
+        setLockSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            if (lockTicker.current) {
+              clearInterval(lockTicker.current);
+              lockTicker.current = null;
+            }
+            if (typeof window !== 'undefined') {
+              try {
+                window.sessionStorage.removeItem(lockStorageKey);
+              } catch {
+                // Ignore storage errors.
+              }
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      if (unlockTimer.current) clearTimeout(unlockTimer.current);
+      unlockTimer.current = setTimeout(() => {
+        if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
+          window.location.assign(thankYouUrl);
+        }
+      }, SUBMIT_LOCK_MS);
     } catch (err: unknown) {
       // A missing webhook URL is a deployment fault, not the visitor's problem —
       // never show them a config error, point them at the phone instead.
@@ -339,6 +435,15 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         </div>
       </div>
 
+      {inSuccessLock ? (
+        <div className="rounded-2xl border border-primary/25 bg-primary/10 p-5 text-center sm:p-6" role="status" aria-live="polite">
+          <p className="text-xl font-semibold text-primary">THANK YOU</p>
+          <p className="mt-2 text-sm text-foreground/90 sm:text-base">We&apos;ll respond to the enquiry ASAP.</p>
+          <p className="mt-2 text-xs text-muted-foreground sm:text-sm">
+            You can submit another enquiry in {lockSecondsRemaining}s.
+          </p>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit}>
         {/* Honeypot - hidden from users */}
         <input
@@ -594,6 +699,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
           </AnimatePresence>
         </div>
       </form>
+      )}
     </div>
   );
 }
