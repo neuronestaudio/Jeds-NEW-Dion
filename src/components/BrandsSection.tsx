@@ -53,67 +53,58 @@ const brands = [
   { name: 'Braemar', featured: false },
 ];
 
-export function BrandsSection() {
-  return (
-    <section className="py-10 sm:py-12 md:py-16 bg-card/20 border-y border-border/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-6 sm:mb-8"
-        >
-          <h3 className="text-base sm:text-lg font-semibold text-muted-foreground mb-2">
-            Trusted Brands We Work With
-          </h3>
-        </motion.div>
+const SCROLL_DURATION_S = 34;
 
-        <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 md:gap-10">
-          {brands.map((brand, index) => (
-            <motion.div
-              key={brand.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`flex flex-col items-center ${brand.featured ? 'order-first' : ''}`}
-            >
-              <div
-                className={`px-4 sm:px-6 py-3 sm:py-4 rounded-xl border transition-colors ${
-                  brand.featured
-                    ? 'bg-primary/10 border-primary/30 text-primary'
-                    : 'bg-card/50 border-border/30 text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                }`}
-                aria-label={brand.featured ? `${brand.name} (featured)` : brand.name}
-              >
-                <div className="flex items-center justify-center min-w-[110px] sm:min-w-[140px]">
-                  {(() => {
-                    const slug = brand.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const autoLogo = brand.logo || findLogo(slug, brand.name);
-                    return autoLogo ? (
-                      <img
-                        src={autoLogo}
-                        alt={`${brand.name} logo`}
-                        className="h-6 sm:h-8 md:h-10 w-auto object-contain"
-                        loading="lazy"
-                        decoding="async"
-                        width="100"
-                        height="40"
-                      />
-                    ) : (
-                      <span className="font-medium text-xs sm:text-sm md:text-base">{brand.name}</span>
-                    );
-                  })()}
-                </div>
-                {brand.featured && (
-                  <span className="block text-xs mt-1 opacity-80">Certified Dealer & Service Agents</span>
-                )}
-              </div>
-            </motion.div>
-          ))}
+export function BrandsSection() {
+  const brandTiles = brands.map((brand) => {
+    const slug = brand.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    return {
+      ...brand,
+      logo: brand.logo || findLogo(slug, brand.name),
+    };
+  });
+
+  const copy = (hidden: boolean) => (
+    <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
+      {brandTiles.map((brand) => (
+        <div key={`${brand.name}-${hidden ? 'b' : 'a'}`} className="mr-3 shrink-0 sm:mr-4 lg:mr-5">
+          <div className="flex h-16 min-w-[140px] items-center justify-center rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] px-5 shadow-[0_14px_30px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:h-[72px] sm:min-w-[160px] sm:px-6">
+            {brand.logo ? (
+              <img
+                src={brand.logo}
+                alt={`${brand.name} logo`}
+                className="h-7 w-auto object-contain opacity-90 sm:h-8"
+                loading="lazy"
+                decoding="async"
+                width="110"
+                height="32"
+              />
+            ) : (
+              <span className="text-sm font-medium tracking-[0.16em] text-foreground/80 uppercase">{brand.name}</span>
+            )}
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <section className="border-y border-border/30 bg-[linear-gradient(180deg,rgba(9,14,20,0.72),rgba(9,14,20,0.28))] py-5 sm:py-6">
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.55 }}
+        className="marquee-strip marquee-mask overflow-hidden"
+      >
+        <div
+          className="marquee-track flex w-max animate-marquee-left"
+          style={{ ['--marquee-duration' as string]: `${SCROLL_DURATION_S}s` }}
+        >
+          {copy(false)}
+          {copy(true)}
+        </div>
+      </motion.div>
     </section>
   );
 }

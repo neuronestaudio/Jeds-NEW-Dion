@@ -27,23 +27,27 @@ const trustItems = [
 
 export function TrustBar() {
   return (
-    <section className="py-5 sm:py-6 md:py-8 bg-card/50 border-y border-border/30">
+    <section className="py-6 sm:py-8 md:py-10 bg-[linear-gradient(180deg,hsl(var(--card)/0.78),hsl(var(--background)))] border-y border-border/30 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
           {trustItems.map((item, index) => (
             <motion.div
               key={item.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="flex items-center gap-3 justify-center md:justify-start"
+              initial={{ opacity: 0, y: 28, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: index * 0.08, duration: 0.55, ease: 'easeOut' }}
+              className="group relative overflow-hidden rounded-2xl border border-white/8 bg-[linear-gradient(160deg,rgba(18,26,36,0.96),rgba(12,17,25,0.88))] p-4 shadow-[0_18px_40px_rgba(1,10,20,0.18)] backdrop-blur-sm transition-transform duration-500 hover:-translate-y-1 hover:border-primary/30 sm:p-5"
             >
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <item.icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm md:text-base text-foreground">{item.label}</p>
-                <p className="text-xs md:text-sm text-muted-foreground">{item.sublabel}</p>
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(111,202,255,0.16),transparent_46%),radial-gradient(circle_at_bottom_right,rgba(18,168,255,0.12),transparent_42%)] opacity-70 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="relative flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors duration-500 group-hover:bg-primary/15 sm:h-12 sm:w-12">
+                  <item.icon className="h-5 w-5 text-primary sm:h-6 sm:w-6" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm leading-tight text-foreground sm:text-base">{item.label}</p>
+                  <p className="mt-1 text-xs leading-tight text-muted-foreground sm:text-sm">{item.sublabel}</p>
+                </div>
               </div>
             </motion.div>
           ))}

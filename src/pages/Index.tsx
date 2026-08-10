@@ -44,20 +44,20 @@ const Index = () => {
       </Helmet>
       <Header />
       
-      {/* Hero with 3D animation */}
+      {/* Hero */}
       <HeroSection />
 
-      {/* Social proof directly after hero */}
-      <ReviewsSection />
-      
-      {/* Trust signals immediately after hero */}
-      <TrustBar />
-      
+      {/* Brand credibility strip directly after hero */}
+      <BrandsSection />
+
       {/* Clear pathways for user decision */}
       <ServicePathways />
       
-      {/* Brand credibility */}
-      <BrandsSection />
+      {/* Social proof after service pathways */}
+      <ReviewsSection />
+
+      {/* Trust signals beneath reviews */}
+      <TrustBar />
       
       {/* Detailed services grid */}
       <ServicesGrid />
