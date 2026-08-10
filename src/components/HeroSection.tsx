@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Phone, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
-import jedLogo from '@/assets/Jedlogo.jpg';
 import QuoteFormInline from '@/components/QuoteFormInline';
 // Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
 // with different built-in padding, which renders as dark boxes at mismatched
@@ -12,8 +11,10 @@ import haierLogo from '@/assets/haier-clean.png';
 import { trackEvent } from '@/lib/analytics';
 
 
+/** Below this the hero stacks, so the clip plays as a band instead of a backdrop. */
+const COMPACT_QUERY = '(max-width: 1023px)';
+
 export function HeroSection() {
-  const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
   // Prefer local bundled assets; fall back to remote SVGs if they fail to load
   const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
   const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
@@ -21,28 +22,53 @@ export function HeroSection() {
   const [play, setPlay] = useState(false);
   const [videoVisible, setVideoVisible] = useState(false);
   const [allowVideo, setAllowVideo] = useState(true);
+  const [compact, setCompact] = useState(false);
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const layout = window.matchMedia(COMPACT_QUERY);
     setAllowVideo(!media.matches);
+    setCompact(layout.matches);
     const handler = () => setAllowVideo(!media.matches);
+    const layoutHandler = () => setCompact(layout.matches);
     media.addEventListener('change', handler);
+    layout.addEventListener('change', layoutHandler);
     const timer = setTimeout(() => setPlay(true), 500);
     return () => {
       clearTimeout(timer);
       media.removeEventListener('change', handler);
+      layout.removeEventListener('change', layoutHandler);
     };
   }, []);
+
+  // Phones and tablets never see the full frame as a backdrop, so they get the
+  // lighter encode. Keying on the URL remounts the element when the breakpoint
+  // is crossed, which a bare `src` swap would not do.
+  const heroVideo =
+    import.meta.env.VITE_HERO_VIDEO_URL || (compact ? '/hero-bg-mobile.mp4' : '/hero-bg.mp4');
+
   return (
     <section className="relative min-h-[85vh] sm:min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
-      
-      {/* Background: Prefer video, no 3D fallback */}
-      <div className="absolute inset-0 overflow-hidden">
+
+      {/*
+        The clip is a 16:9 logo sting with the mark centred, so `object-cover`
+        against a portrait hero blows it up ~1.7x and crops away everything but
+        a sliver of the middle — the wordmark loses both ends. Below lg it
+        instead gets a full-width band at its own aspect ratio, pinned to the
+        top and masked out at the bottom so it dissolves into the page rather
+        than ending on a hard edge. From lg the hero is landscape enough for
+        the frame to fill it honestly, so it goes back to a full-bleed cover.
+      */}
+      <div className="absolute inset-x-0 top-0 aspect-video hero-video-mask overflow-hidden lg:inset-0 lg:aspect-auto lg:[mask-image:none] lg:[-webkit-mask-image:none]">
         {!videoError && play && allowVideo && (
           <video
-            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-80' : 'opacity-0'}`}
-            poster={jedLogo}
+            key={heroVideo}
+            // Held well back below lg. The band lands directly under the
+            // header, which already carries this exact mark, so at full
+            // strength it reads as the logo printed twice and it fights the
+            // headline sitting on top of it. At 40% it is atmosphere.
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-30 lg:opacity-80' : 'opacity-0'}`}
             autoPlay
             muted
             loop
@@ -53,20 +79,20 @@ export function HeroSection() {
             onCanPlay={() => setVideoVisible(true)}
             onPlay={() => setVideoVisible(true)}
           >
-            <source src={HERO_VIDEO} type="video/mp4" />
-            <source src="/hero-bg.webm" type="video/webm" />
+            <source src={heroVideo} type="video/mp4" />
           </video>
         )}
       </div>
-      
+
       {/* Gradient overlay for text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-10 sm:pb-12">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-start">
-          {/* Left: Hero copy */}
-          <div className="max-w-2xl text-left">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12 items-start">
+          {/* Left: Hero copy. Centred while it is a single stacked column,
+              left-aligned again from lg where it sits beside the form. */}
+          <div className="max-w-2xl mx-auto text-center lg:mx-0 lg:text-left">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,7 +141,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg md:text-xl text-foreground/85 max-w-2xl mb-8 sm:mb-10"
+            className="text-base sm:text-lg md:text-xl text-foreground/85 max-w-2xl mx-auto lg:mx-0 mb-8 sm:mb-10"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation for residential, apartment and commercial projects in Sydney.
           </motion.p>
@@ -125,7 +151,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start mb-10 sm:mb-12"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-2 lg:mb-12"
           >
             <Button variant="hero" size="xl" asChild>
               <a
@@ -155,7 +181,7 @@ export function HeroSection() {
           </div>
 
           {/* Right: Inline quote form */}
-          <div className="mt-6 lg:mt-0">
+          <div>
             <QuoteFormInline />
           </div>
         </div>

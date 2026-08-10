@@ -34,21 +34,30 @@ const pathways = [
 
 export function ServicePathways() {
   return (
-    <section id="services" className="py-12 sm:py-16 md:py-24 section-glow">
+    <section id="services" className="py-10 sm:py-16 md:py-24 section-glow">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10 sm:mb-12"
+          className="text-center mb-6 sm:mb-12"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             How Can We Help?
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
+        {/*
+          Below md these three stack, and at the desktop proportions that was
+          about 360px of card each — over 1,000px of scrolling to answer one
+          question. So on phones the card lies down: the icon moves beside the
+          title instead of above it, the feature list becomes a wrapping row of
+          chips instead of three bulleted lines, and "Learn More" collapses to
+          the chevron on the title row, since the whole card is the link
+          anyway. From md up nothing changes.
+        */}
+        <div className="grid grid-cols-1 gap-3 sm:gap-6 md:grid-cols-3 lg:gap-8">
           {pathways.map((pathway, index) => (
             <motion.div
               key={pathway.id}
@@ -62,38 +71,43 @@ export function ServicePathways() {
               <BorderBeam className="h-full" duration={17} delay={index * -5.6}>
                 <a
                   href={pathway.href}
-                  className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[calc(1rem-1.5px)] bg-gradient-to-b from-card to-background p-6 transition-shadow duration-500 hover:shadow-glow"
+                  className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[calc(1rem-1.5px)] bg-gradient-to-b from-card to-background p-4 transition-shadow duration-500 hover:shadow-glow md:p-6"
                 >
                   <div
                     className={`absolute inset-0 bg-gradient-to-br ${pathway.color} rounded-[calc(1rem-1.5px)] opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
                   />
 
-                  <div className="relative z-10">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                      <pathway.icon className="h-7 w-7 text-primary" />
+                  <div className="relative z-10 flex gap-3.5 md:block">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20 md:mb-6 md:h-14 md:w-14 md:rounded-2xl">
+                      <pathway.icon className="h-[22px] w-[22px] text-primary md:h-7 md:w-7" />
                     </div>
 
-                    <h3 className="mb-3 text-xl font-bold transition-colors group-hover:text-primary md:text-2xl">
-                      {pathway.title}
-                    </h3>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="flex items-center justify-between gap-2 text-base font-bold transition-colors group-hover:text-primary md:mb-3 md:block md:text-2xl">
+                        {pathway.title}
+                        <ArrowRight className="h-4 w-4 shrink-0 text-primary md:hidden" />
+                      </h3>
 
-                    <p className="mb-6 text-muted-foreground">{pathway.description}</p>
+                      <p className="mt-1 text-sm text-muted-foreground md:mb-6 md:mt-0 md:text-base">
+                        {pathway.description}
+                      </p>
 
-                    <ul className="mb-6 space-y-2">
-                      {pathway.features.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-center gap-2 text-sm text-muted-foreground"
-                        >
-                          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
+                      <ul className="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 md:mb-6 md:mt-0 md:block md:space-y-2">
+                        {pathway.features.map((feature) => (
+                          <li
+                            key={feature}
+                            className="flex items-center gap-1.5 text-xs text-muted-foreground md:gap-2 md:text-sm"
+                          >
+                            <div className="h-1 w-1 rounded-full bg-primary md:h-1.5 md:w-1.5" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
 
-                    <div className="flex items-center gap-2 font-semibold text-primary transition-all group-hover:gap-3">
-                      Learn More
-                      <ArrowRight className="h-4 w-4" />
+                      <div className="hidden items-center gap-2 font-semibold text-primary transition-all group-hover:gap-3 md:flex">
+                        Learn More
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
                     </div>
                   </div>
                 </a>

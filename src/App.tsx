@@ -27,7 +27,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <main id="main-content" role="main" tabIndex={-1} className="min-h-screen">
+        {/*
+          The mobile CTA bar is fixed and roughly 70px tall plus the home
+          indicator, so without this the last chunk of every page — in practice
+          the footer's legal line — sits underneath it and cannot be reached.
+          Applied once here rather than remembered on each page.
+        */}
+        <main id="main-content" role="main" tabIndex={-1} className="min-h-screen pb-24 lg:pb-0">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />

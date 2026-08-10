@@ -78,9 +78,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.services.map((link) => (
                 <li key={link.label}>
-                  <a 
-                    href={link.href} 
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  <a
+                    href={link.href}
+                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>
@@ -95,9 +95,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
-                  <a 
-                    href={link.href} 
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  <a
+                    href={link.href}
+                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>
@@ -112,9 +112,9 @@ export function Footer() {
             <ul className="space-y-2">
               {footerLinks.areas.map((link) => (
                 <li key={link.label}>
-                  <a 
-                    href={link.href} 
-                    className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  <a
+                    href={link.href}
+                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>

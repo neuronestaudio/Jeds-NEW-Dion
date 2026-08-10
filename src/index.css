@@ -109,11 +109,17 @@
   
   html {
     scroll-behavior: smooth;
+    /* `clip` rather than `hidden`: hidden makes the viewport a scroll container,
+       which both keeps the overflow in the scrollable area (so mobile browsers
+       still stretch the layout viewport to fit it) and would break any
+       position: sticky child. clip actually removes it. This is a backstop —
+       overflow still gets fixed where it happens, see .section-glow::before. */
+    overflow-x: clip;
   }
-  
+
   body {
     @apply bg-background text-foreground font-inter antialiased;
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -169,10 +175,17 @@
   .section-glow {
     @apply relative;
   }
-  
+
+  /* max-w-full is load-bearing, not decoration. At 800px fixed this sticks out
+     194px past a 412px phone viewport, and a mobile browser answers horizontal
+     overflow by widening the *layout viewport* to fit it. Every `position:
+     fixed` element then sizes to 606px instead of 412px, so the header and the
+     bottom CTA bar run off the right of the screen and stay off it while you
+     scroll. `body { overflow-x: hidden }` hides the sideways scrollbar but does
+     nothing about that, which is why it looked broken only once you zoomed out. */
   .section-glow::before {
     content: '';
-    @apply absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] 
+    @apply absolute top-0 left-1/2 -translate-x-1/2 w-[800px] max-w-full h-[400px]
            bg-gradient-to-b from-primary/10 to-transparent rounded-full blur-3xl
            pointer-events-none;
   }
@@ -203,6 +216,16 @@
   /* Custom Shadows */
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  /* Dissolves the bottom of the stacked hero clip into the page. Without it the
+     band ends on a ruled edge halfway down the headline. It has to be gone well
+     before that headline too — the clip resolves into the JED wordmark, and
+     h1 text sitting on top of a second wordmark is unreadable — hence the fade
+     finishing at 78% rather than running the full height of the band. */
+  .hero-video-mask {
+    -webkit-mask-image: linear-gradient(to bottom, #000 15%, transparent 78%);
+    mask-image: linear-gradient(to bottom, #000 15%, transparent 78%);
   }
 
   /* Fades the marquee tiles out at both ends instead of hard-cropping them */
