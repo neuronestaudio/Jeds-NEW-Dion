@@ -97,6 +97,7 @@ const URGENCIES = [
 const STEP_LABELS = ['Service', 'Timing', 'Details'];
 const TOTAL_STEPS = 3;
 const SUBMIT_LOCK_MS = 10_000;
+const REDIRECT_DELAY_MS = 250;
 
 type Props = {
   /** Distinguishes hero vs page form in GA4 and in the GHL payload. */
@@ -328,7 +329,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         if (typeof window !== 'undefined' && import.meta.env.MODE !== 'test') {
           window.location.assign(thankYouUrl);
         }
-      }, SUBMIT_LOCK_MS);
+      }, REDIRECT_DELAY_MS);
     } catch (err: unknown) {
       // A missing webhook URL is a deployment fault, not the visitor's problem —
       // never show them a config error, point them at the phone instead.
