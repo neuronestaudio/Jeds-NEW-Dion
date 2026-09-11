@@ -1,6 +1,8 @@
 export const SITE = {
   name: 'JED Air Conditioning',
-  url: 'https://jedairconditioning.com.au',
+  // www is the primary domain on Vercel — the apex 308s to it — so every
+  // canonical, sitemap URL and JSON-LD @id must use www or they point at a redirect.
+  url: 'https://www.jedairconditioning.com.au',
   phoneDisplay: '0434 308 070',
   phoneTel: 'tel:0434308070',
   phoneE164: '+61434308070',

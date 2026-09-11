@@ -63,7 +63,7 @@ Current `index.html` JSON-LD is a reasonable `LocalBusiness` + `Service` pair, b
   "@context": "https://schema.org",
   "@type": "HVACBusiness",
   "name": "JED Air Conditioning",
-  "url": "https://jedairconditioning.com.au/service-area/bondi",
+  "url": "https://www.jedairconditioning.com.au/service-area/bondi",
   "areaServed": {
     "@type": "City",
     "name": "Bondi",
@@ -113,7 +113,7 @@ Two things to know for future work on it:
 
 - **Every new suburb page must pass a real `blurb`** (§2) — don't ship the template default.
 - `index.html`'s `<meta name="keywords">` tag is inert (Google hasn't used it in over a decade) — harmless, low priority to remove, don't spend time on it.
-- Canonical URLs are **inconsistent between files**: `index.html` uses `https://jedairconditioning.com.au/` (apex, no `www`), but `AreaPageTemplate.tsx` builds canonicals as `https://www.jedairconditioning.com.au/service-area/${slug}` (with `www`). Pick one (apex matches the current live domain and the rest of the site) and make every canonical, `og:url`, and JSON-LD `url` field consistent — a canonical/www mismatch tells search engines these might be two different sites.
+- Canonical URLs are **inconsistent between files**: `index.html` uses `https://jedairconditioning.com.au/` (apex, no `www`), but `AreaPageTemplate.tsx` builds canonicals as `https://www.jedairconditioning.com.au/service-area/${slug}` (with `www`). Pick one and make every canonical, `og:url`, and JSON-LD `url` field consistent — a canonical/www mismatch tells search engines these might be two different sites. **Resolved (Sep 2026): `www` is the one.** Vercel serves the site on `www.jedairconditioning.com.au` and 308-redirects the apex to it, so an apex canonical would point every page at a redirect. `SITE.url` in `src/data/site.ts` is the single source — canonicals, `og:url`, sitemap and JSON-LD all derive from it.
 
 ---
 
