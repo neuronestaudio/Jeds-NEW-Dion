@@ -6,8 +6,8 @@ import QuoteFormInline from '@/components/QuoteFormInline';
 // Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
 // with different built-in padding, which renders as dark boxes at mismatched
 // sizes. Regenerate with: node scripts/clean-brand-logos.mjs
-import daikinLogo from '@/assets/daikin-clean.png';
-import haierLogo from '@/assets/haier-clean.png';
+import daikinLogo from '@/assets/daikin-clean.png?url';
+import haierLogo from '@/assets/haier-clean.png?url';
 import { trackEvent } from '@/lib/analytics';
 
 

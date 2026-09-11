@@ -1,0 +1,16 @@
+---
+import Base from '@/layouts/Base.astro';
+import { SITE } from '@/data/site';
+---
+
+<Base title="Privacy Policy | JED Air Conditioning" description="Privacy policy for JED Air Conditioning." path="/privacy">
+  <section class="container mx-auto px-4 sm:px-6 lg:px-10 py-16 md:py-24">
+    <h1 class="text-3xl md:text-4xl font-bold mb-6">Privacy Policy</h1>
+    <p class="text-muted-foreground mb-4">
+      This page explains how JED Air Conditioning collects, uses, and protects customer information.
+    </p>
+    <p class="text-muted-foreground">
+      For questions about data handling, contact us at <a href={`mailto:${SITE.email}`} class="text-primary hover:underline">{SITE.email}</a>.
+    </p>
+  </section>
+</Base>

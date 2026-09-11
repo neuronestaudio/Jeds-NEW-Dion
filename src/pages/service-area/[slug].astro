@@ -1,0 +1,217 @@
+---
+import Base from '@/layouts/Base.astro';
+import QuoteForm from '@/components/QuoteForm';
+import CtaRow from '@/components/CtaRow';
+import { SUBURBS, ZONES, neighbourLink, type Suburb } from '@/data/suburbs';
+import { SUBURB_GROUPS, fillSuburb } from '@/data/suburbGroups';
+import TrustBadges from '@/components/TrustBadges';
+import ServiceLinks from '@/components/ServiceLinks';
+import ProcessSteps from '@/components/ProcessSteps';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+import { MapPin } from 'lucide-react';
+
+export function getStaticPaths() {
+  return SUBURBS.map((suburb) => ({ params: { slug: suburb.slug }, props: { suburb } }));
+}
+
+const { suburb } = Astro.props as { suburb: Suburb };
+const group = SUBURB_GROUPS[suburb.group];
+const zone = ZONES[suburb.zone];
+const path = `/service-area/${suburb.slug}`;
+
+const issues = [...(suburb.issues ?? []), ...group.issues].map((i) => ({
+  title: fillSuburb(i.title, suburb.name),
+  body: fillSuburb(i.body, suburb.name),
+}));
+const faqs = [...(suburb.faq ?? []), ...group.faq].map((f) => ({
+  q: fillSuburb(f.q, suburb.name),
+  a: fillSuburb(f.a, suburb.name),
+}));
+const neighbours = suburb.neighbours.map(neighbourLink);
+
+const isRegional = suburb.zone === 'regional';
+const title = `Air Conditioning ${suburb.name} | Installation, Service & Repairs | JED`;
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Air Conditioning Installation, Servicing and Repairs',
+  name: `Air Conditioning ${suburb.name}`,
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  areaServed: {
+    '@type': 'City',
+    name: suburb.name,
+    containedInPlace: {
+      '@type': 'AdministrativeArea',
+      name: suburb.slug === 'canberra' ? 'Australian Capital Territory' : 'New South Wales',
+    },
+  },
+};
+
+---
+
+<Base
+  title={title}
+  description={suburb.metaDescription}
+  path={path}
+  jsonLd={[
+    serviceLd,
+    breadcrumbJsonLd([
+      { name: 'Service Areas', path: '/service-areas' },
+      { name: suburb.name, path },
+    ]),
+    faqJsonLd(faqs),
+  ]}
+>
+  {/* Hero */}
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/service-areas" class="hover:text-foreground transition-colors">Service Areas</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href={`/service-areas#${zone.id}`} class="hover:text-foreground transition-colors">{zone.short}</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-foreground" aria-current="page">{suburb.name}</li>
+        </ol>
+      </nav>
+
+      <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12 items-start">
+        <div>
+          <p class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">
+            <MapPin className="h-3.5 w-3.5" />
+            {suburb.name} {suburb.postcode} · {zone.label}
+          </p>
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+            Air Conditioning <span class="text-gradient">{suburb.name}</span>
+          </h1>
+          <p class="text-lg md:text-xl text-foreground/85 mb-4 max-w-2xl">{suburb.tagline}</p>
+          <p class="text-muted-foreground mb-8 max-w-2xl">
+            Installation, servicing and repairs of split, multi-head and ducted systems in {suburb.name} —
+            Daikin &amp; Haier certified, backed by a 5-year workmanship warranty.
+          </p>
+          <CtaRow client:idle quoteHref="#quote" location={`suburb-hero-${suburb.slug}`} />
+        </div>
+
+        <TrustBadges layout="stack" />
+      </div>
+    </div>
+  </section>
+
+  {/* Local intro */}
+  <section class="py-12 md:py-16 border-t border-border/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="max-w-3xl space-y-5 text-muted-foreground text-base md:text-lg">
+        <h2 class="text-2xl sm:text-3xl font-bold text-foreground">
+          {isRegional ? `Servicing ${suburb.name}` : `Local to ${suburb.name}`}
+        </h2>
+        {suburb.intro.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  {/* Common issues */}
+  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2">
+        {isRegional ? `What to plan for in ${suburb.name}` : `Common air conditioning issues in ${suburb.name}`}
+      </h2>
+      <p class="text-muted-foreground mb-8 max-w-3xl">
+        {isRegional
+          ? 'The things that change once a job is outside Sydney — and how they’re handled.'
+          : `The property types and conditions in ${suburb.name} shape how a system should be specified and installed. These are the ones that come up most.`}
+      </p>
+      <div class="grid gap-4 sm:grid-cols-2">
+        {issues.map((issue) => (
+          <div class="rounded-2xl border border-border/30 bg-card/50 p-5 sm:p-6">
+            <h3 class="font-semibold mb-2">{issue.title}</h3>
+            <p class="text-sm text-muted-foreground">{issue.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Services */}
+  <section class="py-12 md:py-16 border-t border-border/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Air conditioning services in {suburb.name}</h2>
+      <ServiceLinks />
+    </div>
+  </section>
+
+  {/* Process */}
+  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-2">How a {suburb.name} install runs</h2>
+      <p class="text-muted-foreground mb-8">From first visit to handover.</p>
+      <ProcessSteps />
+    </div>
+  </section>
+
+  {/* FAQ */}
+  <section class="py-12 md:py-16 border-t border-border/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">{suburb.name} air conditioning FAQs</h2>
+      <div class="max-w-3xl space-y-3">
+        {faqs.map((f) => (
+          <details class="group rounded-2xl border border-border/30 bg-card/50 open:border-primary/30">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold">
+              <span>{f.q}</span>
+              <span aria-hidden="true" class="text-primary transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <p class="px-5 pb-5 text-sm text-muted-foreground">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Nearby */}
+  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-xl sm:text-2xl font-bold mb-4">Also servicing near {suburb.name}</h2>
+      <ul class="flex flex-wrap gap-2">
+        {neighbours.map((n) =>
+          n.href ? (
+            <li>
+              <a
+                href={n.href}
+                class="inline-block rounded-full border border-border/40 bg-card/60 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              >
+                {n.name}
+              </a>
+            </li>
+          ) : (
+            <li>
+              <span class="inline-block rounded-full border border-border/20 px-3 py-1.5 text-sm text-muted-foreground/70">
+                {n.name}
+              </span>
+            </li>
+          )
+        )}
+        <li>
+          <a href="/service-areas" class="inline-block rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
+            All service areas →
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  {/* Quote */}
+  <section class="py-16 md:py-24 border-t border-border/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-2">Get a free quote in {suburb.name}</h2>
+        <p class="text-muted-foreground mb-6">
+          Two quick taps, then your details — we’ll come back to you within 24 hours.
+        </p>
+        <QuoteForm client:visible />
+      </div>
+    </div>
+  </section>
+</Base>

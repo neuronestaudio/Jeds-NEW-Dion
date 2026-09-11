@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
-import daikinLogo from '@/assets/Daikin.png';
-import haierLogo from '@/assets/Haier.png';
-import fujitsuLogo from '@/assets/brands/fujitsu.jpg';
+import daikinLogo from '@/assets/Daikin.png?url';
+import haierLogo from '@/assets/Haier.png?url';
+import fujitsuLogo from '@/assets/brands/fujitsu.jpg?url';
 
-// Eagerly import brand logos placed under src/assets/brands
+// Eagerly import brand logos placed under src/assets/brands.
+// `query: '?url'` — under Astro a plain image import is a metadata object.
 const logoModules = import.meta.glob('../assets/brands/*.{png,jpg,jpeg,svg,webp}', {
   eager: true,
   import: 'default',
+  query: '?url',
 }) as Record<string, string>;
 
 const logoByFile: Record<string, string> = {};

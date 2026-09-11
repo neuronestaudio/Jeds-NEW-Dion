@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import jedLogo from '@/assets/Jedlogo.jpg';
+import jedLogo from '@/assets/Jedlogo.jpg?url';
 
 const footerLinks = {
   services: [
@@ -14,15 +14,16 @@ const footerLinks = {
     { label: 'Our Work', href: '/#projects' },
     { label: 'Reviews', href: '/#reviews' },
     { label: 'Contact', href: '/contact' },
-    { label: 'FAQs', href: '/#faqs' },
+    { label: 'FAQs', href: '/services#faqs' },
   ],
   areas: [
-    { label: 'Newcastle', href: '/service-area/newcastle' },
-    { label: 'Central Coast', href: '/service-area/central-coast' },
-    { label: 'Sydney (All Regions)', href: '/service-area/sydney' },
-    { label: 'Blue Mountains', href: '/service-area/blue-mountains' },
-    { label: 'Wollongong/Illawarra', href: '/service-area/wollongong' },
-    { label: 'Canberra', href: '/service-area/canberra' },
+    { label: 'All Service Areas', href: '/service-areas' },
+    { label: 'North Shore', href: '/service-areas#north-shore' },
+    { label: 'Eastern Suburbs', href: '/service-areas#eastern-suburbs' },
+    { label: 'Bondi', href: '/service-area/bondi' },
+    { label: 'Chatswood', href: '/service-area/chatswood' },
+    { label: 'Mosman', href: '/service-area/mosman' },
+    { label: 'Randwick', href: '/service-area/randwick' },
   ],
 };
 

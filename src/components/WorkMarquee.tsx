@@ -14,7 +14,15 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
  * index.css) so a moving tile can actually be clicked.
  */
 
-const resolveAsset = (name: string) => new URL(`../assets/${name}`, import.meta.url).href;
+// Resolved through import.meta.glob rather than `new URL(..., import.meta.url)`
+// so the server render and the browser agree on the asset URL — the URL form
+// resolves against a file:// path during Astro's build.
+const assetModules = import.meta.glob('../assets/*.{jpeg,jpg,png}', {
+  eager: true,
+  import: 'default',
+  query: '?url',
+}) as Record<string, string>;
+const resolveAsset = (name: string) => assetModules[`../assets/${name}`] ?? '';
 
 type Tile = {
   file: string;

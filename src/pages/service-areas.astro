@@ -1,0 +1,85 @@
+---
+import Base from '@/layouts/Base.astro';
+import QuoteForm from '@/components/QuoteForm';
+import CtaRow from '@/components/CtaRow';
+import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
+import TrustBadges from '@/components/TrustBadges';
+import { breadcrumbJsonLd } from '@/data/site';
+
+const zonesInOrder: Zone[] = ['north', 'east', 'regional'];
+const byZone = (zone: Zone) => SUBURBS.filter((s) => s.zone === zone);
+
+const zoneIntro: Record<Zone, string> = {
+  north:
+    'From high-rise apartments beside Chatswood station to federation homes on Mosman’s harbourside slopes and family houses on Turramurra’s big leafy blocks — the North Shore’s housing changes street by street, and the right system changes with it.',
+  east:
+    'Beachfront apartment blocks along Campbell Parade in Bondi, Victorian terraces off Oxford Street in Paddington, harbourside homes in Rose Bay and Vaucluse — the Eastern Suburbs bring salt air, strata rules and heritage constraints into almost every install.',
+  regional:
+    'Beyond Sydney, JED services Newcastle, the Central Coast, the Blue Mountains, Wollongong and Canberra on scheduled visits. Get in touch with your job details to confirm availability.',
+};
+---
+
+<Base
+  title="Air Conditioning Service Areas | North Shore & Eastern Suburbs Sydney | JED"
+  description="JED Air Conditioning services Sydney's North Shore and Eastern Suburbs — Bondi, Randwick, Double Bay, Chatswood, Mosman, North Sydney, Hornsby and more. Find your suburb."
+  path="/service-areas"
+  jsonLd={[breadcrumbJsonLd([{ name: 'Service Areas', path: '/service-areas' }])]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <p class="text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">Service areas</p>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">
+        Air Conditioning Across Sydney’s <span class="text-gradient">North Shore &amp; Eastern Suburbs</span>
+      </h1>
+      <p class="text-muted-foreground text-lg max-w-3xl mb-8">
+        Local installation, servicing and repairs everywhere east of Homebush — with the salt air, strata rules,
+        heritage frontages and roof spaces of each suburb designed for, not discovered on the day.
+      </p>
+      <CtaRow client:idle quoteHref="#quote" location="service-areas-hero" />
+
+      <div class="mt-10">
+        <TrustBadges layout="row" />
+      </div>
+    </div>
+  </section>
+
+  {zonesInOrder.map((zone) => (
+    <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border/30 scroll-mt-28">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{ZONES[zone].label}</h2>
+        <p class="text-muted-foreground max-w-3xl mb-8">{zoneIntro[zone]}</p>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {byZone(zone).map((s) => (
+            <a
+              href={`/service-area/${s.slug}`}
+              class="group flex flex-col justify-between rounded-2xl border border-border/30 bg-card/50 p-5 transition-all hover:border-primary/40 hover:bg-card/80"
+            >
+              <div>
+                <h3 class="text-lg font-semibold transition-colors group-hover:text-primary">
+                  Air Conditioning {s.name}
+                </h3>
+                <p class="mt-1 text-sm text-muted-foreground">{s.tagline}</p>
+              </div>
+              <span class="mt-4 text-xs font-medium uppercase tracking-wider text-primary">
+                {s.name} {s.postcode} →
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="py-16 md:py-24 border-t border-border/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-2">Not sure your suburb’s listed?</h2>
+        <p class="text-muted-foreground mb-6">
+          Tell us where you are and what you need — we service greater Sydney and will confirm availability for your
+          job.
+        </p>
+        <QuoteForm client:visible />
+      </div>
+    </div>
+  </section>
+</Base>

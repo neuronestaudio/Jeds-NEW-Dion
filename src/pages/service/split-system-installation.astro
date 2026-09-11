@@ -1,0 +1,36 @@
+---
+import ServicePage from '@/layouts/ServicePage.astro';
+
+const faqs = [
+  {
+    q: 'How long does a split system installation take?',
+    a: 'Most installations are completed within a day, depending on unit size and placement.',
+  },
+  {
+    q: 'Do you help with sizing and placement?',
+    a: 'Yes. We assess your room size and layout to recommend the right capacity and optimal wall location.',
+  },
+  {
+    q: 'What brands do you install?',
+    a: 'We install leading brands including Daikin and Haier, tailored to your budget and preferences.',
+  },
+];
+---
+
+<ServicePage
+  path="/service/split-system-installation"
+  title="Split System Air Conditioning Installation | Sydney"
+  description="Energy-efficient split system air conditioning installation across Sydney. Professional advice and warranty-backed workmanship."
+  serviceType="Split System Installation"
+  breadcrumb="Split System Installation"
+  heading="Split System Air Conditioning Installation in Sydney"
+  intro="We install efficient split systems tailored to your space and budget. Get expert guidance on sizing and placement to maximise comfort and savings."
+  pointsHeading="Why Choose Split Systems?"
+  points={[
+    'Cost-effective for individual rooms',
+    'Fast installation with minimal disruption',
+    'Quiet, efficient operation with modern inverter technology',
+  ]}
+  faqs={faqs}
+  quoteHeading="Request a Quote"
+/>

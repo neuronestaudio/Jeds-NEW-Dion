@@ -1,0 +1,87 @@
+---
+import Base from '@/layouts/Base.astro';
+import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
+import { breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+
+const faqs = [
+  {
+    q: 'Which air conditioning system is best for my home?',
+    a: 'It depends on your layout, insulation, and budget. Split systems suit single rooms, while ducted systems provide whole-home comfort with zoning.',
+  },
+  {
+    q: 'Do you provide free quotes?',
+    a: 'Yes, we offer free quotes across Sydney. Share your requirements and we will recommend the most efficient solution.',
+  },
+  {
+    q: 'Are you licensed and insured?',
+    a: 'Yes. We are fully licensed and insured, and our installations include a workmanship warranty.',
+  },
+];
+
+const services = [
+  {
+    href: '/service/split-system-installation',
+    code: 'SS',
+    title: 'Split System Installation',
+    blurb: 'Energy-efficient split systems for homes and small offices.',
+  },
+  {
+    href: '/service/ducted-air-conditioning',
+    code: 'DA',
+    title: 'Ducted Air Conditioning',
+    blurb: 'Whole-home comfort with concealed ducted systems.',
+  },
+  {
+    href: '/service/aircon-repair',
+    code: 'AR',
+    title: 'Repairs & Diagnostics',
+    blurb: 'Fast, accurate diagnosis and repair for all brands.',
+  },
+];
+---
+
+<Base
+  title="Air Conditioning Services in Sydney | Installation, Repairs & Maintenance"
+  description="Comprehensive air conditioning services across Sydney: split system installation, ducted systems, and fast repairs."
+  path="/services"
+  jsonLd={[breadcrumbJsonLd([{ name: 'Services', path: '/services' }]), faqJsonLd(faqs)]}
+>
+  <section class="py-16 md:py-24 bg-card/30">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Air Conditioning Services in Sydney</h1>
+      <p class="text-muted-foreground text-lg max-w-2xl mb-10">
+        Installation, repairs, and maintenance for residential and commercial properties.
+      </p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+          services.map((s) => (
+            <a
+              href={s.href}
+              class="group p-6 bg-card/50 border border-border/30 rounded-2xl hover:border-primary/30 hover:bg-card/80 transition-all"
+            >
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <span class="text-primary font-semibold">{s.code}</span>
+              </div>
+              <h2 class="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">{s.title}</h2>
+              <p class="text-muted-foreground text-sm">{s.blurb}</p>
+            </a>
+          ))
+        }
+      </div>
+      <div id="faqs" class="glass-card p-6 md:p-8 mt-10 scroll-mt-28">
+        <h2 class="text-2xl font-semibold mb-4">FAQs</h2>
+        <div class="space-y-4 text-muted-foreground">
+          {
+            faqs.map((f) => (
+              <div>
+                <h3 class="font-semibold">{f.q}</h3>
+                <p>{f.a}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+  <ServiceAreasTeaser />
+</Base>

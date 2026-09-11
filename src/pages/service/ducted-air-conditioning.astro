@@ -1,0 +1,26 @@
+---
+import ServicePage from '@/layouts/ServicePage.astro';
+
+const faqs = [
+  { q: 'Can I zone my ducted system?', a: 'Yes. Zoning allows you to heat/cool selected areas for comfort and efficiency.' },
+  { q: 'How long does installation take?', a: 'Typical installations take 1–2 days depending on home layout and capacity.' },
+  {
+    q: 'Is ducted suitable for existing homes?',
+    a: 'In many cases yes. We assess roof space and structure to design a suitable system.',
+  },
+];
+---
+
+<ServicePage
+  path="/service/ducted-air-conditioning"
+  title="Ducted Air Conditioning Installation & Upgrades | Sydney"
+  description="Whole-home ducted air conditioning installation and upgrades in Sydney. Discreet, powerful climate control with professional design."
+  serviceType="Ducted Air Conditioning"
+  breadcrumb="Ducted Air Conditioning"
+  heading="Ducted Air Conditioning in Sydney"
+  intro="Enjoy seamless comfort throughout your home with custom-designed ducted systems. We manage design, installation, and commissioning."
+  pointsHeading="Benefits of Ducted Systems"
+  points={['Whole-home climate control', 'Discreet vents and minimal visual impact', 'Zoning options for energy efficiency']}
+  faqs={faqs}
+  quoteHeading="Request a Quote"
+/>

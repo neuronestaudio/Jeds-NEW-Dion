@@ -1,0 +1,34 @@
+---
+import Base from '@/layouts/Base.astro';
+import HeroSection from '@/components/HeroSection';
+import BrandsSection from '@/components/BrandsSection';
+import ServicePathways from '@/components/ServicePathways';
+import ReviewsSection from '@/components/ReviewsSection';
+import TrustBar from '@/components/TrustBar';
+import ServicesGrid from '@/components/ServicesGrid';
+import ProjectsGallery from '@/components/ProjectsGallery';
+import SocialReels from '@/components/SocialReels';
+import WhyChooseUs from '@/components/WhyChooseUs';
+import ProcessSection from '@/components/ProcessSection';
+import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
+---
+
+<Base
+  title="Daikin & Haier Air Conditioning Installation Sydney | JED Air Conditioning"
+  description="Authorised Daikin & Haier installation specialists across Sydney's North Shore and Eastern Suburbs. Professional ducted & split system air conditioning installs, service & repairs. Get a free quote now."
+  path="/"
+  ogTitle="JED Air Conditioning | Sydney Air Conditioning Specialists"
+  ogDescription="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty."
+>
+  <HeroSection client:load />
+  <BrandsSection client:visible />
+  <ServicePathways client:visible />
+  <ReviewsSection client:visible />
+  <TrustBar client:visible />
+  <ServicesGrid client:visible />
+  <ProjectsGallery client:visible />
+  <SocialReels client:visible />
+  <WhyChooseUs client:visible />
+  <ProcessSection client:visible />
+  <ServiceAreasTeaser />
+</Base>

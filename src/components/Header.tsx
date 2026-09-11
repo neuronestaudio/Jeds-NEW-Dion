@@ -2,7 +2,8 @@ import { Phone, Mail, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import jedLogo from '@/assets/Jedlogo.jpg';
+// `?url` — under Astro an image import is a metadata object, not a URL string.
+import jedLogo from '@/assets/Jedlogo.jpg?url';
 import { trackEvent } from '@/lib/analytics';
 
 const navLinks = [

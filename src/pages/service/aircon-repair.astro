@@ -1,0 +1,26 @@
+---
+import ServicePage from '@/layouts/ServicePage.astro';
+
+const faqs = [
+  { q: 'Do you offer emergency repairs?', a: 'Yes. We provide rapid response for urgent breakdowns across Sydney.' },
+  { q: 'What brands do you repair?', a: 'We service and repair most major brands, including Daikin and Haier.' },
+  {
+    q: 'Should I repair or replace?',
+    a: 'We diagnose the issue and provide repair vs replace advice based on age, condition, and cost-effectiveness.',
+  },
+];
+---
+
+<ServicePage
+  path="/service/aircon-repair"
+  title="Air Conditioning Repairs & Maintenance | Sydney"
+  description="Fast, reliable air conditioning repairs and maintenance across Sydney. Diagnostics for all major brands."
+  serviceType="Air Conditioning Repair"
+  breadcrumb="Air Conditioning Repairs"
+  heading="Air Conditioning Repairs in Sydney"
+  intro="We diagnose and fix common AC issues quickly: leaks, electrical faults, airflow, thermostat problems, and more."
+  pointsHeading="Common Faults We Fix"
+  points={['No cooling or heating', 'Unusual noises or vibrations', 'Water leaks and drainage issues']}
+  faqs={faqs}
+  quoteHeading="Request a Repair"
+/>

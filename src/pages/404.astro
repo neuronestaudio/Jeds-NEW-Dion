@@ -1,0 +1,16 @@
+---
+import Base from '@/layouts/Base.astro';
+---
+
+<Base title="Page Not Found | JED Air Conditioning" description="That page doesn't exist." path="/404" noindex>
+  <section class="flex min-h-[70vh] items-center justify-center">
+    <div class="text-center px-4">
+      <h1 class="mb-4 text-4xl font-bold">404</h1>
+      <p class="mb-6 text-xl text-muted-foreground">Oops! Page not found</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="text-primary underline hover:text-primary/90">Return to Home</a>
+        <a href="/service-areas" class="text-primary underline hover:text-primary/90">Browse service areas</a>
+      </div>
+    </div>
+  </section>
+</Base>

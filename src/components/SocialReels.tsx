@@ -4,15 +4,15 @@ import type { EmblaCarouselType } from 'embla-carousel';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Instagram, Play } from 'lucide-react';
 
-import ownVan from '@/assets/instagram/own-van.jpg';
-import sydneyViews from '@/assets/instagram/sydney-views.jpg';
-import dodgyInstall from '@/assets/instagram/dodgy-install.jpg';
-import owningBusiness from '@/assets/instagram/owning-business.jpg';
-import sixMistakes from '@/assets/instagram/six-mistakes.jpg';
-import loveTrade from '@/assets/instagram/love-trade.jpg';
-import allTrades from '@/assets/instagram/all-trades.jpg';
-import stayStrong from '@/assets/instagram/stay-strong.jpg';
-import commercialPart4 from '@/assets/instagram/commercial-part4.jpg';
+import ownVan from '@/assets/instagram/own-van.jpg?url';
+import sydneyViews from '@/assets/instagram/sydney-views.jpg?url';
+import dodgyInstall from '@/assets/instagram/dodgy-install.jpg?url';
+import owningBusiness from '@/assets/instagram/owning-business.jpg?url';
+import sixMistakes from '@/assets/instagram/six-mistakes.jpg?url';
+import loveTrade from '@/assets/instagram/love-trade.jpg?url';
+import allTrades from '@/assets/instagram/all-trades.jpg?url';
+import stayStrong from '@/assets/instagram/stay-strong.jpg?url';
+import commercialPart4 from '@/assets/instagram/commercial-part4.jpg?url';
 
 /**
  * Instagram reels carousel.
