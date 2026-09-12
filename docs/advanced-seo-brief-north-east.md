@@ -129,7 +129,7 @@ Two things to know for future work on it:
 ## 8. Core Web Vitals (Vite/React specifics)
 
 - `App.tsx` currently statically imports every page component up front. Fine at 8 routes; at 20+ it bloats the initial JS bundle for every visitor regardless of which page they land on. Switch area/service page imports to `React.lazy()` + `<Suspense>` so each suburb page is its own chunk, loaded on demand.
-- `public/hero-bg.mp4` / `hero-bg-mobile.mp4` — if any suburb page reuses this hero, make sure it's not eagerly loading and blocking LCP; `preload="none"` or defer until after first paint if it's below the fold.
+- `public/hero-reel.mp4` / `hero-reel-mobile.mp4` — if any suburb page reuses this hero, make sure it's not eagerly loading and blocking LCP; `preload="none"` or defer until after first paint if it's below the fold.
 - New suburb-specific imagery should ship as WebP/AVIF with a fallback, sized for the actual display area (not full-res drops).
 - Once pages are live, check field data (not just lab scores) via PageSpeed Insights / CrUX — target LCP < 2.5s, INP < 200ms, CLS < 0.1.
 

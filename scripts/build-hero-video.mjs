@@ -38,8 +38,8 @@ const SOURCE_FRAMES = 192;
 const FADE_SECONDS = 1;
 
 const OUTPUTS = [
-  { file: 'public/hero-bg.mp4', width: 1280, crf: 25 },
-  { file: 'public/hero-bg-mobile.mp4', width: 854, crf: 28 },
+  { file: 'public/hero-reel.mp4', width: 1280, crf: 25 },
+  { file: 'public/hero-reel-mobile.mp4', width: 854, crf: 28 },
 ];
 
 const duration = (SOURCE_FRAMES - TRIM_START_FRAME) / FPS;

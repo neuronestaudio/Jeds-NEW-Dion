@@ -45,41 +45,32 @@ export function HeroSection() {
   // lighter encode. Keying on the URL remounts the element when the breakpoint
   // is crossed, which a bare `src` swap would not do.
   const heroVideo =
-    import.meta.env.VITE_HERO_VIDEO_URL || (compact ? '/hero-bg-mobile.mp4' : '/hero-bg.mp4');
+    import.meta.env.VITE_HERO_VIDEO_URL || (compact ? '/hero-reel-mobile.mp4' : '/hero-reel.mp4');
 
   return (
     <section className="relative min-h-[85vh] sm:min-h-[90vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
 
-      {/* Light theme: a bright room (a real JED split install) fading into the
-          page from the left, so the copy sits on off-white and the photo
-          carries the right. Dark theme keeps the logo sting below. */}
-      <div className="absolute inset-0 dark:hidden" aria-hidden="true">
+      {/*
+        Backdrop: a JED job reel at 50% over the page colour, in both themes,
+        so the hero moves without the copy having to fight it. The room photo
+        sits underneath as the poster and fades out once the clip is playing;
+        it is the whole backdrop when motion is reduced or the clip fails.
+        Phones get a portrait crop of the same clip.
+      */}
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
         <img
           src={lightRoom}
           alt=""
-          className="h-full w-full object-cover object-[68%_40%] brightness-[1.04] lg:object-[62%_center]"
+          className={`absolute inset-0 h-full w-full object-cover object-[68%_40%] transition-opacity duration-1000 ${videoVisible ? 'opacity-0' : 'opacity-50'}`}
           decoding="async"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/45 lg:via-background/60 lg:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
-      </div>
-
-      {/*
-        Desktop, dark theme: the logo sting fills the hero behind the copy. The
-        clip is 16:9 with the mark centred, and from lg the hero is landscape
-        enough for object-cover to keep the whole mark on screen. Below lg it
-        is NOT a backdrop — see the in-flow band in the content column, which
-        shows the clip at its own aspect ratio with nothing drawn over it, so
-        the mark actually reads on a phone.
-      */}
-      <div className="hidden dark:lg:block absolute inset-0 overflow-hidden">
-        {!compact && !videoError && play && allowVideo && (
+        {!videoError && allowVideo && play && (
           <video
             key={heroVideo}
-            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-80' : 'opacity-0'}`}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-50' : 'opacity-0'}`}
             autoPlay
             muted
             loop
@@ -93,40 +84,12 @@ export function HeroSection() {
             <source src={heroVideo} type="video/mp4" />
           </video>
         )}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
       </div>
 
-      {/* Gradient overlay for text readability over the desktop backdrop */}
-      <div className="hidden dark:lg:block absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
-
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-[4.5rem] sm:pt-20 md:pt-24 lg:pt-32 pb-10 sm:pb-12">
-        {/* Phones and tablets, dark theme: the sting as its own full-width band
-            directly under the header, at the clip's real aspect ratio, with
-            nothing on top of it. The container reserves the space server-side
-            and the video mounts after hydration, so the layout never shifts. */}
-        <div
-          className="hidden dark:block dark:lg:hidden relative -mx-4 sm:-mx-6 mb-6 sm:mb-8 aspect-video overflow-hidden bg-background"
-          aria-hidden="true"
-        >
-          {compact && !videoError && play && allowVideo && (
-            <video
-              key={heroVideo}
-              className={`w-full h-full object-cover transition-opacity duration-700 ${videoVisible ? 'opacity-90' : 'opacity-0'}`}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              onError={() => setVideoError(true)}
-              onLoadedData={() => setVideoVisible(true)}
-              onCanPlay={() => setVideoVisible(true)}
-              onPlay={() => setVideoVisible(true)}
-            >
-              <source src={heroVideo} type="video/mp4" />
-            </video>
-          )}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-background to-transparent" />
-        </div>
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-10 sm:pb-12">
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12 items-start">
           {/* Left: Hero copy. Centred while it is a single stacked column,
               left-aligned again from lg where it sits beside the form. */}

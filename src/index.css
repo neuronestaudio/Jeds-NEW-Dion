@@ -1,5 +1,7 @@
-/* Fonts are linked from the <head> in src/layouts/Base.astro (with preconnect)
-   rather than @import'ed here, so they don't block the stylesheet. */
+/* Self-hosted variable fonts (the East Shore pairing): Bricolage Grotesque for
+   display, Figtree for text. No Google Fonts request. */
+@import '@fontsource-variable/bricolage-grotesque/wght.css';
+@import '@fontsource-variable/figtree/wght.css';
 
 @tailwind base;
 @tailwind components;
@@ -75,9 +77,9 @@
     --shadow-lg: 0 8px 32px hsl(240 8% 10% / 0.12);
     --shadow-glow: 0 0 40px hsl(197 44% 40% / 0.18);
 
-    /* Display type: a serif in light for the editorial, premium read;
-       Montserrat in dark, which is the look the brand launched with. */
-    --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+    /* Type is the same in both themes. */
+    --font-display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
+    --font-sans: "Figtree Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
 
   .dark {
@@ -136,7 +138,8 @@
     --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.5);
     --shadow-glow: 0 0 40px hsl(197 47% 58% / 0.25);
 
-    --font-display: Montserrat, Inter, system-ui, sans-serif;
+    --font-display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
+    --font-sans: "Figtree Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   }
 }
 
@@ -156,7 +159,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
     overflow-x: clip;
   }
   
@@ -417,7 +421,7 @@
 }
 .svcslant__name {
   display: flex; align-items: center; gap: 0.5rem;
-  font-family: Montserrat, Inter, sans-serif; font-weight: 700;
+  font-family: var(--font-display); font-weight: 700;
   font-size: clamp(1.05rem, 1.6vw, 1.45rem); letter-spacing: 0.04em;
   text-transform: uppercase; color: #fff;
 }

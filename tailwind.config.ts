@@ -18,8 +18,11 @@ export default {
     },
     extend: {
       fontFamily: {
-        montserrat: ["Montserrat", "Inter", "system-ui", "sans-serif"],
-        inter: ["Inter", "system-ui", "sans-serif"],
+        display: ["Bricolage Grotesque Variable", "Figtree Variable", "system-ui", "sans-serif"],
+        sans: ["Figtree Variable", "system-ui", "sans-serif"],
+        // Legacy names, same stacks.
+        montserrat: ["Bricolage Grotesque Variable", "Figtree Variable", "system-ui", "sans-serif"],
+        inter: ["Figtree Variable", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
