@@ -395,10 +395,12 @@
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .svcslant__blurb {
-  display: block; margin-top: 0.5rem; max-width: 28rem;
+  display: block; margin-top: 0; max-width: 28rem; max-height: 0; overflow: hidden;
   font-size: 0.86rem; line-height: 1.5; color: rgba(255, 255, 255, 0.78);
   opacity: 0; transform: translateY(8px);
-  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  /* Collapsed at rest (not just invisible) so the three labels sit on one
+     baseline regardless of how each blurb wraps; grows open on hover. */
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease), max-height 0.5s var(--ease), margin-top 0.5s var(--ease);
 }
 .svcslant__feat {
   display: block; margin-top: 0.35rem;
@@ -407,17 +409,18 @@
 }
 .svcslant__i:hover { flex-grow: 2.4; }
 .svcslant__i:hover::before { filter: saturate(1.05) brightness(0.72); transform: skewX(calc(var(--slant) * -1)) scale(1.36); }
-.svcslant__i:hover .svcslant__blurb { opacity: 1; transform: none; }
+.svcslant__i:hover .svcslant__blurb { opacity: 1; transform: none; max-height: 9rem; margin-top: 0.5rem; }
 .svcslant__i:hover .svcslant__arrow { opacity: 1; transform: none; }
 .svcslant__i:focus-visible { flex-grow: 2.4; outline: 2px solid hsl(var(--primary)); outline-offset: -4px; }
-.svcslant__i:focus-visible .svcslant__blurb,
+.svcslant__i:focus-visible .svcslant__blurb { opacity: 1; transform: none; max-height: 9rem; margin-top: 0.5rem; }
 .svcslant__i:focus-visible .svcslant__arrow { opacity: 1; transform: none; }
 
 @media (max-width: 767px) {
   .svcslant { height: auto; flex-direction: column; gap: 10px; clip-path: none; --slant: 0deg; padding-inline: 1rem; }
   .svcslant__i { height: 150px; flex: 0 0 auto; border-radius: 1rem; }
   .svcslant__i:hover { flex-grow: 0; }
-  .svcslant__blurb, .svcslant__arrow { opacity: 1; transform: none; }
+  .svcslant__blurb { opacity: 1; transform: none; max-height: none; margin-top: 0.5rem; }
+  .svcslant__arrow { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .svcslant__i, .svcslant__i::before, .svcslant__blurb, .svcslant__arrow { transition: none; }
