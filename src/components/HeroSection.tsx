@@ -7,19 +7,26 @@ import { Button } from './ui/button';
 import daikinLogo from '@/assets/daikin-clean.png?url';
 import haierLogo from '@/assets/haier-clean.png?url';
 import { trackEvent } from '@/lib/analytics';
-// The room. This is a real JED install (Residential 5) standing in for the
-// rendered room in the design; swap the file and nothing else changes.
-import roomPhoto from '@/assets/hero/room.jpg?url';
+// Both rooms are the supplied renders (D:\CLIENTS\JED AIR\media), brand mark
+// retouched off the unit — JED sells Daikin and Haier.
+import loungeWide from '@/assets/hero/lounge.jpg?url';
+import loungePortrait from '@/assets/hero/lounge-portrait.jpg?url';
 
 /**
- * Hero, to the layered design: one full-bleed room photo, the title stacked
- * on three lines at the left, and a frosted trust bar along the bottom edge.
- * No form in the hero — the quote panel is the section directly below, and
- * every CTA here scrolls to it.
+ * Hero, to the layered design: one room photo, the title stacked on three
+ * lines at the left, and a frosted trust bar along the bottom edge. No form
+ * here — the quote panel is the section directly below, and every CTA
+ * scrolls to it.
  *
- * Copy in the bar is limited to claims the site already makes elsewhere
- * (footer badges / trust bar). The reference design's "24/7" line is not
- * used: JED's published hours are Mon–Sat 7am–6pm.
+ * Two variants, same copy and bar:
+ *   a — the wide lounge as a full-bleed backdrop (the homepage).
+ *   b — the portrait render as a full-height panel on the right, copy on
+ *       page colour at the left; behind the copy on small screens. Lives at
+ *       /b for testing.
+ *
+ * Bar copy is limited to claims the site already makes elsewhere (footer
+ * badges / trust bar). The reference design's "24/7" line is not used: JED's
+ * published hours are Mon–Sat 7am–6pm.
  */
 const TRUST = [
   { icon: ShieldCheck, label: 'Fully Licensed & Insured', sub: 'Your home in safe hands' },
@@ -30,27 +37,49 @@ const TRUST = [
 const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
 const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
 
-export function HeroSection() {
+type Props = { variant?: 'a' | 'b' };
+
+export function HeroSection({ variant = 'a' }: Props) {
+  const isB = variant === 'b';
   return (
-    <section className="relative flex min-h-[88svh] flex-col justify-center overflow-hidden lg:min-h-[92vh]">
-      {/* Backdrop. The veil runs left→right so the copy sits on page colour and
-          the room carries the right; a second, vertical veil keeps the bar and
-          the bottom edge legible in both themes. */}
-      <div className="absolute inset-0" aria-hidden="true">
-        <img
-          src={roomPhoto}
-          alt=""
-          className="h-full w-full object-cover object-[58%_32%] dark:brightness-[0.82]"
-          decoding="async"
-          fetchPriority="high"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-background/5 lg:via-background/45" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20" />
-      </div>
+    <section
+      data-hero={variant}
+      className="relative flex min-h-[88svh] flex-col justify-center overflow-hidden lg:min-h-[92vh]"
+    >
+      {isB ? (
+        /* B: the portrait as a right-hand panel from lg (its aspect is kept,
+           not cropped to landscape); full-bleed behind the copy below lg. */
+        <div className="absolute inset-0" aria-hidden="true">
+          <img
+            src={loungePortrait}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover object-[50%_28%] dark:brightness-[0.82] lg:left-auto lg:w-[46%]"
+            decoding="async"
+            fetchPriority="high"
+          />
+          {/* seam: page colour fading onto the photo's left edge */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:60%_100%] lg:bg-no-repeat" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20 lg:from-background/60" />
+        </div>
+      ) : (
+        /* A: full-bleed. The veil runs left→right so the copy sits on page
+           colour and the room carries the right. */
+        <div className="absolute inset-0" aria-hidden="true">
+          <img
+            src={loungeWide}
+            alt=""
+            className="h-full w-full object-cover object-[62%_40%] dark:brightness-[0.82]"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-background/5 lg:via-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20" />
+        </div>
+      )}
 
       {/* Copy */}
       <div className="container relative z-10 mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
-        <div className="max-w-2xl">
+        <div className={isB ? 'max-w-xl lg:max-w-[50%]' : 'max-w-2xl'}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -119,7 +148,7 @@ export function HeroSection() {
               <a
                 href="#quote"
                 className="flex w-full items-center justify-center gap-2 sm:w-auto"
-                onClick={() => trackEvent('cta_click', { location: 'hero', type: 'quote' })}
+                onClick={() => trackEvent('cta_click', { location: `hero-${variant}`, type: 'quote' })}
               >
                 Get a Free Quote
                 <ArrowRight className="h-5 w-5" />
@@ -129,7 +158,7 @@ export function HeroSection() {
               <a
                 href="tel:0434308070"
                 className="flex w-full items-center justify-center gap-2 sm:w-auto"
-                onClick={() => trackEvent('cta_click', { location: 'hero', type: 'call' })}
+                onClick={() => trackEvent('cta_click', { location: `hero-${variant}`, type: 'call' })}
               >
                 <Phone className="h-5 w-5" />
                 0434 308 070

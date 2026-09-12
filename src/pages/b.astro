@@ -1,0 +1,44 @@
+---
+/**
+ * Homepage variant B — for comparison against `/`, not for visitors:
+ * noindex, excluded from the sitemap, canonical points at itself.
+ *
+ *   - Hero B: the portrait render as a right-hand panel (HeroSection variant="b").
+ *   - Every alternate section sits on a brick texture (`.brick` in index.css),
+ *     which also strips that section's own flat background so the texture
+ *     shows through.
+ */
+import Base from '@/layouts/Base.astro';
+import HeroSection from '@/components/HeroSection';
+import QuoteSection from '@/components/QuoteSection.astro';
+import BrandsSection from '@/components/BrandsSection';
+import ServicePathways from '@/components/ServicePathways';
+import ReviewsSection from '@/components/ReviewsSection';
+import TrustBar from '@/components/TrustBar';
+import ServicesCoverflow from '@/components/ServicesCoverflow';
+import ProjectsGallery from '@/components/ProjectsGallery';
+import SocialReels from '@/components/SocialReels';
+import WhyChooseUs from '@/components/WhyChooseUs';
+import ProcessSection from '@/components/ProcessSection';
+import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
+---
+
+<Base
+  title="Homepage B (test) | JED Air Conditioning"
+  description="Test variant of the JED Air Conditioning homepage."
+  path="/b"
+  noindex
+>
+  <HeroSection variant="b" client:load />
+  <div class="brick"><QuoteSection /></div>
+  <BrandsSection client:visible />
+  <div class="brick"><ServicePathways client:visible /></div>
+  <ReviewsSection client:visible />
+  <div class="brick"><TrustBar client:visible /></div>
+  <ServicesCoverflow client:visible />
+  <div class="brick"><ProjectsGallery client:visible /></div>
+  <SocialReels client:visible />
+  <div class="brick"><WhyChooseUs client:visible /></div>
+  <ProcessSection client:visible />
+  <div class="brick"><ServiceAreasTeaser /></div>
+</Base>

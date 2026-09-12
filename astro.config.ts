@@ -18,7 +18,11 @@ export default defineConfig({
     react(),
     sitemap({
       filter: (page) =>
-        !page.includes('/thank-you') && !page.includes('/404') && !page.includes('/service-area/sydney'),
+        !page.includes('/thank-you') &&
+        !page.includes('/404') &&
+        !page.includes('/service-area/sydney') &&
+        // homepage test variant (noindex) — keep it out of the sitemap
+        new URL(page).pathname.replace(/\/$/, '') !== '/b',
       serialize: (item) => ({ ...item, lastmod: pageLastmod(new URL(item.url).pathname) }),
     }),
   ],
