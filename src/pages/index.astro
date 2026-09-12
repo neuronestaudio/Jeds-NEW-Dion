@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
 import HeroSection from '@/components/HeroSection';
+import QuoteSection from '@/components/QuoteSection.astro';
 import BrandsSection from '@/components/BrandsSection';
 import ServicePathways from '@/components/ServicePathways';
 import ReviewsSection from '@/components/ReviewsSection';
@@ -21,6 +22,7 @@ import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
   ogDescription="Daikin certified dealer. Professional installation, repairs & maintenance. 5-year workmanship warranty."
 >
   <HeroSection client:load />
+  <QuoteSection />
   <BrandsSection client:visible />
   <ServicePathways client:visible />
   <ReviewsSection client:visible />
