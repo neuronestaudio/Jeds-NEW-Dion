@@ -1,37 +1,12 @@
 ---
 /**
- * The quote panel, directly under the hero. The hero no longer carries the
- * form (the layered design has none), so this is where every "Get a Free
- * Quote" on the homepage lands — and it is the `#quote` anchor the coverflow
- * cards were already pointing at, which the homepage previously did not have.
+ * The homepage quote section: the shared QuotePanel with the compact wizard.
+ * It is the `#quote` anchor every "Get a Free Quote" on the page scrolls to.
  */
+import QuotePanel from '@/components/QuotePanel.astro';
 import QuoteFormInline from '@/components/QuoteFormInline';
-import { CheckCircle2 } from 'lucide-react';
-
-const points = [
-  'Two quick taps, then your details — no forms to fill twice',
-  'A real reply within 24 hours, not an auto-response',
-  'Daikin & Haier certified installers across Sydney',
-];
 ---
 
-<section id="quote" class="scroll-mt-24 border-y border-border bg-card/40 py-14 sm:py-20">
-  <div class="container mx-auto grid gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.15fr] lg:items-center lg:gap-16 lg:px-10">
-    <div class="max-w-xl">
-      <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.22em] text-primary">Free quote</span>
-      <h2 class="mb-4 text-3xl sm:text-4xl lg:text-5xl">Tell us the job. We'll take it from there.</h2>
-      <p class="mb-7 text-muted-foreground sm:text-lg">
-        Installation, repair or a service — pick the one that fits and we'll come back with a clear, itemised quote.
-      </p>
-      <ul class="space-y-3">
-        {points.map((p) => (
-          <li class="flex items-start gap-3 text-sm sm:text-base">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-            <span>{p}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-    <QuoteFormInline client:visible />
-  </div>
-</section>
+<QuotePanel id="quote" as="h2">
+  <QuoteFormInline client:visible />
+</QuotePanel>

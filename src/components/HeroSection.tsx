@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Phone, ShieldCheck, BadgeCheck, Award } from 'lucide-react';
+import { ArrowRight, Phone, ShieldCheck, BadgeCheck, Award, Leaf } from 'lucide-react';
 import { Button } from './ui/button';
 // Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
 // with different built-in padding, which renders as dark boxes at mismatched
@@ -32,6 +32,7 @@ const TRUST = [
   { icon: ShieldCheck, label: 'Fully Licensed & Insured', sub: 'Your home in safe hands' },
   { icon: BadgeCheck, label: 'Daikin & Haier Certified', sub: 'Authorised dealer & installer' },
   { icon: Award, label: '5-Year Workmanship Warranty', sub: 'On all labour' },
+  { icon: Leaf, label: 'Energy Efficient Solutions', sub: 'Comfort today. A cleaner tomorrow.' },
 ];
 
 const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
@@ -58,8 +59,8 @@ export function HeroSection({ variant = 'a' }: Props) {
             fetchPriority="high"
           />
           {/* seam: page colour fading onto the photo's left edge */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:60%_100%] lg:bg-no-repeat" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20 lg:from-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:58%_100%] lg:bg-no-repeat" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent lg:hidden dark:lg:block dark:lg:from-background/60" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -72,8 +73,11 @@ export function HeroSection({ variant = 'a' }: Props) {
             decoding="async"
             fetchPriority="high"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/55 to-background/5 lg:via-background/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/20" />
+          {/* Light: no veil — the render is shown at full strength and the dark
+              ink reads on the bright room. Dark: white copy on a bright photo
+              needs a wash, kept as light as legibility allows. */}
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/45 to-transparent dark:block" />
+          <div className="absolute inset-0 hidden bg-gradient-to-t from-background/75 via-transparent to-transparent dark:block" />
         </div>
       )}
 
@@ -177,12 +181,12 @@ export function HeroSection({ variant = 'a' }: Props) {
         className="relative z-10 pb-8 lg:absolute lg:inset-x-0 lg:bottom-8 lg:pb-0"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-          <ul className="hero-bar grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <ul className="hero-bar grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
             {TRUST.map((t) => (
               <li key={t.label} className="flex items-center gap-4 px-5 py-4 sm:px-6 sm:py-5">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-foreground/15 bg-background/60 text-foreground">
-                  <t.icon className="h-5 w-5" aria-hidden="true" />
-                </span>
+                {/* The icon is the node — drawn at the full 44px with a light
+                    stroke, rather than a small glyph floating inside a ring. */}
+                <t.icon className="h-11 w-11 shrink-0 text-foreground [stroke-width:1.4]" aria-hidden="true" />
                 <span className="min-w-0">
                   <span className="block text-sm font-semibold leading-tight sm:text-base">{t.label}</span>
                   <span className="mt-0.5 block text-xs text-foreground/70 sm:text-sm">{t.sub}</span>

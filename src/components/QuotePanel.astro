@@ -1,0 +1,168 @@
+---
+/**
+ * The quote experience, to the "luxe" mock: a bright room behind a frosted
+ * white panel; the wizard on the left; a deep-teal "Contact Us Directly" card
+ * and a "Why Get a Quote?" checklist on the right; FAQs in a bar underneath.
+ *
+ * Shared by the homepage section (compact wizard) and /contact (full form) —
+ * the form itself comes in through the slot. Every claim on the panel is one
+ * the site already makes: 24-hour response, upfront pricing, the 5-year
+ * workmanship warranty, Daikin & Haier certification, Mon–Sat 7–6.
+ */
+import {
+  ShieldCheck, Clock3, Star, Phone, Mail, MapPin, Clock, ChevronRight, CheckCircle2, ArrowRight, Plus,
+} from 'lucide-react';
+import { SITE } from '@/data/site';
+import { QUOTE_FAQS } from '@/data/faqs';
+import lounge from '@/assets/hero/lounge.jpg?url';
+
+interface Props {
+  /** h1 on /contact, h2 when embedded on the homepage. */
+  as?: 'h1' | 'h2';
+  /** Section id — the homepage uses "quote"; /contact's form carries its own. */
+  id?: string;
+  heading?: string;
+  subheading?: string;
+}
+const {
+  as = 'h2',
+  id,
+  heading = 'Get a Free Quote',
+  subheading = 'Tell us about your AC needs and we’ll respond within 24 hours.',
+} = Astro.props;
+const Heading = as;
+
+const chips = [
+  { icon: ShieldCheck, label: 'Trusted Local Experts' },
+  { icon: Clock3, label: 'Response within 24 hours' },
+  { icon: Star, label: '5-Star Rated' },
+];
+const contact = [
+  { icon: Phone, label: 'Call Us', value: SITE.phoneDisplay, href: SITE.phoneTel },
+  { icon: Mail, label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },
+  { icon: MapPin, label: 'Service Area', value: 'Sydney-Wide Coverage', href: '/service-areas' },
+  { icon: Clock, label: 'Hours', value: SITE.hoursDisplay },
+];
+const why = [
+  'Free, no-obligation assessment',
+  'Response within 24 hours',
+  'Transparent upfront pricing',
+  '5-year workmanship warranty',
+  'Daikin & Haier certified installations',
+];
+---
+
+<section id={id} class="q-scene relative isolate overflow-hidden py-14 sm:py-20 lg:py-24 scroll-mt-24">
+  {/* Backdrop: the lounge render, softened, under a page-colour veil. */}
+  <div class="absolute inset-0 -z-10" aria-hidden="true">
+    <img src={lounge} alt="" class="h-full w-full scale-105 object-cover object-[60%_35%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
+    <div class="absolute inset-0 bg-background/60 dark:bg-background/75"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-background/80"></div>
+  </div>
+
+  {/* Decorative vertical words, right edge, large screens only. */}
+  <div class="q-vertical pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 xl:block" aria-hidden="true">
+    <span>Install</span><span>Repair</span><span>Maintain</span><span class="q-vertical-sub">For a cooler tomorrow</span>
+  </div>
+
+  <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+    <div class="mb-8 max-w-3xl sm:mb-10">
+      <span class="q-eyebrow">Comfort for a brighter tomorrow</span>
+      <Heading class="mb-3 text-4xl sm:text-5xl lg:text-6xl">{heading}</Heading>
+      <p class="mb-5 text-base text-foreground/80 sm:text-lg">{subheading}</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        {chips.map((c) => (
+          <li class="flex items-center gap-2 text-sm font-medium text-foreground/85">
+            <c.icon className="h-5 w-5 text-[hsl(var(--q-teal))]" aria-hidden="true" />
+            {c.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="q-glass">
+      <div class="grid gap-5 lg:grid-cols-[1.25fr_1fr] lg:gap-6">
+        {/* The form — compact wizard on the homepage, the full form on /contact. */}
+        <div class="q-card p-5 sm:p-6 lg:p-7">
+          <slot />
+        </div>
+
+        <div class="flex flex-col gap-5 lg:gap-6">
+          <div class="q-teal p-5 sm:p-6">
+            <div class="mb-4 flex items-baseline justify-between gap-3">
+              <h3 class="text-xl font-semibold text-white sm:text-2xl">Contact Us Directly</h3>
+              <span class="q-kicker text-white/70">We’re here to help</span>
+            </div>
+            <ul class="space-y-3">
+              {contact.map((c) => {
+                const Row = c.href ? 'a' : 'div';
+                return (
+                  <li>
+                    <Row href={c.href} class="q-row">
+                      <span class="q-row-icon"><c.icon className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block text-xs text-white/65">{c.label}</span>
+                        <span class="block truncate text-[15px] font-semibold text-white">{c.value}</span>
+                      </span>
+                      {c.href && <ChevronRight className="h-4 w-4 shrink-0 text-white/70" aria-hidden="true" />}
+                    </Row>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div class="q-why relative overflow-hidden p-5 sm:p-6">
+            <div class="mb-4 flex items-baseline justify-between gap-3">
+              <h3 class="text-xl font-semibold sm:text-2xl">Why Get a Quote?</h3>
+              <span class="q-kicker text-foreground/55">Quality you can count on</span>
+            </div>
+            <ul class="relative z-10 space-y-2.5">
+              {why.map((w) => (
+                <li class="flex items-center gap-3 text-sm sm:text-[15px]">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-[hsl(var(--q-teal))]" aria-hidden="true" />
+                  {w}
+                </li>
+              ))}
+            </ul>
+            {/* concentric arcs + badge, bottom-right */}
+            <svg class="pointer-events-none absolute -bottom-24 -right-16 h-72 w-72 text-[hsl(var(--q-teal))] opacity-[0.18]" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+              <circle cx="100" cy="100" r="96" /><circle cx="100" cy="100" r="80" /><circle cx="100" cy="100" r="64" /><circle cx="100" cy="100" r="48" /><circle cx="100" cy="100" r="32" />
+            </svg>
+            <div class="absolute bottom-5 right-5 hidden flex-col items-center text-center sm:flex" aria-hidden="true">
+              <ShieldCheck className="mb-1 h-7 w-7 text-[hsl(var(--q-teal))]" />
+              <span class="q-kicker text-foreground/60">Comfort</span>
+              <span class="text-[9px] uppercase tracking-[0.22em] text-foreground/45">Peace of mind built in</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQs */}
+      <div class="q-faq mt-5 lg:mt-6">
+        <div class="mb-3 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <h3 class="text-2xl font-semibold">FAQs</h3>
+          <p class="text-sm text-foreground/70">Quick answers to common questions.</p>
+          <div class="ml-auto flex items-center gap-4">
+            <span class="q-kicker hidden text-foreground/55 sm:inline">Still have a question?</span>
+            <a href={SITE.phoneTel} class="q-btn">Get in Touch <ArrowRight className="h-4 w-4" aria-hidden="true" /></a>
+          </div>
+        </div>
+        <div class="space-y-2">
+          {QUOTE_FAQS.map((f) => (
+            <details class="q-faq-item">
+              <summary>
+                <span class="q-faq-q">{f.q}</span>
+                <span class="q-faq-a">{f.a}</span>
+                <span class="q-faq-plus" aria-hidden="true"><Plus className="h-4 w-4" /></span>
+              </summary>
+              <p class="q-faq-full">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <p class="q-tagline">Cooler spaces · Brighter lives</p>
+  </div>
+</section>
