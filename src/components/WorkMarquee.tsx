@@ -62,7 +62,7 @@ function MarqueeTile({ tile, onOpen }: { tile: Tile; onOpen: () => void }) {
       type="button"
       onClick={onOpen}
       aria-label={`Enlarge ${tile.title}, ${tile.location}`}
-      className="group/tile relative mr-4 w-[240px] shrink-0 cursor-zoom-in overflow-hidden rounded-xl border border-border/30 transition-colors duration-300 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 sm:mr-5 sm:w-[300px] lg:w-[360px]"
+      className="group/tile relative mr-4 w-[240px] shrink-0 cursor-zoom-in overflow-hidden rounded-xl border border-border transition-colors duration-300 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 sm:mr-5 sm:w-[300px] lg:w-[360px]"
     >
       <img
         src={resolveAsset(tile.file)}

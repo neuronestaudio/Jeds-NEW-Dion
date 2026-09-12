@@ -48,6 +48,7 @@ const services = [
 >
   <section class="py-16 md:py-24 bg-card/30">
     <div class="container mx-auto px-4">
+      <span class="eyebrow">Services</span>
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Air Conditioning Services in Sydney</h1>
       <p class="text-muted-foreground text-lg max-w-2xl mb-10">
         Installation, repairs, and maintenance for residential and commercial properties.
@@ -57,7 +58,7 @@ const services = [
           services.map((s) => (
             <a
               href={s.href}
-              class="group p-6 bg-card/50 border border-border/30 rounded-2xl hover:border-primary/30 hover:bg-card/80 transition-all"
+              class="group p-6 bg-card/90 border border-border rounded-2xl hover:border-primary/30 hover:bg-card transition-all"
             >
               <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                 <span class="text-primary font-semibold">{s.code}</span>

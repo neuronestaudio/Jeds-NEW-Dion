@@ -20,6 +20,8 @@ export default {
       fontFamily: {
         display: ["Bricolage Grotesque Variable", "Figtree Variable", "system-ui", "sans-serif"],
         sans: ["Figtree Variable", "system-ui", "sans-serif"],
+        // Hero title only — the condensed caps face from Next Lvl Protection.
+        condensed: ["Bebas Neue", "Bricolage Grotesque Variable", "system-ui", "sans-serif"],
         // Legacy names, same stacks.
         montserrat: ["Bricolage Grotesque Variable", "Figtree Variable", "system-ui", "sans-serif"],
         inter: ["Figtree Variable", "system-ui", "sans-serif"],

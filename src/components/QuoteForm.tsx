@@ -29,7 +29,7 @@ export function QuoteForm() {
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
-            <div id="contact" className="p-6 bg-card border border-border/30 rounded-2xl">
+            <div id="contact" className="p-6 bg-card border border-border rounded-2xl">
               <h3 className="text-xl font-bold mb-6">Contact Us Directly</h3>
 
               <div className="space-y-4">
@@ -82,7 +82,7 @@ export function QuoteForm() {
             </div>
 
             {/* Trust signals near form */}
-            <div className="p-6 bg-card border border-border/30 rounded-2xl">
+            <div className="p-6 bg-card border border-border rounded-2xl">
               <h3 className="text-lg font-semibold mb-4">Why Get a Quote?</h3>
               <ul className="space-y-3">
                 {[

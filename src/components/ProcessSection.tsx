@@ -42,7 +42,7 @@ function ProcessStep({ step, index, isLit, progress, reduceMotion }: StepProps) 
           colour instead of replacing it. */}
       <div
         className={`relative z-10 mb-4 inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border bg-card transition-all duration-500 sm:h-16 sm:w-16 ${
-          isLit ? 'border-primary shadow-[0_0_28px_hsl(var(--primary)/0.45)]' : 'border-border/50'
+          isLit ? 'border-primary shadow-[0_0_28px_hsl(var(--primary)/0.45)]' : 'border-border'
         }`}
       >
         {isLit && <span aria-hidden className="absolute inset-0 rounded-full bg-primary/10" />}
@@ -122,6 +122,7 @@ export function ProcessSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12"
         >
+          <span className="eyebrow">How it works</span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Our Installation Process
           </h2>

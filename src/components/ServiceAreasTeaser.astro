@@ -5,16 +5,17 @@ const north = SUBURBS.filter((s) => s.zone === 'north');
 const east = SUBURBS.filter((s) => s.zone === 'east');
 ---
 
-<section class="py-12 sm:py-16 md:py-20 border-t border-border/30 bg-card/20">
+<section class="py-12 sm:py-16 md:py-20 border-t border-border bg-card/20">
   <div class="container mx-auto px-4 sm:px-6 lg:px-10">
     <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-8">
       <div>
+        <span class="eyebrow">Service areas</span>
         <h2 class="text-2xl sm:text-3xl font-bold mb-2">Areas We Service</h2>
         <p class="text-muted-foreground text-sm sm:text-base max-w-2xl">
           Local air conditioning installs, servicing and repairs across Sydney’s North Shore and Eastern Suburbs.
         </p>
       </div>
-      <a href="/service-areas" class="inline-flex items-center gap-2 text-primary font-medium hover:underline">
+      <a href="/service-areas" class="q-kicker inline-flex items-center gap-2 text-[hsl(var(--q-teal))] hover:underline">
         All service areas →
       </a>
     </div>

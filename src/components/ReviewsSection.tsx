@@ -45,7 +45,7 @@ const SCROLL_DURATION_S = 55;
 
 function ReviewCard({ review }: { review: (typeof reviews)[number] }) {
   return (
-    <figure className="mr-4 flex w-[300px] shrink-0 flex-col rounded-2xl border border-border/30 bg-card/50 p-5 transition-colors duration-300 hover:border-primary/30 hover:bg-card/80 sm:mr-5 sm:w-[360px] sm:p-6">
+    <figure className="mr-4 flex w-[300px] shrink-0 flex-col rounded-2xl border border-border bg-card/90 p-5 transition-colors duration-300 hover:border-primary/30 hover:bg-card sm:mr-5 sm:w-[360px] sm:p-6">
       <Quote className="mb-3 h-6 w-6 text-primary/20" />
 
       <div className="mb-3 flex items-center gap-1">
@@ -58,7 +58,7 @@ function ReviewCard({ review }: { review: (typeof reviews)[number] }) {
         &ldquo;{review.text}&rdquo;
       </blockquote>
 
-      <figcaption className="flex items-center justify-between border-t border-border/30 pt-4">
+      <figcaption className="flex items-center justify-between border-t border-border pt-4">
         <span className="text-sm font-semibold">{review.name}</span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3" />
@@ -102,8 +102,11 @@ export function ReviewsSection() {
             </div>
             <span className="text-xl sm:text-2xl font-bold">5.0</span>
           </div>
+          {/* Two deliberate lines — "Trusted by Sydney" over "Homeowners &
+              Businesses" — rather than wherever the column width breaks it. */}
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Trusted by Sydney Homeowners &amp; Businesses
+            <span className="block">Trusted by Sydney</span>
+            <span className="block">Homeowners &amp; Businesses</span>
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
             No shortcuts. From start to finish.

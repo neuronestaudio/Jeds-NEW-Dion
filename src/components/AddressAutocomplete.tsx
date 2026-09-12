@@ -108,7 +108,7 @@ export function AddressAutocomplete({
   required,
   placeholder = 'Start typing your address…',
   labelClassName = 'block text-sm font-medium mb-2',
-  inputClassName = 'w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors',
+  inputClassName = 'w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors',
   confirmedAddress,
 }: Props) {
   const reactId = useId();
@@ -390,7 +390,7 @@ export function AddressAutocomplete({
           id={listboxId}
           role="listbox"
           aria-label="Address suggestions"
-          className="absolute z-50 mt-2 w-full max-h-64 overflow-auto rounded-lg border border-border/50 bg-card shadow-lg"
+          className="absolute z-50 mt-2 w-full max-h-64 overflow-auto rounded-lg border border-border bg-card shadow-lg"
         >
           {suggestions.map((s, i) => (
             <li

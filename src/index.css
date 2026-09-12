@@ -2,6 +2,10 @@
    display, Figtree for text. No Google Fonts request. */
 @import '@fontsource-variable/bricolage-grotesque/wght.css';
 @import '@fontsource-variable/figtree/wght.css';
+/* Bebas Neue: the condensed display face for the hero title, as on the Next
+   Lvl Protection site. One weight only — see `.font-condensed`, which also
+   stops the browser faking a bold. */
+@import '@fontsource/bebas-neue/400.css';
 
 @tailwind base;
 @tailwind components;
@@ -82,6 +86,21 @@
     /* Type is the same in both themes. */
     --font-display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
     --font-sans: "Figtree Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-condensed: "Bebas Neue", "Bricolage Grotesque Variable", system-ui, sans-serif;
+
+    /* Floating pill header geometry (src/components/Header.tsx). Pages whose
+       first section sits under the header (everything but the hero pages)
+       clear it with `main > section:first-child` below. */
+    --header-top: 0.75rem;
+    --header-h: 4rem;
+    --header-clear: calc(var(--header-top) + var(--header-h));
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-top: 1rem;
+      --header-h: 4.75rem;
+    }
   }
 
   .dark {
@@ -109,8 +128,10 @@
     --destructive: 0 62% 31%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 19%;
-    --input: 240 4% 19%;
+    /* 24%, up from 19%: a rim at 19% on an 11% card was a rumour of an edge.
+       The site now leans on visible borders in both themes. */
+    --border: 240 4% 24%;
+    --input: 240 4% 24%;
     --ring: 197 47% 58%;
 
     --sidebar-background: 240 5% 11%;
@@ -142,6 +163,7 @@
 
     --font-display: "Bricolage Grotesque Variable", "Figtree Variable", system-ui, sans-serif;
     --font-sans: "Figtree Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-condensed: "Bebas Neue", "Bricolage Grotesque Variable", system-ui, sans-serif;
   }
 }
 
@@ -149,9 +171,11 @@
   * {
     @apply border-border;
   }
-  
+
   html {
     scroll-behavior: smooth;
+    /* Anchors land below the floating header rather than under it. */
+    scroll-padding-top: calc(var(--header-clear) + 1rem);
     /* `clip` rather than `hidden`: hidden makes the viewport a scroll container,
        which both keeps the overflow in the scrollable area (so mobile browsers
        still stretch the layout viewport to fit it) and would break any
@@ -170,19 +194,32 @@
     @apply font-bold tracking-tight;
     font-family: var(--font-display);
   }
+
+  /* The header is fixed and floats over the page. The hero pages start with
+     an island (HeroSection) and paint behind it on purpose; every other page
+     opens with a plain <section>, which gets pushed clear here so its own
+     padding starts under the pill rather than under the header. */
+  main > section:first-child {
+    padding-top: calc(var(--header-clear) + 3rem);
+  }
+  @media (min-width: 1024px) {
+    main > section:first-child {
+      padding-top: calc(var(--header-clear) + 4rem);
+    }
+  }
 }
 
 @layer components {
   /* Trust Badge Styles */
   .trust-badge {
     @apply inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm 
-           border border-border/50 rounded-lg text-sm font-medium;
+           border border-border rounded-lg text-sm font-medium;
   }
   
   /* Service Card Hover Effect */
   .service-card {
     @apply relative overflow-hidden bg-gradient-to-b from-card to-background 
-           border border-border/30 rounded-2xl p-6 transition-all duration-500
+           border border-border rounded-2xl p-6 transition-all duration-500
            hover:border-primary/50 hover:shadow-glow;
   }
   
@@ -235,15 +272,13 @@
            pointer-events-none;
   }
   
-  /* Glass Card */
+  /* Glass Card — the quote panel's card recipe: a solid rim, a soft lift. */
   .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/30 rounded-2xl;
+    @apply bg-card/80 backdrop-blur-xl border border-border rounded-[1.25rem];
+    box-shadow: 0 10px 30px -18px hsl(240 8% 10% / 0.25);
   }
-  
-  /* Sticky Header */
-  .sticky-header {
-    @apply fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-xl 
-           border-b border-border/30;
+  .dark .glass-card {
+    box-shadow: 0 16px 34px -18px rgb(0 0 0 / 0.7), inset 0 1px 0 hsl(0 0% 100% / 0.05);
   }
   
   /* Mobile Bottom Bar
@@ -252,7 +287,7 @@
      The safe-area inset keeps the buttons clear of the iPhone home indicator. */
   .mobile-cta-bar {
     @apply fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl
-           border-t border-border/30 px-4 pt-3 lg:hidden;
+           border-t border-border px-4 pt-3 lg:hidden;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
   }
 }
@@ -261,6 +296,13 @@
   /* Custom Shadows */
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+
+  /* Bebas Neue has one weight. Without font-synthesis: none a `font-bold`
+     ancestor rule makes the browser smear a fake bold over it. */
+  .font-condensed {
+    font-family: var(--font-condensed);
+    font-synthesis: none;
   }
 
   /* Fades the marquee tiles out at both ends instead of hard-cropping them */
@@ -489,10 +531,15 @@
 @media (min-width: 640px) {
   .brand-logo { width: 9rem; }
 }
+/* Dark theme: a light chip, not a dark one. The marks are brand-coloured ink
+   (Daikin blue, Fujitsu red, Panasonic near-black...) and used to be flattened
+   to white here, which lost every brand's colour; a bright chip keeps them as
+   the brands draw them — the same white-chip-on-dark-plate the supplied files
+   had, done deliberately this time. */
 .dark .brand-tile {
-  background: linear-gradient(160deg, hsl(0 0% 100% / 0.10), hsl(0 0% 100% / 0.028));
-  border-color: hsl(0 0% 100% / 0.14);
-  box-shadow: 0 16px 34px -16px rgb(0 0 0 / 0.7), inset 0 1px 0 hsl(0 0% 100% / 0.12);
+  background: linear-gradient(160deg, hsl(0 0% 100% / 0.94), hsl(210 16% 92% / 0.88));
+  border-color: hsl(0 0% 100% / 0.45);
+  box-shadow: 0 18px 38px -16px rgb(0 0 0 / 0.85), inset 0 1px 0 hsl(0 0% 100% / 0.95);
 }
 
 /* =========================================================================
@@ -546,7 +593,9 @@
    ========================================================================= */
 :root { --q-teal-deep: 193 62% 17%; --q-teal-deeper: 195 66% 11%; --q-teal: 191 55% 30%; }
 .dark { --q-teal: 191 55% 55%; }
-.q-eyebrow { display: inline-block; margin-bottom: 0.6rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--q-teal)); }
+/* `.eyebrow` is the site-wide alias: the same tracked teal kicker now sits
+   above every section title, so the quote panel's language runs page-wide. */
+.q-eyebrow, .eyebrow { display: inline-block; margin-bottom: 0.6rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--q-teal)); }
 .q-kicker { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; white-space: nowrap; }
 .q-glass {
   padding: 1rem; border-radius: 1.75rem;
@@ -587,3 +636,79 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 .q-vertical-sub { color: hsl(var(--foreground) / 0.45); }
 .q-tagline { margin-top: 2.25rem; text-align: center; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: hsl(var(--foreground) / 0.55); }
 .q-tagline::before, .q-tagline::after { content: "—"; margin: 0 0.75rem; color: hsl(var(--foreground) / 0.35); }
+
+/* =========================================================================
+   Floating pill header (src/components/Header.tsx)
+   One oval of black silk (public/textures/header-silk.jpg) under a dark veil,
+   hovering over the page in both themes; it compacts once the page scrolls.
+   Geometry lives in --header-top / --header-h on :root.
+   ========================================================================= */
+.pill-header {
+  position: fixed; top: var(--header-top); left: 0; right: 0; z-index: 50;
+  padding-inline: 0.75rem;
+  pointer-events: none;
+}
+@media (min-width: 640px) { .pill-header { padding-inline: 1rem; } }
+@media (min-width: 1024px) { .pill-header { padding-inline: 1.5rem; } }
+.pill-header > * { pointer-events: auto; }
+.pill-shell, .pill-menu {
+  color: #fff;
+  background:
+    linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 45%),
+    linear-gradient(0deg, hsl(240 8% 5% / 0.42), hsl(240 8% 5% / 0.42)),
+    url('/textures/header-silk.jpg') center / cover no-repeat;
+  border: 1px solid hsl(0 0% 100% / 0.14);
+  box-shadow: 0 18px 44px -18px rgb(0 0 0 / 0.7), inset 0 1px 0 hsl(0 0% 100% / 0.14);
+}
+.pill-shell {
+  position: relative; margin-inline: auto; max-width: 1400px;
+  height: var(--header-h); border-radius: 9999px;
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+.pill-header[data-scrolled] .pill-shell {
+  height: calc(var(--header-h) - 0.5rem);
+  box-shadow: 0 24px 54px -20px rgb(0 0 0 / 0.8), inset 0 1px 0 hsl(0 0% 100% / 0.14);
+}
+.pill-menu {
+  margin: 0.5rem auto 0; max-width: 1400px;
+  border-radius: 1.5rem; padding: 0.75rem;
+  max-height: calc(100svh - var(--header-clear) - 6rem); overflow-y: auto;
+}
+.pill-nav-link { font-size: 0.875rem; font-weight: 500; color: hsl(0 0% 100% / 0.72); transition: color 0.2s ease; }
+.pill-nav-link:hover { color: #fff; }
+.pill-dropdown {
+  position: absolute; left: 0; top: calc(100% + 0.85rem); min-width: 264px; padding: 0.5rem;
+  border-radius: 1.25rem; color: #fff;
+  background: linear-gradient(180deg, hsl(240 8% 9% / 0.98), hsl(240 8% 6% / 0.98));
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  box-shadow: 0 24px 50px -18px rgb(0 0 0 / 0.8);
+}
+/* bridges the gap under the trigger so the pointer can travel down without
+   the menu closing on the way */
+.pill-dropdown::before { content: ""; position: absolute; left: 0; right: 0; top: -0.9rem; height: 0.9rem; }
+.pill-dropdown a { display: block; padding: 0.6rem 0.85rem; border-radius: 0.75rem; font-size: 0.875rem; color: hsl(0 0% 100% / 0.8); transition: background 0.2s ease, color 0.2s ease; }
+.pill-dropdown a:hover { background: hsl(0 0% 100% / 0.1); color: #fff; }
+
+/* =========================================================================
+   Hero logo sting (src/components/HeroSection.tsx) — the JED wordmark clip
+   keyed over the lounge. Black is removed with a blend, not an alpha channel:
+   screen on the dark theme (black adds nothing, the white mark lights up);
+   inverted + multiply on light, where the plate becomes white and drops out
+   and the mark prints as ink — a white-on-black sting would vanish against
+   white walls. Half strength by request; a soft mask hides any residual
+   compression haze at the crop edges. Desktop only.
+   ========================================================================= */
+.hero-sting {
+  /* Anchored to the right edge and sized from the viewport — a left anchor
+     plus max-width let the wordmark run off the frame once the cap bound. */
+  position: absolute; right: 4%; top: 37%;
+  width: clamp(420px, 46vw, 760px); height: auto; aspect-ratio: 920 / 372;
+  object-fit: contain; pointer-events: none;
+  opacity: 0.5;
+  filter: invert(1);
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 85% 95% at 50% 50%, #000 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 85% 95% at 50% 50%, #000 55%, transparent 100%);
+}
+.dark .hero-sting { filter: none; mix-blend-mode: screen; }
+@media (prefers-reduced-motion: reduce) { .hero-sting { display: none !important; } }

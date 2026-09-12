@@ -40,7 +40,7 @@ export function ServiceLinks() {
         <a
           key={s.title}
           href={s.href}
-          className="group rounded-2xl border border-border/30 bg-card/50 p-5 transition-all hover:border-primary/40 hover:bg-card/80"
+          className="group rounded-2xl border border-border bg-card/90 p-5 transition-all hover:border-primary/40 hover:bg-card"
         >
           <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-primary/20">
             <s.icon className="h-5 w-5 text-primary" />

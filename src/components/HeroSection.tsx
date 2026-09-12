@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Phone, ShieldCheck, BadgeCheck, Award, Leaf } from 'lucide-react';
 import { Button } from './ui/button';
@@ -42,6 +43,18 @@ type Props = { variant?: 'a' | 'b' };
 
 export function HeroSection({ variant = 'a' }: Props) {
   const isB = variant === 'b';
+
+  // The attribute alone does not satisfy every autoplay policy; setting the
+  // property before play() does. Failure is silent — the room is the hero,
+  // the sting is a garnish.
+  const stingRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = stingRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {});
+  }, []);
+
   return (
     <section
       data-hero={variant}
@@ -78,6 +91,23 @@ export function HeroSection({ variant = 'a' }: Props) {
               needs a wash, kept as light as legibility allows. */}
           <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/45 to-transparent dark:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-t from-background/75 via-transparent to-transparent dark:block" />
+          {/* The JED logo sting, keyed over the couch at half strength — see
+              .hero-sting in index.css for the black removal. The clip is
+              cropped above its tagline row (the supplied file spells
+              "MAINTENAANCE • INSTALATION") and fades at both ends so the loop
+              breathes rather than snaps. Desktop only: on phones the copy
+              owns the frame. */}
+          <video
+            ref={stingRef}
+            className="hero-sting hidden lg:block"
+            src="/hero-sting.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            tabIndex={-1}
+          />
         </div>
       )}
 
@@ -119,13 +149,17 @@ export function HeroSection({ variant = 'a' }: Props) {
             Sydney air conditioning specialists
           </motion.p>
 
-          {/* Three lines, as designed. Weight sits below the site's usual bold
-              so the size can be large without the block turning into a wall. */}
+          {/* Three lines, as designed, in Bebas Neue — the condensed caps face
+              from the Next Lvl Protection heroes. Sizes are set from the
+              column: "ENGINEERED FOR" is ~5.5em wide, and the copy column is
+              max-w-2xl, so 7.2rem is the ceiling before it wraps. font-normal
+              is load-bearing: the face has one weight and the base h1 rule
+              would otherwise ask the browser to fake a bold. */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6 text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.025em] sm:text-6xl lg:text-[4.6rem] xl:text-[5.2rem]"
+            className="font-condensed mb-6 text-[3.6rem] font-normal uppercase leading-[0.92] tracking-[-0.01em] sm:text-[5rem] lg:text-[6.4rem] xl:text-[7.2rem]"
           >
             <span className="block">Comfort,</span>
             <span className="block">Engineered for</span>

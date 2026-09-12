@@ -30,13 +30,13 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t border-border/30 pt-12 sm:pt-16 pb-8">
+    <footer className="bg-card border-t border-border pt-12 sm:pt-16 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <img src={logoOnDark} alt="JED Air Conditioning" className="hidden h-10 w-auto dark:block sm:h-12 mb-4" />
-            <img src={logoOnLight} alt="JED Air Conditioning" className="h-10 w-auto dark:hidden sm:h-12 mb-4" />
+            <img src={logoOnDark} alt="JED Air Conditioning" className="hidden h-10 w-auto opacity-90 dark:block sm:h-12 mb-4" />
+            <img src={logoOnLight} alt="JED Air Conditioning" className="h-10 w-auto opacity-90 dark:hidden sm:h-12 mb-4" />
             <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-sm">
               Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
               <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs
@@ -45,21 +45,21 @@ export function Footer() {
             <div className="flex gap-4">
               <a 
                 href="https://www.facebook.com/jed.airconditioning/" 
-                className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
+                className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a 
                 href="https://www.instagram.com/jed_airconditioning/" 
-                className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
+                className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a 
                 href="https://www.linkedin.com/company/jed-air-conditioning/" 
-                className="w-10 h-10 rounded-full bg-card border border-border/50 flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
+                className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center hover:border-primary/50 hover:text-primary transition-colors"
                 aria-label="LinkedIn"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -121,26 +121,38 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Contact Bar */}
-        <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 py-6 border-y border-border/30 mb-8">
-          <a 
-            href="tel:0434308070" 
-            className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            0434 308 070
-          </a>
-          <a 
-            href="mailto:JED_AIR@outlook.com" 
-            className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
-          >
-            <Mail className="w-4 h-4" />
-            JED_AIR@outlook.com
-          </a>
-          <span className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPin className="w-4 h-4" />
-            Sydney-Wide Service
-          </span>
+        {/* Contact strip — the quote panel's deep-teal card (.q-teal / .q-row
+            in index.css), so the footer speaks the same language as the panel. */}
+        <div className="q-teal mb-8 p-4 sm:p-5">
+          <ul className="grid gap-3 sm:grid-cols-3">
+            <li>
+              <a href="tel:0434308070" className="q-row">
+                <span className="q-row-icon"><Phone className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xs text-white/65">Call us</span>
+                  <span className="block truncate text-[15px] font-semibold text-white">0434 308 070</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="mailto:JED_AIR@outlook.com" className="q-row">
+                <span className="q-row-icon"><Mail className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xs text-white/65">Email</span>
+                  <span className="block truncate text-[15px] font-semibold text-white">JED_AIR@outlook.com</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a href="/service-areas" className="q-row">
+                <span className="q-row-icon"><MapPin className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-xs text-white/65">Service area</span>
+                  <span className="block truncate text-[15px] font-semibold text-white">Sydney-Wide Service</span>
+                </span>
+              </a>
+            </li>
+          </ul>
         </div>
 
         {/* Bottom Bar */}
@@ -153,7 +165,7 @@ export function Footer() {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-8 pt-8 border-t border-border/30">
+        <div className="mt-8 pt-8 border-t border-border">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-[11px] sm:text-xs text-muted-foreground">
             <span>✓ Fully Licensed</span>
             <span>✓ Fully Insured</span>

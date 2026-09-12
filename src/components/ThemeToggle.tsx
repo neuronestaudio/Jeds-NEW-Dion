@@ -9,7 +9,18 @@ import { trackEvent } from '@/lib/analytics';
  */
 const STORAGE_KEY = 'jed-theme';
 
-export function ThemeToggle({ className = '' }: { className?: string }) {
+/**
+ * `auto` follows the page tokens; `onDark` is for surfaces that are dark in
+ * both themes (the silk header pill), where a foreground-tinted button would
+ * disappear on the light theme.
+ */
+type Tone = 'auto' | 'onDark';
+const TONE: Record<Tone, string> = {
+  auto: 'border-foreground/15 bg-foreground/5 text-foreground hover:bg-foreground/10 active:bg-foreground/15',
+  onDark: 'border-white/15 bg-white/10 text-white hover:bg-white/20 active:bg-white/25',
+};
+
+export function ThemeToggle({ className = '', tone = 'auto' }: { className?: string; tone?: Tone }) {
   const toggle = () => {
     const root = document.documentElement;
     const next = !root.classList.contains('dark');
@@ -29,7 +40,7 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       onClick={toggle}
       aria-label="Toggle dark mode"
       title="Toggle dark mode"
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors hover:bg-foreground/10 active:bg-foreground/15 ${className}`}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${TONE[tone]} ${className}`}
     >
       <Moon className="h-[18px] w-[18px] dark:hidden" aria-hidden="true" />
       <Sun className="hidden h-[18px] w-[18px] dark:block" aria-hidden="true" />

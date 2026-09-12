@@ -83,8 +83,8 @@ const serviceLd = {
 
       <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12 items-start">
         <div>
-          <p class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">
-            <MapPin className="h-3.5 w-3.5" />
+          <p class="eyebrow mb-4">
+            <MapPin className="mr-1.5 inline-block h-3.5 w-3.5 align-[-2px]" />
             {suburb.name} {suburb.postcode} · {zone.label}{suburb.areaKm2 ? ` · ${suburb.areaKm2} km²` : ''}
           </p>
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -104,7 +104,7 @@ const serviceLd = {
   </section>
 
   {/* Local intro + service boundary */}
-  <section class="py-12 md:py-16 border-t border-border/30">
+  <section class="py-12 md:py-16 border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <div class={hasMap ? 'grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-12 items-start' : ''}>
         <div class="space-y-5 text-muted-foreground text-base md:text-lg max-w-3xl">
@@ -134,7 +134,7 @@ const serviceLd = {
   </section>
 
   {/* Common issues */}
-  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+  <section class="py-12 md:py-16 border-t border-border bg-card/30">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-2xl sm:text-3xl font-bold mb-2">
         {isRegional ? `What to plan for in ${suburb.name}` : `Common air conditioning issues in ${suburb.name}`}
@@ -146,7 +146,7 @@ const serviceLd = {
       </p>
       <div class="grid gap-4 sm:grid-cols-2">
         {issues.map((issue) => (
-          <div class="rounded-2xl border border-border/30 bg-card/50 p-5 sm:p-6">
+          <div class="rounded-2xl border border-border bg-card/90 p-5 sm:p-6">
             <h3 class="font-semibold mb-2">{issue.title}</h3>
             <p class="text-sm text-muted-foreground">{issue.body}</p>
           </div>
@@ -156,7 +156,7 @@ const serviceLd = {
   </section>
 
   {/* Services */}
-  <section class="py-12 md:py-16 border-t border-border/30">
+  <section class="py-12 md:py-16 border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-2xl sm:text-3xl font-bold mb-8">Air conditioning services in {suburb.name}</h2>
       <ServiceLinks />
@@ -164,7 +164,7 @@ const serviceLd = {
   </section>
 
   {/* Process */}
-  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+  <section class="py-12 md:py-16 border-t border-border bg-card/30">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-2xl sm:text-3xl font-bold mb-2">How a {suburb.name} install runs</h2>
       <p class="text-muted-foreground mb-8">From first visit to handover.</p>
@@ -173,12 +173,12 @@ const serviceLd = {
   </section>
 
   {/* FAQ */}
-  <section class="py-12 md:py-16 border-t border-border/30">
+  <section class="py-12 md:py-16 border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-2xl sm:text-3xl font-bold mb-8">{suburb.name} air conditioning FAQs</h2>
       <div class="max-w-3xl space-y-3">
         {faqs.map((f) => (
-          <details class="group rounded-2xl border border-border/30 bg-card/50 open:border-primary/30">
+          <details class="group rounded-2xl border border-border bg-card/90 open:border-primary/30">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold">
               <span>{f.q}</span>
               <span aria-hidden="true" class="text-primary transition-transform group-open:rotate-45">+</span>
@@ -191,7 +191,7 @@ const serviceLd = {
   </section>
 
   {/* Nearby */}
-  <section class="py-12 md:py-16 border-t border-border/30 bg-card/30">
+  <section class="py-12 md:py-16 border-t border-border bg-card/30">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-xl sm:text-2xl font-bold mb-4">Also servicing near {suburb.name}</h2>
       <ul class="flex flex-wrap gap-2">
@@ -200,14 +200,14 @@ const serviceLd = {
             <li>
               <a
                 href={n.href}
-                class="inline-block rounded-full border border-border/40 bg-card/60 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                class="inline-block rounded-full border border-border bg-card/60 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
               >
                 {n.name}
               </a>
             </li>
           ) : (
             <li>
-              <span class="inline-block rounded-full border border-border/20 px-3 py-1.5 text-sm text-muted-foreground/70">
+              <span class="inline-block rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground/70">
                 {n.name}
               </span>
             </li>
@@ -223,7 +223,7 @@ const serviceLd = {
   </section>
 
   {/* Quote */}
-  <section class="py-16 md:py-24 border-t border-border/30">
+  <section class="py-16 md:py-24 border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <div class="glass-card p-6 md:p-8">
         <h2 class="text-2xl font-semibold mb-2">Get a free quote in {suburb.name}</h2>

@@ -12,6 +12,7 @@ export function ProjectsGallery() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12"
         >
+          <span className="eyebrow">Recent installs</span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
             Our Recent Work
           </h2>

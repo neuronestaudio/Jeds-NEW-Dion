@@ -71,7 +71,7 @@ export function BorderBeam({ children, className = '', duration = 20, delay = 0,
       style={{ ['--beam-duration' as string]: `${duration}s` }}
     >
       {/* Static rim so the edge never vanishes between passes. */}
-      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-border/50" />
+      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-2xl bg-border" />
 
       {/* Glow pass — blurred, bleeds a halo just outside the rim.
           Note `[transition-duration:500ms]` rather than `duration-500`: the

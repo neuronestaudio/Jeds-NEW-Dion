@@ -57,12 +57,13 @@ export function BrandsSection() {
             <img
               src={brand.logo}
               alt={`${brand.name} logo`}
-              /* Brand colours on the light theme; one flat white silhouette on
-                 the dark one, where navy and near-black marks would vanish.
-                 The box is fixed (see .brand-logo) rather than sized by the
-                 file, so a mark that has not decoded yet still holds its space
-                 instead of collapsing the tile to nothing. */
-              className="brand-logo dark:brightness-0 dark:invert"
+              /* Brand colours in both themes: on dark the tile itself turns
+                 into a light chip (see .dark .brand-tile) rather than the
+                 marks being flattened to white silhouettes, which lost every
+                 brand's colour. The box is fixed (see .brand-logo) rather
+                 than sized by the file, so a mark that has not decoded yet
+                 still holds its space instead of collapsing the tile. */
+              className="brand-logo"
               style={{ ['--logo-scale' as string]: brand.scale ?? 1 }}
               /* Eager: the strip sits directly under the hero, and a lazy mark
                  in the off-screen half of the marquee scrolls in blank. */
@@ -78,7 +79,7 @@ export function BrandsSection() {
   return (
     <section
       aria-label="Brands we install and service"
-      className="relative isolate overflow-hidden border-y border-border/40 py-7 sm:py-9"
+      className="relative isolate overflow-hidden border-y border-border py-7 sm:py-9"
     >
       {/* Something for the glass to blur: a soft wash rather than flat colour. */}
       <div

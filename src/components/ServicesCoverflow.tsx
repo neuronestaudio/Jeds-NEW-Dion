@@ -178,7 +178,7 @@ export function ServicesCoverflow() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <div className="mb-8 text-center sm:mb-12">
-          <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.22em] text-primary">What we do</span>
+          <span className="eyebrow">What we do</span>
           <h2 className="mb-4 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl">Our Services</h2>
           <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base md:text-lg">
             Complete air conditioning solutions for every need. Swipe the deck, or tap a card.

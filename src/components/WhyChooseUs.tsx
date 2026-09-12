@@ -56,6 +56,7 @@ export function WhyChooseUs() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
+            <span className="eyebrow">Why JED</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 sm:mb-6">
               Sydney’s Trusted <span className="text-gradient">Daikin & Haier Installation Experts</span>
             </h2>

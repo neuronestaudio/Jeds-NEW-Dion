@@ -350,8 +350,8 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     ? 'block text-[11px] sm:text-xs font-medium mb-2'
     : 'block text-sm font-medium mb-2';
   const inputClass = compact
-    ? 'w-full px-4 py-3 text-sm sm:text-base bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors'
-    : 'w-full px-4 py-3 bg-card border border-border/50 rounded-lg focus:outline-none focus:border-primary transition-colors';
+    ? 'w-full px-4 py-3 text-sm sm:text-base bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors'
+    : 'w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors';
 
   const slide = {
     enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 32 : -32 }),
@@ -490,7 +490,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                       className={`group flex w-full items-center gap-3.5 rounded-2xl border p-3.5 text-left transition-all duration-300 ${
                         selected
                           ? 'border-primary bg-primary/10'
-                          : 'border-border/30 bg-card/50 hover:border-primary/30 hover:bg-card/80'
+                          : 'border-border bg-card/90 hover:border-primary/30 hover:bg-card'
                       }`}
                     >
                       <span
@@ -536,7 +536,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                       className={`group flex w-full items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-300 ${
                         selected
                           ? 'border-primary bg-primary/10'
-                          : 'border-border/30 bg-card/50 hover:border-primary/30 hover:bg-card/80'
+                          : 'border-border bg-card/90 hover:border-primary/30 hover:bg-card'
                       }`}
                     >
                       <span

@@ -34,7 +34,7 @@ const sydneyCount = SUBURBS.filter((s) => s.zone !== 'regional').length;
 >
   <section class="relative py-16 md:py-24 section-glow">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
-      <p class="text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">Service areas</p>
+      <p class="eyebrow mb-4">Service areas</p>
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">
         Air Conditioning Across <span class="text-gradient">{sydneyCount} Sydney Suburbs</span>
       </h1>
@@ -52,7 +52,7 @@ const sydneyCount = SUBURBS.filter((s) => s.zone !== 'regional').length;
   </section>
 
   {zonesInOrder.map((zone) => (
-    <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border/30 scroll-mt-28">
+    <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border scroll-mt-28">
       <div class="container mx-auto px-4 sm:px-6 lg:px-10">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
           {ZONES[zone].label}
@@ -65,7 +65,7 @@ const sydneyCount = SUBURBS.filter((s) => s.zone !== 'regional').length;
           {byZone(zone).map((s) => (
             <a
               href={`/service-area/${s.slug}`}
-              class="group flex flex-col justify-between rounded-2xl border border-border/30 bg-card/50 p-5 transition-all hover:border-primary/40 hover:bg-card/80"
+              class="group flex flex-col justify-between rounded-2xl border border-border bg-card/90 p-5 transition-all hover:border-primary/40 hover:bg-card"
             >
               <div>
                 <h3 class="text-lg font-semibold transition-colors group-hover:text-primary">
@@ -83,7 +83,7 @@ const sydneyCount = SUBURBS.filter((s) => s.zone !== 'regional').length;
     </section>
   ))}
 
-  <section class="py-16 md:py-24 border-t border-border/30">
+  <section class="py-16 md:py-24 border-t border-border">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <div class="glass-card p-6 md:p-8">
         <h2 class="text-2xl font-semibold mb-2">Not sure your suburb’s listed?</h2>

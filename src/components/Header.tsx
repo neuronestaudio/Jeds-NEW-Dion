@@ -1,10 +1,9 @@
 import { Phone, Mail, Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // `?url` — under Astro an image import is a metadata object, not a URL string.
-// One transparent mark per theme; the old JPG carried its own black plate.
-import logoOnLight from '@/assets/brand/jed-logo-on-light.png?url';
+// The pill is black silk in both themes, so only the on-dark mark is needed.
 import logoOnDark from '@/assets/brand/jed-logo-on-dark.png?url';
 import { ThemeToggle } from './ThemeToggle';
 import { trackEvent } from '@/lib/analytics';
@@ -17,10 +16,39 @@ const navLinks = [
   { label: 'Contact', href: '/contact' },
 ];
 
+const serviceLinks = [
+  { label: 'All Services', href: '/services' },
+  { label: 'Split System Installation', href: '/service/split-system-installation' },
+  { label: 'Ducted Air Conditioning', href: '/service/ducted-air-conditioning' },
+  { label: 'Repairs & Diagnostics', href: '/service/aircon-repair' },
+];
+
+/** Round on-dark control: the phone-size call and menu buttons. */
+const ROUND_CONTROL =
+  'inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 active:bg-white/25';
+
+/**
+ * Floating pill header. One oval of black silk (see .pill-shell in index.css)
+ * sits over the page in both themes and compacts once the page has scrolled.
+ *
+ * Below lg the row is a three-column grid — call button, logo, toggle + menu —
+ * so the logo is dead centre whatever the side controls measure, scrolled or
+ * not. From lg it is the usual logo / nav / CTAs row inside the same pill.
+ */
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const hoverCloseTimer = useRef<number | null>(null);
+
+  // Passive listener; state only flips at the threshold, so this is not a
+  // re-render per scroll frame.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const openServices = () => {
     if (hoverCloseTimer.current) {
@@ -45,45 +73,38 @@ export function Header() {
       >
         Skip to content
       </a>
-      <header className="sticky-header">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-          {/*
-            Below lg this is a three-column grid so the logo is optically
-            centred no matter how wide the side controls are. It used to be
-            `justify-between` with only two children, which flung the logo and
-            the menu button to opposite edges and left dead space between them.
-            The left slot is a call button — it balances the row and puts the
-            highest-intent action inside thumb reach instead of leaving a gap.
-            From lg up it reverts to the usual flex row.
-          */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-16 sm:h-18 md:h-20 lg:h-24 lg:flex lg:justify-between">
+
+      <header className="pill-header" data-scrolled={scrolled ? '' : undefined}>
+        <div className="pill-shell">
+          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center px-2 sm:px-3 lg:flex lg:justify-between lg:pl-7 lg:pr-3">
             {/* Mobile: quick-call, left slot */}
             <a
               href="tel:0434308070"
               aria-label="Call JED Air Conditioning on 0434 308 070"
               onClick={() => trackEvent('cta_click', { location: 'header-mobile', type: 'call' })}
-              className="lg:hidden justify-self-start inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary transition-colors active:bg-primary/20"
+              className={`${ROUND_CONTROL} justify-self-start lg:hidden`}
             >
-              <Phone className="w-[18px] h-[18px]" />
+              <Phone className="h-[18px] w-[18px]" />
             </a>
 
-            {/* Logo */}
-            <a href="/" className="flex items-center gap-3 justify-self-center lg:justify-self-start">
+            {/* Logo. 90% opacity by request — the mark sits into the silk
+                rather than on top of it. */}
+            <a
+              href="/"
+              className="flex items-center justify-self-center lg:justify-self-start"
+              aria-label="JED Air Conditioning — home"
+            >
               <img
                 src={logoOnDark}
                 alt="JED Air Conditioning"
-                className="hidden h-10 w-auto dark:block sm:h-12 md:h-14 lg:h-18"
-              />
-              <img
-                src={logoOnLight}
-                alt="JED Air Conditioning"
-                className="h-10 w-auto dark:hidden sm:h-12 md:h-14 lg:h-18"
+                className={`w-auto opacity-90 transition-[height] duration-300 ${
+                  scrolled ? 'h-9 sm:h-10 lg:h-11' : 'h-10 sm:h-11 lg:h-[52px]'
+                }`}
               />
             </a>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8">
-              {/* Services dropdown */}
+            {/* Desktop navigation */}
+            <nav className="hidden items-center gap-8 lg:flex">
               <div
                 className="relative"
                 onMouseEnter={openServices}
@@ -92,110 +113,109 @@ export function Header() {
                 onBlurCapture={closeServices}
               >
                 <div className="flex items-center gap-1">
-                  <a
-                    href="/services"
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  >
+                  <a href="/services" className="pill-nav-link">
                     Services
                   </a>
                   <button
                     type="button"
-                    className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                    className="pill-nav-link inline-flex items-center"
                     aria-label="Toggle services menu"
                     aria-haspopup="menu"
                     aria-expanded={servicesOpen}
                     onClick={() => setServicesOpen((v) => !v)}
                   >
-                    <ChevronDown className={`w-4 h-4 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`h-4 w-4 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
-                <div
-                  className={`absolute left-0 mt-2 ${servicesOpen ? 'block' : 'hidden'} bg-card border border-border/40 rounded-md shadow-md min-w-[260px] p-3 z-40`}
-                  role="menu"
-                >
-                  <div className="flex flex-col">
-                    <a href="/services" className="px-3 py-2 rounded hover:bg-muted text-sm font-medium">All Services</a>
-                    <a href="/service/split-system-installation" className="px-3 py-2 rounded hover:bg-muted text-sm">Split System Installation</a>
-                    <a href="/service/ducted-air-conditioning" className="px-3 py-2 rounded hover:bg-muted text-sm">Ducted Air Conditioning</a>
-                    <a href="/service/aircon-repair" className="px-3 py-2 rounded hover:bg-muted text-sm">Repairs & Diagnostics</a>
-                  </div>
+                <div className={`pill-dropdown ${servicesOpen ? 'block' : 'hidden'}`} role="menu">
+                  {serviceLinks.map((l) => (
+                    <a key={l.href + l.label} href={l.href} role="menuitem">
+                      {l.label}
+                    </a>
+                  ))}
                 </div>
               </div>
-              {/* Other links */}
-              {navLinks.filter(l => l.label !== 'Services').map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks
+                .filter((l) => l.label !== 'Services')
+                .map((link) => (
+                  <a key={link.label} href={link.href} className="pill-nav-link">
+                    {link.label}
+                  </a>
+                ))}
             </nav>
 
-            {/* Desktop CTAs. lg, not md — at md the header is still the
-                three-column mobile grid, and a fourth child would break it. */}
-            <div className="hidden lg:flex items-center gap-3">
-              <ThemeToggle />
-              <Button variant="call" size="sm" asChild>
+            {/* Desktop CTAs. lg, not md — at md the row is still the
+                three-column grid, and a fourth child would break it. */}
+            <div className="hidden items-center gap-2.5 lg:flex">
+              <ThemeToggle tone="onDark" />
+              <Button variant="call" size="sm" className="rounded-full px-4" asChild>
                 <a
                   href="tel:0434308070"
                   className="flex items-center gap-2"
                   onClick={() => trackEvent('cta_click', { location: 'header', type: 'call' })}
                 >
-                  <Phone className="w-4 h-4" />
+                  <Phone className="h-4 w-4" />
                   <span>0434 308 070</span>
                 </a>
               </Button>
-              <Button variant="cta" size="sm" asChild>
+              <Button variant="cta" size="sm" className="rounded-full px-5" asChild>
                 <a href="/contact#quote" onClick={() => trackEvent('cta_click', { location: 'header', type: 'quote' })}>
                   Get a Quote
                 </a>
               </Button>
             </div>
 
-            <div className="lg:hidden justify-self-end flex items-center gap-2">
-            <ThemeToggle />
-            {/* Mobile Menu Button — same 40px footprint as the call button so
-                the two sides of the grid balance and both clear the 44px
-                touch-target guidance once padding is counted. */}
-            <button
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors active:bg-foreground/10"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile: theme + menu, right slot. Same footprint as the call
+                button so the grid balances around the logo. */}
+            <div className="flex items-center justify-self-end gap-2 lg:hidden">
+              <ThemeToggle tone="onDark" />
+              <button
+                className={ROUND_CONTROL}
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+                aria-expanded={mobileMenuOpen}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile menu — its own rounded panel under the pill, same silk. */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-card border-t border-border"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="pill-menu lg:hidden"
             >
-              <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+              <nav className="flex flex-col gap-1">
                 {navLinks.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
-                    className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors"
+                    className="rounded-xl px-4 py-3 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
                   </a>
                 ))}
-                <div className="mt-2 pt-2 border-t border-border/30">
-                  <p className="px-4 pb-1 text-xs uppercase tracking-wider text-muted-foreground">Services</p>
-                  <a href="/service/split-system-installation" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Split System Installation</a>
-                  <a href="/service/ducted-air-conditioning" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Ducted Air Conditioning</a>
-                  <a href="/service/aircon-repair" className="py-3 px-4 text-foreground hover:bg-muted rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>Repairs & Diagnostics</a>
+                <div className="mt-2 border-t border-white/10 pt-2">
+                  <p className="px-4 pb-1 pt-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white/50">
+                    Services
+                  </p>
+                  {serviceLinks.slice(1).map((l) => (
+                    <a
+                      key={l.href + l.label}
+                      href={l.href}
+                      className="block rounded-xl px-4 py-3 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {l.label}
+                    </a>
+                  ))}
                 </div>
               </nav>
             </motion.div>
@@ -206,23 +226,23 @@ export function Header() {
       {/* Mobile Bottom CTA Bar */}
       <div className="mobile-cta-bar">
         <div className="flex gap-3">
-          <Button variant="call" className="flex-1" asChild>
+          <Button variant="call" className="flex-1 rounded-full" asChild>
             <a
               href="tel:0434308070"
               className="flex items-center justify-center gap-2"
               onClick={() => trackEvent('cta_click', { location: 'mobile-bar', type: 'call' })}
             >
-              <Phone className="w-5 h-5" />
+              <Phone className="h-5 w-5" />
               Call Now
             </a>
           </Button>
-          <Button variant="cta" className="flex-1" asChild>
+          <Button variant="cta" className="flex-1 rounded-full" asChild>
             <a
               href="/contact#quote"
               className="flex items-center justify-center gap-2"
               onClick={() => trackEvent('cta_click', { location: 'mobile-bar', type: 'quote' })}
             >
-              <Mail className="w-5 h-5" />
+              <Mail className="h-5 w-5" />
               Get Quote
             </a>
           </Button>

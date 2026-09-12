@@ -1,16 +1,271 @@
 ---
+/**
+ * Privacy Policy. Every statement here describes what the site actually does:
+ * the quote form posts to the HighLevel (LeadConnector) CRM webhook from the
+ * browser (src/lib/ghl.ts); address autocomplete calls Google Places
+ * (AddressAutocomplete.tsx); Google Analytics 4 loads only when VITE_GA_ID is
+ * set, with IP anonymisation (src/lib/analytics.ts); suburb maps fetch Google
+ * Maps or OpenStreetMap tiles (SuburbMap.astro); the theme choice is a
+ * localStorage value, not a cookie; fonts are self-hosted; Instagram is linked,
+ * never embedded. Update this page when any of that changes.
+ */
 import Base from '@/layouts/Base.astro';
-import { SITE } from '@/data/site';
+import { SITE, breadcrumbJsonLd } from '@/data/site';
+import { ShieldCheck, Phone, Mail, Clock, ChevronRight, CheckCircle2 } from 'lucide-react';
+
+const UPDATED = '13 September 2026';
+
+const summary = [
+  'We only collect what we need to quote, book and deliver your air conditioning work.',
+  'Your enquiry goes into our customer system so we can respond within 24 hours.',
+  'We never sell personal information, and we don’t run bulk marketing lists.',
+  'You can ask to see, correct or delete what we hold about you at any time.',
+];
+
+const sections = [
+  { id: 'who-we-are', title: 'Who we are' },
+  { id: 'what-we-collect', title: 'What we collect' },
+  { id: 'how-we-use-it', title: 'How we use it' },
+  { id: 'who-we-share-it-with', title: 'Who we share it with' },
+  { id: 'overseas', title: 'Overseas disclosure' },
+  { id: 'cookies', title: 'Cookies & analytics' },
+  { id: 'marketing', title: 'Marketing & follow-up' },
+  { id: 'security', title: 'Security & retention' },
+  { id: 'your-rights', title: 'Access, correction & deletion' },
+  { id: 'complaints', title: 'Complaints' },
+  { id: 'changes', title: 'Changes to this policy' },
+  { id: 'contact', title: 'Contact us' },
+];
+
+const contact = [
+  { icon: Phone, label: 'Call us', value: SITE.phoneDisplay, href: SITE.phoneTel },
+  { icon: Mail, label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },
+  { icon: Clock, label: 'Hours', value: SITE.hoursDisplay },
+];
 ---
 
-<Base title="Privacy Policy | JED Air Conditioning" description="Privacy policy for JED Air Conditioning." path="/privacy">
-  <section class="container mx-auto px-4 sm:px-6 lg:px-10 py-16 md:py-24">
-    <h1 class="text-3xl md:text-4xl font-bold mb-6">Privacy Policy</h1>
-    <p class="text-muted-foreground mb-4">
-      This page explains how JED Air Conditioning collects, uses, and protects customer information.
-    </p>
-    <p class="text-muted-foreground">
-      For questions about data handling, contact us at <a href={`mailto:${SITE.email}`} class="text-primary hover:underline">{SITE.email}</a>.
-    </p>
+<Base
+  title="Privacy Policy | JED Air Conditioning"
+  description="How JED Air Conditioning collects, uses, stores and shares personal information when you enquire, book a job or use jedairconditioning.com.au."
+  path="/privacy"
+  jsonLd={[breadcrumbJsonLd([{ name: 'Privacy Policy', path: '/privacy' }])]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container relative mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="max-w-3xl">
+        <span class="eyebrow">Legal</span>
+        <h1 class="mb-4 text-4xl sm:text-5xl lg:text-6xl">Privacy Policy</h1>
+        <p class="mb-4 text-base text-foreground/80 sm:text-lg">
+          This policy explains what personal information JED Air Conditioning collects when you contact us, request a
+          quote, book a job or browse this website — and what we do with it.
+        </p>
+        <p class="text-sm text-muted-foreground">
+          Last updated {UPDATED} · Applies to jedairconditioning.com.au and the services we provide across Sydney.
+        </p>
+      </div>
+
+      <div class="mt-10 grid gap-8 lg:mt-14 lg:grid-cols-[15rem_1fr] lg:gap-12">
+        {/* Contents — sticky on large screens */}
+        <nav aria-label="On this page" class="glass-card self-start p-5 lg:sticky lg:top-[calc(var(--header-clear)+1.5rem)]">
+          <span class="q-kicker block text-foreground/55">On this page</span>
+          <ol class="mt-3 space-y-1.5 text-sm">
+            {sections.map((s, i) => (
+              <li>
+                <a href={`#${s.id}`} class="flex items-baseline gap-2.5 py-0.5 text-foreground/75 transition-colors hover:text-[hsl(var(--q-teal))]">
+                  <span class="w-5 shrink-0 text-xs font-semibold text-[hsl(var(--q-teal))]">{String(i + 1).padStart(2, '0')}</span>
+                  {s.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div class="min-w-0 space-y-6 text-[15px] leading-relaxed text-foreground/85 sm:text-base">
+          {/* The short version */}
+          <div class="glass-card relative overflow-hidden p-6 sm:p-8">
+            <div class="mb-4 flex items-baseline justify-between gap-3">
+              <h2 class="text-2xl font-semibold">The short version</h2>
+              <span class="q-kicker text-foreground/55">Plain English</span>
+            </div>
+            <ul class="relative z-10 space-y-2.5">
+              {summary.map((s) => (
+                <li class="flex items-start gap-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[hsl(var(--q-teal))]" aria-hidden="true" />
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
+            <ShieldCheck className="pointer-events-none absolute -bottom-8 -right-6 h-40 w-40 text-[hsl(var(--q-teal))] opacity-[0.08]" aria-hidden="true" />
+          </div>
+
+          <article id="who-we-are" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">1. Who we are</h2>
+            <p>
+              JED Air Conditioning (“JED”, “we”, “us”) installs, services and repairs air conditioning for homes,
+              apartments and commercial premises across Sydney. We are an authorised Daikin and Haier dealer. We handle
+              personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
+            </p>
+          </article>
+
+          <article id="what-we-collect" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">2. What we collect</h2>
+            <p class="mb-4">We collect personal information in three ways.</p>
+            <h3 class="mb-1.5 font-semibold text-foreground">When you enquire or request a quote</h3>
+            <p class="mb-4">
+              Your name, phone number and email address; the address or suburb of the property; the type of property
+              and the work you need (for example a new split system, a ducted install, a repair or a service); your
+              preferred timing; and anything you write in the message field. If you use the address suggestions in the
+              quote form, the text you type is sent to Google’s Places service to return matching addresses.
+            </p>
+            <h3 class="mb-1.5 font-semibold text-foreground">When we do the work</h3>
+            <p class="mb-4">
+              Details of the system installed or serviced (brand, model and serial number), photos of the installation
+              for our records and warranty purposes, invoicing details, and notes about the job.
+            </p>
+            <h3 class="mb-1.5 font-semibold text-foreground">When you use this website</h3>
+            <p>
+              Standard technical information such as your IP address, browser and device type, the pages you visit and
+              how you arrived at the site. See <a href="#cookies" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">Cookies &amp; analytics</a> for what runs on the page.
+            </p>
+          </article>
+
+          <article id="how-we-use-it" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">3. How we use it</h2>
+            <ul class="list-disc space-y-1.5 pl-5">
+              <li>To respond to your enquiry and prepare a quote — normally within 24 hours.</li>
+              <li>To schedule, carry out and follow up installation, servicing and repair work.</li>
+              <li>To confirm bookings and keep you informed by phone, SMS or email.</li>
+              <li>To register manufacturer warranties and honour our 5-year workmanship warranty.</li>
+              <li>To invoice you and keep the business records the law requires.</li>
+              <li>To understand how the website is used so we can improve it.</li>
+            </ul>
+          </article>
+
+          <article id="who-we-share-it-with" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">4. Who we share it with</h2>
+            <p class="mb-4">We do not sell personal information. We share it only with the providers we need to run the business:</p>
+            <ul class="list-disc space-y-1.5 pl-5">
+              <li>
+                <strong class="text-foreground">Our customer management system (HighLevel / LeadConnector).</strong> Enquiries from the website are
+                sent directly into this system, which stores your details and sends our confirmation messages.
+              </li>
+              <li>
+                <strong class="text-foreground">Google.</strong> Address suggestions in the quote form (Google Places), the map on our suburb pages
+                (Google Maps, or OpenStreetMap where Google Maps is not configured) and website analytics (Google Analytics).
+              </li>
+              <li>
+                <strong class="text-foreground">Manufacturers.</strong> Daikin, Haier or another manufacturer, when we register the warranty on a
+                unit we have supplied or installed for you.
+              </li>
+              <li>
+                <strong class="text-foreground">Website hosting (Vercel)</strong>, which keeps standard server logs.
+              </li>
+              <li>
+                Our accountants, insurers and professional advisers where required, and anyone the law requires us to disclose to.
+              </li>
+            </ul>
+          </article>
+
+          <article id="overseas" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">5. Overseas disclosure</h2>
+            <p>
+              Some of the providers above, including our customer management system, Google and our hosting provider,
+              store data on servers outside Australia (chiefly in the United States). By submitting an enquiry you
+              consent to your information being handled by these providers under their own privacy policies.
+            </p>
+          </article>
+
+          <article id="cookies" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">6. Cookies &amp; analytics</h2>
+            <p class="mb-4">
+              This site uses <strong class="text-foreground">Google Analytics</strong> to measure visits, with IP addresses anonymised. Google
+              Analytics sets cookies (such as <code class="rounded bg-muted px-1.5 py-0.5 text-[0.85em]">_ga</code>) that recognise a returning browser;
+              they do not identify you by name. You can block or delete cookies in your browser settings, or install
+              Google’s Analytics opt-out add-on.
+            </p>
+            <p class="mb-4">
+              Your light or dark theme choice is saved in your browser’s local storage, on your device only. It is not
+              sent to us.
+            </p>
+            <p>
+              Fonts are served from our own site, not from a third-party font service. Instagram content on our
+              homepage links out to Instagram; nothing from Instagram loads until you choose to open it.
+            </p>
+          </article>
+
+          <article id="marketing" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">7. Marketing &amp; follow-up</h2>
+            <p>
+              We will contact you about the enquiry or job you have raised, including reminders about servicing where
+              relevant. We do not add you to bulk marketing lists without asking first. To stop follow-up messages,
+              reply STOP to any SMS or email <a href={`mailto:${SITE.email}`} class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">{SITE.email}</a>.
+            </p>
+          </article>
+
+          <article id="security" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">8. Security &amp; retention</h2>
+            <p class="mb-4">
+              The website is served over HTTPS and enquiries are transmitted encrypted. Access to our customer system is
+              limited to the people who need it to serve you. No method of storage or transmission is completely
+              secure, and we cannot guarantee absolute security.
+            </p>
+            <p>
+              We keep enquiry details while we are dealing with your request. Job and warranty records are kept for the
+              life of the warranty we provide (5 years on workmanship) and for as long as tax and business record-keeping
+              laws require. Information that is no longer needed is deleted or de-identified.
+            </p>
+          </article>
+
+          <article id="your-rights" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">9. Access, correction &amp; deletion</h2>
+            <p>
+              You can ask us what personal information we hold about you, ask us to correct it, or ask us to delete it
+              where we no longer need it. Email <a href={`mailto:${SITE.email}`} class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">{SITE.email}</a> and we will respond within 30 days. We may need to confirm your identity first.
+            </p>
+          </article>
+
+          <article id="complaints" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">10. Complaints</h2>
+            <p>
+              If you believe we have mishandled your personal information, contact us first and we will investigate and
+              reply in writing. If you are not satisfied with our response you can complain to the Office of the
+              Australian Information Commissioner at <a href="https://www.oaic.gov.au" target="_blank" rel="noopener noreferrer" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">oaic.gov.au</a>.
+            </p>
+          </article>
+
+          <article id="changes" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">11. Changes to this policy</h2>
+            <p>
+              We update this page when the way we handle information changes. The date at the top shows the current
+              version. Continuing to use the website or our services after a change means you accept the updated policy.
+            </p>
+          </article>
+
+          <div id="contact" class="q-teal scroll-mt-28 p-5 sm:p-6">
+            <div class="mb-4 flex items-baseline justify-between gap-3">
+              <h2 class="text-xl font-semibold text-white sm:text-2xl">12. Contact us</h2>
+              <span class="q-kicker text-white/70">Privacy questions</span>
+            </div>
+            <ul class="grid gap-3 sm:grid-cols-3">
+              {contact.map((c) => {
+                const Row = c.href ? 'a' : 'div';
+                return (
+                  <li>
+                    <Row href={c.href} class="q-row">
+                      <span class="q-row-icon"><c.icon className="h-[18px] w-[18px]" aria-hidden="true" /></span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block text-xs text-white/65">{c.label}</span>
+                        <span class="block truncate text-[15px] font-semibold text-white">{c.value}</span>
+                      </span>
+                      {c.href && <ChevronRight className="h-4 w-4 shrink-0 text-white/70" aria-hidden="true" />}
+                    </Row>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </Base>
