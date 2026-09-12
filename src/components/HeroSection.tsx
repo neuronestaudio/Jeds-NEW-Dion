@@ -63,14 +63,14 @@ export function HeroSection() {
         <img
           src={lightRoom}
           alt=""
-          className={`absolute inset-0 h-full w-full object-cover object-[68%_40%] transition-opacity duration-1000 ${videoVisible ? 'opacity-0' : 'opacity-50'}`}
+          className={`absolute inset-0 h-full w-full object-cover object-[68%_40%] transition-opacity duration-1000 ${videoVisible ? 'opacity-0' : 'opacity-30'}`}
           decoding="async"
           fetchPriority="high"
         />
         {!videoError && allowVideo && play && (
           <video
             key={heroVideo}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-50' : 'opacity-0'}`}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-30' : 'opacity-0'}`}
             autoPlay
             muted
             loop
