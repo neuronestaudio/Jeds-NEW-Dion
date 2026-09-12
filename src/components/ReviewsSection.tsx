@@ -103,10 +103,10 @@ export function ReviewsSection() {
             <span className="text-xl sm:text-2xl font-bold">5.0</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            What Our Customers Say
+            Trusted by Sydney Homeowners &amp; Businesses
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
-            Trusted by Sydney homeowners and businesses
+            No shortcuts. From start to finish.
           </p>
         </motion.div>
       </div>
