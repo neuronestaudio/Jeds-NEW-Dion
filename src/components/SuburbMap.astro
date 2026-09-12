@@ -1,0 +1,158 @@
+---
+/**
+ * SuburbMap — draws a suburb's real gazetted boundary on a map.
+ *
+ * Uses Google Maps when PUBLIC_GOOGLE_MAPS_API_KEY is set, and falls back to
+ * OpenStreetMap tiles via Leaflet when it is not, so the page never ships a broken
+ * or empty map. The polygon is identical either way and is inlined as a prop, so
+ * only this suburb's geometry reaches the browser — not all 116.
+ */
+import { boundaryGeoJson, SUBURB_BOUNDARIES } from '../data/suburbBoundaries';
+
+interface Props {
+  slug: string;
+  name: string;
+  /** [lng, lat] */
+  centre: [number, number];
+  height?: string;
+  /** Boundary stroke. Defaults to the brand accent. */
+  colour?: string;
+}
+
+const { slug, name, centre, height = '320px', colour = '#C4552E' } = Astro.props;
+
+const geo = boundaryGeoJson(slug, name);
+const bbox = SUBURB_BOUNDARIES[slug]?.bbox ?? null;
+const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+const id = `suburb-map-${slug}`;
+---
+
+{geo ? (
+  <figure class="suburb-map" style={`--map-h:${height}`}>
+    <div
+      id={id}
+      class="suburb-map__canvas"
+      data-geo={JSON.stringify(geo)}
+      data-bbox={JSON.stringify(bbox)}
+      data-centre={JSON.stringify(centre)}
+      data-colour={colour}
+      data-key={apiKey}
+      role="img"
+      aria-label={`Map showing the boundary of ${name}`}
+    />
+    <figcaption>{name} service boundary</figcaption>
+  </figure>
+) : null}
+
+<style>
+  .suburb-map { margin: 0; }
+  .suburb-map__canvas {
+    height: var(--map-h, 320px);
+    width: 100%;
+    border: 1px solid hsl(var(--border, 0 0% 88%));
+    border-radius: 0.6rem;
+    overflow: hidden;
+    background: hsl(var(--muted, 0 0% 96%));
+  }
+  .suburb-map figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    opacity: 0.7;
+  }
+  :global(.leaflet-container) { font: inherit; }
+</style>
+
+<script>
+  function initOne(el: HTMLElement) {
+    const geo = JSON.parse(el.dataset.geo!);
+    const bbox = el.dataset.bbox ? JSON.parse(el.dataset.bbox) : null;
+    const centre = JSON.parse(el.dataset.centre!) as [number, number];
+    const colour = el.dataset.colour || '#C4552E';
+    const key = el.dataset.key || '';
+
+    if (key) {
+      loadGoogle(key).then(() => drawGoogle(el, geo, bbox, centre, colour)).catch(() => drawLeaflet(el, geo, bbox, colour));
+    } else {
+      drawLeaflet(el, geo, bbox, colour);
+    }
+  }
+
+  let googlePromise: Promise<void> | null = null;
+  function loadGoogle(key: string) {
+    if (googlePromise) return googlePromise;
+    googlePromise = new Promise<void>((resolve, reject) => {
+      if ((window as any).google?.maps) return resolve();
+      const s = document.createElement('script');
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&loading=async`;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('maps failed'));
+      document.head.appendChild(s);
+    });
+    return googlePromise;
+  }
+
+  function drawGoogle(el: HTMLElement, geo: any, bbox: number[] | null, centre: [number, number], colour: string) {
+    const g = (window as any).google;
+    const map = new g.maps.Map(el, {
+      center: { lat: centre[1], lng: centre[0] },
+      zoom: 14,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      gestureHandling: 'cooperative',
+    });
+    map.data.addGeoJson(geo);
+    map.data.setStyle({
+      strokeColor: colour, strokeWeight: 2.5, strokeOpacity: 0.95,
+      fillColor: colour, fillOpacity: 0.12, clickable: false,
+    });
+    if (bbox) {
+      map.fitBounds(new g.maps.LatLngBounds(
+        { lat: bbox[1], lng: bbox[0] },
+        { lat: bbox[3], lng: bbox[2] },
+      ), 16);
+    }
+  }
+
+  async function drawLeaflet(el: HTMLElement, geo: any, bbox: number[] | null, colour: string) {
+    await ensureLeaflet();
+    const L = (window as any).L;
+    const map = L.map(el, { scrollWheelZoom: false, attributionControl: true });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18, attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+    const layer = L.geoJSON(geo, {
+      style: { color: colour, weight: 2.5, opacity: 0.95, fillColor: colour, fillOpacity: 0.12 },
+    }).addTo(map);
+    map.fitBounds(layer.getBounds(), { padding: [14, 14] });
+  }
+
+  function ensureLeaflet(): Promise<void> {
+    if ((window as any).L) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+      document.head.appendChild(css);
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('leaflet failed'));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Only build the map once it is near the viewport — it is below the fold on every
+  // suburb page and there is no reason to pay for it on load.
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        obs.unobserve(e.target);
+        initOne(e.target as HTMLElement);
+      }
+    }
+  }, { rootMargin: '200px' });
+
+  document.querySelectorAll<HTMLElement>('.suburb-map__canvas').forEach((el) => io.observe(el));
+</script>

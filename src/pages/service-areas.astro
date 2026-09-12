@@ -6,22 +6,29 @@ import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
 import TrustBadges from '@/components/TrustBadges';
 import { breadcrumbJsonLd } from '@/data/site';
 
-const zonesInOrder: Zone[] = ['north', 'east', 'regional'];
-const byZone = (zone: Zone) => SUBURBS.filter((s) => s.zone === zone);
+const zonesInOrder: Zone[] = ['north', 'upper', 'beaches', 'east', 'regional'];
+const byZone = (zone: Zone) =>
+  SUBURBS.filter((s) => s.zone === zone).sort((a, b) => a.name.localeCompare(b.name));
 
 const zoneIntro: Record<Zone, string> = {
   north:
-    'From high-rise apartments beside Chatswood station to federation homes on Mosman’s harbourside slopes and family houses on Turramurra’s big leafy blocks — the North Shore’s housing changes street by street, and the right system changes with it.',
+    'From high-rise apartments beside Chatswood station to federation homes on Mosman’s harbourside slopes and split-level houses built into the fall at Northbridge — the Lower North Shore’s housing changes street by street, and the right system changes with it.',
+  upper:
+    'Ku-ring-gai and Hornsby are the big-block end of Sydney: federation and interwar homes on deep, leafy allotments with real roof space, and bushland-interface properties where leaf load and duct-run length matter as much as capacity.',
+  beaches:
+    'Ocean on one side, Middle Harbour and Pittwater on the other. The Northern Beaches put salt air into almost every job, and stack beachfront apartment density at Dee Why and Manly against steep bush blocks at Seaforth and Belrose.',
   east:
     'Beachfront apartment blocks along Campbell Parade in Bondi, Victorian terraces off Oxford Street in Paddington, harbourside homes in Rose Bay and Vaucluse — the Eastern Suburbs bring salt air, strata rules and heritage constraints into almost every install.',
   regional:
     'Beyond Sydney, JED services Newcastle, the Central Coast, the Blue Mountains, Wollongong and Canberra on scheduled visits. Get in touch with your job details to confirm availability.',
 };
+
+const sydneyCount = SUBURBS.filter((s) => s.zone !== 'regional').length;
 ---
 
 <Base
-  title="Air Conditioning Service Areas | North Shore & Eastern Suburbs Sydney | JED"
-  description="JED Air Conditioning services Sydney's North Shore and Eastern Suburbs — Bondi, Randwick, Double Bay, Chatswood, Mosman, North Sydney, Hornsby and more. Find your suburb."
+  title="Air Conditioning Service Areas | North Shore, Beaches & Eastern Suburbs | JED"
+  description="JED Air Conditioning services 116 Sydney suburbs across the North Shore, Upper North Shore, Northern Beaches and Eastern Suburbs. Find your suburb."
   path="/service-areas"
   jsonLd={[breadcrumbJsonLd([{ name: 'Service Areas', path: '/service-areas' }])]}
 >
@@ -29,11 +36,12 @@ const zoneIntro: Record<Zone, string> = {
     <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
       <p class="text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">Service areas</p>
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">
-        Air Conditioning Across Sydney’s <span class="text-gradient">North Shore &amp; Eastern Suburbs</span>
+        Air Conditioning Across <span class="text-gradient">{sydneyCount} Sydney Suburbs</span>
       </h1>
       <p class="text-muted-foreground text-lg max-w-3xl mb-8">
-        Local installation, servicing and repairs everywhere east of Homebush — with the salt air, strata rules,
-        heritage frontages and roof spaces of each suburb designed for, not discovered on the day.
+        Local installation, servicing and repairs across the North Shore, the Upper North Shore, the Northern
+        Beaches and the Eastern Suburbs — with the salt air, strata rules, heritage frontages and roof spaces of
+        each suburb designed for, not discovered on the day.
       </p>
       <CtaRow client:idle quoteHref="#quote" location="service-areas-hero" />
 
@@ -46,7 +54,12 @@ const zoneIntro: Record<Zone, string> = {
   {zonesInOrder.map((zone) => (
     <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border/30 scroll-mt-28">
       <div class="container mx-auto px-4 sm:px-6 lg:px-10">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{ZONES[zone].label}</h2>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+          {ZONES[zone].label}
+          <span class="ml-3 align-middle text-sm font-medium text-muted-foreground">
+            {byZone(zone).length} suburbs
+          </span>
+        </h2>
         <p class="text-muted-foreground max-w-3xl mb-8">{zoneIntro[zone]}</p>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {byZone(zone).map((s) => (

@@ -3,10 +3,20 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
   ],
   "redirects": [
-    { "source": "/service-area/sydney", "destination": "/service-areas", "permanent": true }
+    {
+      "source": "/service-area/sydney",
+      "destination": "/service-areas",
+      "permanent": true
+    }
   ],
   "headers": [
     {
@@ -14,10 +24,16 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://beta.leadconnectorhq.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://upload.wikimedia.org https://beta.leadconnectorhq.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://services.leadconnectorhq.com https://places.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://beta.leadconnectorhq.com https://*.leadconnectorhq.com; media-src 'self' https:; frame-src 'self' https://beta.leadconnectorhq.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://beta.leadconnectorhq.com https://maps.googleapis.com https://cdnjs.cloudflare.com https://*.leadconnectorhq.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://*.leadconnectorhq.com https://fonts.bunny.net; img-src 'self' data: https://images.unsplash.com https://upload.wikimedia.org https://beta.leadconnectorhq.com https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.ggpht.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://cdnjs.cloudflare.com blob: https://*.leadconnectorhq.com; font-src 'self' data: https://fonts.gstatic.com https://fonts.bunny.net; connect-src 'self' https://services.leadconnectorhq.com https://places.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://beta.leadconnectorhq.com https://*.leadconnectorhq.com https://maps.googleapis.com https://*.googleapis.com https://services.msgsndr.com https://*.msgsndr.com; media-src 'self' https:; frame-src 'self' https://beta.leadconnectorhq.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
         },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
       ]
     }
   ]

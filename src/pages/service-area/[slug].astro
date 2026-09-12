@@ -9,6 +9,7 @@ import ServiceLinks from '@/components/ServiceLinks';
 import ProcessSteps from '@/components/ProcessSteps';
 import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
 import { MapPin } from 'lucide-react';
+import SuburbMap from '@/components/SuburbMap.astro';
 
 export function getStaticPaths() {
   return SUBURBS.map((suburb) => ({ params: { slug: suburb.slug }, props: { suburb } }));
@@ -30,6 +31,7 @@ const faqs = [...(suburb.faq ?? []), ...group.faq].map((f) => ({
 const neighbours = suburb.neighbours.map(neighbourLink);
 
 const isRegional = suburb.zone === 'regional';
+const hasMap = !isRegional && Boolean(suburb.centre);
 const title = `Air Conditioning ${suburb.name} | Installation, Service & Repairs | JED`;
 
 const serviceLd = {
@@ -83,7 +85,7 @@ const serviceLd = {
         <div>
           <p class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-primary font-semibold mb-4">
             <MapPin className="h-3.5 w-3.5" />
-            {suburb.name} {suburb.postcode} · {zone.label}
+            {suburb.name} {suburb.postcode} · {zone.label}{suburb.areaKm2 ? ` · ${suburb.areaKm2} km²` : ''}
           </p>
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
             Air Conditioning <span class="text-gradient">{suburb.name}</span>
@@ -101,14 +103,32 @@ const serviceLd = {
     </div>
   </section>
 
-  {/* Local intro */}
+  {/* Local intro + service boundary */}
   <section class="py-12 md:py-16 border-t border-border/30">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
-      <div class="max-w-3xl space-y-5 text-muted-foreground text-base md:text-lg">
-        <h2 class="text-2xl sm:text-3xl font-bold text-foreground">
-          {isRegional ? `Servicing ${suburb.name}` : `Local to ${suburb.name}`}
-        </h2>
-        {suburb.intro.map((p) => <p>{p}</p>)}
+      <div class={hasMap ? 'grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-12 items-start' : ''}>
+        <div class="space-y-5 text-muted-foreground text-base md:text-lg max-w-3xl">
+          <h2 class="text-2xl sm:text-3xl font-bold text-foreground">
+            {isRegional ? `Servicing ${suburb.name}` : `Local to ${suburb.name}`}
+          </h2>
+          {suburb.intro.map((p) => <p>{p}</p>)}
+        </div>
+
+        {hasMap && (
+          <div class="lg:sticky lg:top-24">
+            <SuburbMap
+              slug={suburb.slug}
+              name={suburb.name}
+              centre={suburb.centre!}
+              height="340px"
+            />
+            {suburb.landmarks && suburb.landmarks.length > 0 && (
+              <p class="mt-3 text-sm text-muted-foreground">
+                Around {suburb.landmarks.slice(0, 3).join(', ')}.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   </section>
