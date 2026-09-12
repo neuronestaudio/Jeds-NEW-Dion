@@ -34,8 +34,9 @@ const pathways = [
 
 export function ServicePathways() {
   return (
-    <section id="services" className="py-10 sm:py-16 md:py-24 section-glow">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+    <section id="services" className="trapezium-stage py-12 sm:py-16 md:py-24">
+      <span aria-hidden="true" className="trapezium-glow" />
+      <div className="container mx-auto px-5 sm:px-8 lg:px-16 xl:px-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

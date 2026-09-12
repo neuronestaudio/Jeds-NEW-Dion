@@ -131,9 +131,12 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-5 sm:mb-6 leading-tight"
+            className="text-[6.8vw] sm:text-4xl md:text-5xl lg:text-[min(3.45vw,3.4rem)] font-bold mb-5 sm:mb-6 leading-[1.08]"
           >
-            Experts in <span className="text-gradient">Air Conditioning Servicing</span>
+            {/* Two lines, always: the size is derived from the column width so
+                "Conditioning Servicing" never wraps onto a third line. */}
+            <span className="block">Experts in <span className="text-gradient">Air</span></span>
+            <span className="block whitespace-nowrap text-gradient">Conditioning Servicing</span>
           </motion.h1>
 
           {/* Subheadline */}
