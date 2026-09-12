@@ -39,9 +39,21 @@ type Props = {
   duration?: number;
   /** Negative values start the lap already in progress. */
   delay?: number;
+  /**
+   * Hold the beam until the card is hovered. A grid of eight cards each
+   * running two oversized blurred gradients is real paint cost on a phone and
+   * reads as noise on the page; at rest those cards keep the static rim and
+   * light up one at a time instead.
+   */
+  hoverOnly?: boolean;
 };
 
-export function BorderBeam({ children, className = '', duration = 20, delay = 0 }: Props) {
+export function BorderBeam({ children, className = '', duration = 20, delay = 0, hoverOnly = false }: Props) {
+  // Paused *and* invisible at rest — a stopped beam parked at a random angle
+  // just looks like a stray highlight.
+  const gated = hoverOnly
+    ? ' [animation-play-state:paused] group-hover/beam:[animation-play-state:running] opacity-0 group-hover/beam:opacity-100'
+    : '';
   const spin: CSSProperties = {
     // animationDuration is set inline, NOT left to the `--beam-duration` var
     // alone. tailwindcss-animate makes the `duration-*` utilities set
@@ -66,14 +78,14 @@ export function BorderBeam({ children, className = '', duration = 20, delay = 0 
           latter would also set animation-duration and pin the lap time. */}
       <span
         aria-hidden
-        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam opacity-60 blur-[6px] transition-opacity [transition-duration:500ms] group-hover/beam:opacity-95"
+        className={`beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam blur-[6px] transition-opacity [transition-duration:500ms] ${hoverOnly ? gated : "opacity-60 group-hover/beam:opacity-95"}`}
         style={spin}
       />
 
       {/* Core pass — sharp, gives the beam a defined leading edge. */}
       <span
         aria-hidden
-        className="beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam transition-opacity [transition-duration:500ms]"
+        className={`beam-spin pointer-events-none absolute inset-[-150%] animate-border-beam transition-opacity [transition-duration:500ms]${gated}`}
         style={spin}
       />
 

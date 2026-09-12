@@ -1,5 +1,6 @@
 import { Shield, Award, Clock, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
+import BorderBeam from './BorderBeam';
 
 const trustItems = [
   {
@@ -37,8 +38,12 @@ export function TrustBar() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ delay: index * 0.08, duration: 0.55, ease: 'easeOut' }}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card dark:border-white/8 dark:bg-[linear-gradient(160deg,rgba(18,26,36,0.96),rgba(12,17,25,0.88))] p-4 shadow-[0_18px_40px_rgba(1,10,20,0.18)] backdrop-blur-sm transition-transform duration-500 hover:-translate-y-1 hover:border-primary/30 sm:p-5"
+              className="h-full"
             >
+              {/* Laps are offset so the four beams never travel in unison,
+                  which reads as decoration rather than four synced widgets. */}
+              <BorderBeam className="h-full" duration={19} delay={index * -4.7}>
+              <div className="group relative h-full overflow-hidden rounded-[calc(1rem-1.5px)] bg-card dark:bg-[linear-gradient(160deg,rgba(18,26,36,0.96),rgba(12,17,25,0.88))] p-4 shadow-[0_18px_40px_rgba(1,10,20,0.18)] backdrop-blur-sm transition-transform duration-500 hover:-translate-y-1 sm:p-5">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(111,202,255,0.16),transparent_46%),radial-gradient(circle_at_bottom_right,rgba(18,168,255,0.12),transparent_42%)] opacity-70 transition-opacity duration-500 group-hover:opacity-100" />
               <div className="relative flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors duration-500 group-hover:bg-primary/15 sm:h-12 sm:w-12">
@@ -49,6 +54,8 @@ export function TrustBar() {
                   <p className="mt-1 text-xs leading-tight text-muted-foreground sm:text-sm">{item.sublabel}</p>
                 </div>
               </div>
+              </div>
+              </BorderBeam>
             </motion.div>
           ))}
         </div>

@@ -43,8 +43,10 @@
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 86%;
-    --input: 240 6% 86%;
+    /* Firmer than the usual near-white hairline: at 86% the rims were only
+       just visible against a 97% ground, so cards read as floating blobs. */
+    --border: 240 7% 80%;
+    --input: 240 7% 82%;
     --ring: 197 44% 40%;
 
     --radius: 0.75rem;

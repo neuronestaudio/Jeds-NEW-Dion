@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-react';
+import BorderBeam from './BorderBeam';
 
 const reasons = [
   {
@@ -87,13 +88,17 @@ export function WhyChooseUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className={`p-4 sm:p-5 bg-card/50 border border-border/30 rounded-xl ${index >= 6 ? 'hidden sm:block' : ''}`}
+                className={`h-full ${index >= 6 ? 'hidden sm:block' : ''}`}
               >
+                <BorderBeam className="h-full" duration={16} delay={index * -2.1} hoverOnly>
+                <div className="h-full rounded-[calc(1rem-1.5px)] bg-card p-4 sm:p-5">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                   <reason.icon className="w-5 h-5 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-1">{reason.title}</h3>
                 <p className="text-muted-foreground text-sm">{reason.description}</p>
+                </div>
+                </BorderBeam>
               </motion.div>
             ))}
           </div>
