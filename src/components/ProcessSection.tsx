@@ -36,37 +36,33 @@ function ProcessStep({ step, index, isLit, progress, reduceMotion }: StepProps) 
 
   return (
     <motion.div style={{ y }} className="relative text-center">
+      {/* z-10 + an opaque base: the rail runs behind the row, but a node tinted
+          with bg-primary/10 is 90% see-through, so the line was visibly
+          crossing every lit circle. The tint is a layer on top of solid card
+          colour instead of replacing it. */}
       <div
-        className={`relative mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-500 sm:h-16 sm:w-16 ${
-          isLit
-            ? 'border-primary bg-primary/10 shadow-[0_0_28px_hsl(var(--primary)/0.45)]'
-            : 'border-border/50 bg-card'
+        className={`relative z-10 mb-4 inline-flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border bg-card transition-all duration-500 sm:h-16 sm:w-16 ${
+          isLit ? 'border-primary shadow-[0_0_28px_hsl(var(--primary)/0.45)]' : 'border-border/50'
         }`}
       >
-        {isLit && (
-          <motion.span
-            aria-hidden
-            className="absolute inset-0 rounded-full ring-2 ring-primary/60"
-            initial={{ opacity: 0.9, scale: 1 }}
-            animate={{ opacity: 0, scale: 1.55 }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
-          />
-        )}
-
+        {isLit && <span aria-hidden className="absolute inset-0 rounded-full bg-primary/10" />}
         <step.icon
           className={`h-6 w-6 transition-colors duration-500 sm:h-7 sm:w-7 ${
             isLit ? 'text-primary' : 'text-muted-foreground'
           }`}
         />
 
-        <span
-          className={`absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-all duration-500 ${
-            isLit ? 'scale-100 bg-primary text-primary-foreground' : 'scale-90 bg-muted text-muted-foreground'
-          }`}
-        >
-          {index + 1}
-        </span>
       </div>
+
+      {/* Outside the circle so the clipped interior does not cut it off, and
+          above the rail for the same reason the circle is. */}
+      <span
+        className={`pointer-events-none absolute left-1/2 top-0 z-20 ml-3 flex h-6 w-6 -translate-y-2 items-center justify-center rounded-full text-xs font-bold transition-all duration-500 sm:ml-4 ${
+          isLit ? 'scale-100 bg-primary text-primary-foreground' : 'scale-90 bg-muted text-muted-foreground'
+        }`}
+      >
+        {index + 1}
+      </span>
 
       <h3
         className={`mb-2 text-sm font-semibold transition-colors duration-500 sm:text-base ${

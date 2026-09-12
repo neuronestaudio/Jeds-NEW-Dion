@@ -279,10 +279,10 @@
     );
   }
 
-  /* Hovering anywhere in the strip holds both rows so a tile can be clicked */
-  .marquee-strip:hover .marquee-track {
-    animation-play-state: paused;
-  }
+  /* The strips run continuously and are never paused by the pointer. Holding
+     on hover was meant as a courtesy for reading a card, but a tile occupies
+     essentially the whole strip, so resting the cursor anywhere near one
+     stopped the row dead and read as a broken scroll. */
 
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
@@ -399,7 +399,7 @@
   position: relative; flex: 1 1 0; min-width: 0; overflow: hidden;
   transform: skewX(var(--slant));
   background: hsl(var(--card));
-  display: flex; align-items: flex-end;
+  display: flex; align-items: center;
   color: #fff; text-decoration: none;
   transition: flex-grow 0.55s var(--ease);
 }
@@ -412,12 +412,15 @@
 }
 .svcslant__i::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 38%, hsl(240 7% 4% / 0.92) 100%);
+  background:
+    radial-gradient(70% 55% at 50% 50%, hsl(240 7% 4% / 0.62), transparent 78%),
+    linear-gradient(180deg, hsl(240 7% 4% / 0.42), hsl(240 7% 4% / 0.30) 45%, hsl(240 7% 4% / 0.72));
 }
 .svcslant__in {
   position: relative; z-index: 1;
   transform: skewX(calc(var(--slant) * -1));
   padding: 1.4rem 1.3rem; width: 100%;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .svcslant__name {
   display: flex; align-items: center; gap: 0.5rem;
@@ -431,7 +434,7 @@
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .svcslant__blurb {
-  display: block; margin-top: 0; max-width: 28rem; max-height: 0; overflow: hidden;
+  display: block; margin-top: 0; max-width: 24rem; max-height: 0; overflow: hidden;
   font-size: 0.86rem; line-height: 1.5; color: rgba(255, 255, 255, 0.78);
   opacity: 0; transform: translateY(8px);
   /* Collapsed at rest (not just invisible) so the three labels sit on one
