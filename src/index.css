@@ -11,44 +11,104 @@
 */
 
 @layer base {
+  /* Light is the default palette (no class on <html>); `.dark` is the original
+     dark design. Every component reads these tokens, so the two themes differ
+     here and in a handful of `dark:` variants, not in the components. */
   :root {
-    /* Core Neutrals */
-    --background: 240 7% 6%; /* Jet Black #0F0F12 */
-    --foreground: 0 0% 100%; /* Pure White */
-    
-    --card: 240 5% 11%; /* Carbon Black #1A1A1F */
+    --background: 240 6% 97%;   /* off-white */
+    --foreground: 240 8% 10%;   /* near-black ink */
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 8% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 8% 10%;
+
+    /* Primary shifts to Steel Blue on light so white-on-primary passes AA;
+       Arctic (the dark theme's primary) becomes the secondary. */
+    --primary: 197 44% 40%;     /* #3B7A96 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 197 47% 58%;   /* #5FA7C9 */
+    --secondary-foreground: 240 8% 10%;
+
+    --muted: 240 6% 92%;
+    --muted-foreground: 240 4% 40%;
+
+    --accent: 197 42% 92%;
+    --accent-foreground: 240 8% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 86%;
+    --input: 240 6% 86%;
+    --ring: 197 44% 40%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 8% 10%;
+    --sidebar-primary: 197 44% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 6% 92%;
+    --sidebar-accent-foreground: 240 8% 10%;
+    --sidebar-border: 240 6% 86%;
+    --sidebar-ring: 197 44% 40%;
+
+    /* Extended palette — same names, light equivalents */
+    --jet: 240 6% 97%;
+    --carbon: 0 0% 100%;
+    --charcoal: 240 6% 92%;
+    --arctic: 197 47% 58%;
+    --steel: 197 44% 40%;
+    --ice: 197 42% 94%;
+    --soft-white: 240 8% 12%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(240 6% 97%) 0%, hsl(0 0% 100%) 50%, hsl(197 47% 58% / 0.12) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 6% 96%) 100%);
+    --gradient-cta: linear-gradient(135deg, hsl(197 44% 40%) 0%, hsl(197 47% 58%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(197 44% 40% / 0.12) 0%, transparent 70%);
+
+    --shadow-sm: 0 2px 8px hsl(240 8% 10% / 0.06);
+    --shadow-md: 0 4px 16px hsl(240 8% 10% / 0.08);
+    --shadow-lg: 0 8px 32px hsl(240 8% 10% / 0.12);
+    --shadow-glow: 0 0 40px hsl(197 44% 40% / 0.18);
+
+    /* Display type: a serif in light for the editorial, premium read;
+       Montserrat in dark, which is the look the brand launched with. */
+    --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  }
+
+  .dark {
+    --background: 240 7% 6%;    /* Jet Black #0F0F12 */
+    --foreground: 0 0% 100%;
+
+    --card: 240 5% 11%;         /* Carbon Black #1A1A1F */
     --card-foreground: 0 0% 100%;
-    
+
     --popover: 240 5% 11%;
     --popover-foreground: 0 0% 100%;
-    
-    /* Primary - Arctic Blue */
-    --primary: 197 47% 58%; /* #5FA7C9 */
+
+    --primary: 197 47% 58%;     /* Arctic Blue #5FA7C9 */
     --primary-foreground: 0 0% 100%;
-    
-    /* Secondary - Steel Blue */
-    --secondary: 197 42% 43%; /* #3F7F9C */
+
+    --secondary: 197 42% 43%;   /* Steel Blue #3F7F9C */
     --secondary-foreground: 0 0% 100%;
-    
-    /* Muted */
+
     --muted: 240 3% 14%;
-    --muted-foreground: 240 2% 52%; /* #6B6B70 */
-    
-    /* Accent - Ice Tint */
-    --accent: 197 42% 95%; /* #EAF4F9 */
+    --muted-foreground: 240 2% 52%;
+
+    --accent: 197 42% 95%;
     --accent-foreground: 240 5% 16%;
-    
-    --destructive: 0 84% 60%;
+
+    --destructive: 0 62% 31%;
     --destructive-foreground: 0 0% 100%;
-    
-    /* Borders */
-    --border: 240 4% 19%; /* #2E2E34 on dark */
+
+    --border: 240 4% 19%;
     --input: 240 4% 19%;
     --ring: 197 47% 58%;
-    
-    --radius: 0.75rem;
-    
-    /* Sidebar */
+
     --sidebar-background: 240 5% 11%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 197 47% 58%;
@@ -57,8 +117,7 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 4% 19%;
     --sidebar-ring: 197 47% 58%;
-    
-    /* Extended Palette */
+
     --jet: 240 7% 6%;
     --carbon: 240 5% 11%;
     --charcoal: 240 5% 16%;
@@ -66,40 +125,18 @@
     --steel: 197 42% 43%;
     --ice: 197 42% 95%;
     --soft-white: 0 0% 93%;
-    
-    /* Gradients */
+
     --gradient-hero: linear-gradient(135deg, hsl(240 7% 6%) 0%, hsl(240 5% 11%) 50%, hsl(197 47% 58% / 0.1) 100%);
     --gradient-card: linear-gradient(180deg, hsl(240 5% 13%) 0%, hsl(240 5% 9%) 100%);
     --gradient-cta: linear-gradient(135deg, hsl(197 47% 58%) 0%, hsl(197 42% 43%) 100%);
     --gradient-glow: radial-gradient(ellipse at center, hsl(197 47% 58% / 0.15) 0%, transparent 70%);
-    
-    /* Shadows */
+
     --shadow-sm: 0 2px 8px hsl(0 0% 0% / 0.3);
     --shadow-md: 0 4px 16px hsl(0 0% 0% / 0.4);
     --shadow-lg: 0 8px 32px hsl(0 0% 0% / 0.5);
     --shadow-glow: 0 0 40px hsl(197 47% 58% / 0.25);
-  }
 
-  .dark {
-    --background: 240 7% 6%;
-    --foreground: 0 0% 100%;
-    --card: 240 5% 11%;
-    --card-foreground: 0 0% 100%;
-    --popover: 240 5% 11%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 197 47% 58%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 197 42% 43%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 3% 14%;
-    --muted-foreground: 240 2% 52%;
-    --accent: 197 42% 95%;
-    --accent-foreground: 240 5% 16%;
-    --destructive: 0 62% 31%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 4% 19%;
-    --input: 240 4% 19%;
-    --ring: 197 47% 58%;
+    --font-display: Montserrat, Inter, system-ui, sans-serif;
   }
 }
 
@@ -124,7 +161,8 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-montserrat font-bold tracking-tight;
+    @apply font-bold tracking-tight;
+    font-family: var(--font-display);
   }
 }
 
@@ -219,16 +257,6 @@
     box-shadow: var(--shadow-glow);
   }
 
-  /* Dissolves the bottom of the stacked hero clip into the page. Without it the
-     band ends on a ruled edge halfway down the headline. It has to be gone well
-     before that headline too — the clip resolves into the JED wordmark, and
-     h1 text sitting on top of a second wordmark is unreadable — hence the fade
-     finishing at 78% rather than running the full height of the band. */
-  .hero-video-mask {
-    -webkit-mask-image: linear-gradient(to bottom, #000 15%, transparent 78%);
-    mask-image: linear-gradient(to bottom, #000 15%, transparent 78%);
-  }
-
   /* Fades the marquee tiles out at both ends instead of hard-cropping them */
   .marquee-mask {
     -webkit-mask-image: linear-gradient(
@@ -299,11 +327,13 @@
   border: 1px solid hsl(var(--border));
   background: hsl(var(--card));
   cursor: pointer; will-change: transform, opacity;
-  box-shadow: 0 40px 80px -32px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 40px 80px -32px hsl(240 8% 6% / 0.35);
   -webkit-user-select: none; user-select: none;
 }
+.dark .sc-card { box-shadow: 0 40px 80px -32px rgba(0, 0, 0, 0.9); }
 [data-ready] .sc-card { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease; }
-.sc-card.is-active { cursor: default; box-shadow: 0 50px 110px -26px rgba(0, 0, 0, 0.95), 0 0 70px -24px hsl(var(--primary) / 0.55); }
+.sc-card.is-active { cursor: default; box-shadow: 0 50px 110px -26px hsl(240 8% 6% / 0.45), 0 0 70px -24px hsl(var(--primary) / 0.45); }
+.dark .sc-card.is-active { box-shadow: 0 50px 110px -26px rgba(0, 0, 0, 0.95), 0 0 70px -24px hsl(var(--primary) / 0.55); }
 .sc-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.94) brightness(0.82); transition: filter 0.6s ease; }
 .sc-card.is-active .sc-img { filter: saturate(1.03) brightness(0.96); }
 .sc-shade { position: absolute; inset: 0; background: linear-gradient(0deg, hsl(240 7% 5% / 0.97) 12%, hsl(240 7% 5% / 0.55) 48%, hsl(240 7% 5% / 0.1) 74%); }
@@ -326,19 +356,21 @@
 .sc-arrow {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 120;
   width: 52px; height: 52px; border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.06); border: 1px solid hsl(var(--border));
+  background: hsl(var(--foreground) / 0.06); border: 1px solid hsl(var(--border));
   color: hsl(var(--foreground)); display: grid; place-items: center; cursor: pointer;
   -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   transition: background 0.2s ease, border-color 0.2s ease;
 }
-.sc-arrow:hover { background: rgba(255, 255, 255, 0.14); border-color: hsl(var(--primary) / 0.6); }
+.sc-arrow:hover { background: hsl(var(--foreground) / 0.12); border-color: hsl(var(--primary) / 0.6); }
 .sc-arrow svg { width: 20px; height: 20px; }
 .sc-prev { left: clamp(6px, 3vw, 42px); }
 .sc-next { right: clamp(6px, 3vw, 42px); }
-.sc-dot { width: 26px; height: 5px; border-radius: 9999px; background: rgba(255, 255, 255, 0.16); border: 0; padding: 0; cursor: pointer; transition: background 0.3s ease, width 0.3s ease; }
+.sc-dot { width: 26px; height: 5px; border-radius: 9999px; background: hsl(var(--foreground) / 0.18); border: 0; padding: 0; cursor: pointer; transition: background 0.3s ease, width 0.3s ease; }
 .sc-dot.on { background: hsl(var(--primary)); width: 36px; }
-.sc-backdrop { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
-.sc-backdrop img { position: absolute; inset: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(30px) saturate(0.8) brightness(0.32); transition: opacity 0.9s ease; }
+.sc-backdrop { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.55; }
+.dark .sc-backdrop { opacity: 1; }
+.sc-backdrop img { position: absolute; inset: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(30px) saturate(0.9) brightness(1); transition: opacity 0.9s ease; }
+.dark .sc-backdrop img { filter: blur(30px) saturate(0.8) brightness(0.32); }
 .sc-backdrop::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background) / 0.35) 30%, hsl(var(--background) / 0.35) 70%, hsl(var(--background)) 100%); }
 @media (max-width: 760px) { .sc-arrow { width: 44px; height: 44px; } .sc-prev { left: 4px; } .sc-next { right: 4px; } }
 @media (prefers-reduced-motion: reduce) { .sc-card.is-active .sc-glare { display: none; } }

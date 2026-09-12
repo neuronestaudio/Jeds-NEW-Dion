@@ -9,6 +9,7 @@ import QuoteFormInline from '@/components/QuoteFormInline';
 import daikinLogo from '@/assets/daikin-clean.png?url';
 import haierLogo from '@/assets/haier-clean.png?url';
 import { trackEvent } from '@/lib/analytics';
+import lightRoom from '@/assets/hero/light-room.jpg?url';
 
 
 /** Below this the hero stacks, so the clip plays as a band instead of a backdrop. */
@@ -51,24 +52,34 @@ export function HeroSection() {
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
 
+      {/* Light theme: a bright room (a real JED split install) fading into the
+          page from the left, so the copy sits on off-white and the photo
+          carries the right. Dark theme keeps the logo sting below. */}
+      <div className="absolute inset-0 dark:hidden" aria-hidden="true">
+        <img
+          src={lightRoom}
+          alt=""
+          className="h-full w-full object-cover object-[68%_40%] brightness-[1.04] lg:object-[62%_center]"
+          decoding="async"
+          fetchPriority="high"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/45 lg:via-background/60 lg:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/30" />
+      </div>
+
       {/*
-        The clip is a 16:9 logo sting with the mark centred, so `object-cover`
-        against a portrait hero blows it up ~1.7x and crops away everything but
-        a sliver of the middle — the wordmark loses both ends. Below lg it
-        instead gets a full-width band at its own aspect ratio, pinned to the
-        top and masked out at the bottom so it dissolves into the page rather
-        than ending on a hard edge. From lg the hero is landscape enough for
-        the frame to fill it honestly, so it goes back to a full-bleed cover.
+        Desktop, dark theme: the logo sting fills the hero behind the copy. The
+        clip is 16:9 with the mark centred, and from lg the hero is landscape
+        enough for object-cover to keep the whole mark on screen. Below lg it
+        is NOT a backdrop — see the in-flow band in the content column, which
+        shows the clip at its own aspect ratio with nothing drawn over it, so
+        the mark actually reads on a phone.
       */}
-      <div className="absolute inset-x-0 top-0 aspect-video hero-video-mask overflow-hidden lg:inset-0 lg:aspect-auto lg:[mask-image:none] lg:[-webkit-mask-image:none]">
-        {!videoError && play && allowVideo && (
+      <div className="hidden dark:lg:block absolute inset-0 overflow-hidden">
+        {!compact && !videoError && play && allowVideo && (
           <video
             key={heroVideo}
-            // Held well back below lg. The band lands directly under the
-            // header, which already carries this exact mark, so at full
-            // strength it reads as the logo printed twice and it fights the
-            // headline sitting on top of it. At 40% it is atmosphere.
-            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-30 lg:opacity-80' : 'opacity-0'}`}
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${videoVisible ? 'opacity-80' : 'opacity-0'}`}
             autoPlay
             muted
             loop
@@ -84,11 +95,38 @@ export function HeroSection() {
         )}
       </div>
 
-      {/* Gradient overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
+      {/* Gradient overlay for text readability over the desktop backdrop */}
+      <div className="hidden dark:lg:block absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/30" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-10 sm:pb-12">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-10 pt-[4.5rem] sm:pt-20 md:pt-24 lg:pt-32 pb-10 sm:pb-12">
+        {/* Phones and tablets, dark theme: the sting as its own full-width band
+            directly under the header, at the clip's real aspect ratio, with
+            nothing on top of it. The container reserves the space server-side
+            and the video mounts after hydration, so the layout never shifts. */}
+        <div
+          className="hidden dark:block dark:lg:hidden relative -mx-4 sm:-mx-6 mb-6 sm:mb-8 aspect-video overflow-hidden bg-background"
+          aria-hidden="true"
+        >
+          {compact && !videoError && play && allowVideo && (
+            <video
+              key={heroVideo}
+              className={`w-full h-full object-cover transition-opacity duration-700 ${videoVisible ? 'opacity-90' : 'opacity-0'}`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              onError={() => setVideoError(true)}
+              onLoadedData={() => setVideoVisible(true)}
+              onCanPlay={() => setVideoVisible(true)}
+              onPlay={() => setVideoVisible(true)}
+            >
+              <source src={heroVideo} type="video/mp4" />
+            </video>
+          )}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-background to-transparent" />
+        </div>
         <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12 items-start">
           {/* Left: Hero copy. Centred while it is a single stacked column,
               left-aligned again from lg where it sits beside the form. */}
@@ -98,7 +136,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-4 sm:gap-5 px-5 sm:px-6 py-2.5 bg-foreground/[0.05] border border-foreground/10 rounded-full shadow-[0_6px_24px_rgba(0,0,0,0.25)] backdrop-blur-md mb-5 sm:mb-6"
+            className="inline-flex items-center gap-4 sm:gap-5 px-5 sm:px-6 py-2.5 bg-foreground/[0.05] border border-foreground/10 rounded-full shadow-[0_6px_24px_hsl(var(--foreground)/0.12)] backdrop-blur-md mb-5 sm:mb-6"
             aria-label="Daikin and Haier certified dealer"
           >
             {/* Both marks sit on one shared height. Their trimmed artwork is
@@ -119,7 +157,7 @@ export function HeroSection() {
             <img
               src={haierLogo}
               alt="Haier"
-              className="h-[18px] sm:h-[22px] w-auto object-contain"
+              className="h-[18px] sm:h-[22px] w-auto object-contain invert dark:invert-0"
               loading="lazy"
               decoding="async"
               onError={(e) => { (e.currentTarget as HTMLImageElement).src = HAIER_LOGO_FALLBACK; }}

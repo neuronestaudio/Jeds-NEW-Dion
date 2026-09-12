@@ -148,7 +148,7 @@ export function SocialReels() {
             href={PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-medium backdrop-blur-md transition-colors hover:border-primary/40 hover:bg-white/10"
+            className="mb-5 inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-4 py-2 text-xs font-medium backdrop-blur-md transition-colors hover:border-primary/40 hover:bg-white/10"
           >
             <Instagram className="h-4 w-4 text-primary" />@{HANDLE}
           </a>
@@ -186,7 +186,7 @@ export function SocialReels() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Watch on Instagram: ${reel.title}`}
-                  className="group/reel relative block aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl shadow-black/60 ring-1 ring-white/15 transition-[box-shadow,ring] duration-500 will-change-transform hover:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="group/reel relative block aspect-[9/16] overflow-hidden rounded-3xl shadow-2xl shadow-black/30 ring-1 ring-foreground/15 transition-[box-shadow,ring] duration-500 will-change-transform hover:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   style={{ transform: 'scale(0.76)', opacity: 0.28 }}
                 >
                   <img
@@ -232,7 +232,7 @@ export function SocialReels() {
             type="button"
             onClick={scrollPrev}
             aria-label="Previous reel"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-foreground/20 bg-foreground/5 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -246,7 +246,7 @@ export function SocialReels() {
                 aria-label={`Go to reel ${i + 1}`}
                 aria-current={i === selected}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === selected ? 'w-6 bg-primary' : 'w-1.5 bg-white/25 hover:bg-white/50'
+                  i === selected ? 'w-6 bg-primary' : 'w-1.5 bg-foreground/25 hover:bg-foreground/50'
                 }`}
               />
             ))}
@@ -256,7 +256,7 @@ export function SocialReels() {
             type="button"
             onClick={scrollNext}
             aria-label="Next reel"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-foreground/20 bg-foreground/5 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <ChevronRight className="h-5 w-5" />
           </button>

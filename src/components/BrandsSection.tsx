@@ -70,7 +70,7 @@ export function BrandsSection() {
     <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
       {brandTiles.map((brand) => (
         <div key={`${brand.name}-${hidden ? 'b' : 'a'}`} className="mr-3 shrink-0 sm:mr-4 lg:mr-5">
-          <div className="flex h-16 min-w-[140px] items-center justify-center rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] px-5 shadow-[0_14px_30px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:h-[72px] sm:min-w-[160px] sm:px-6">
+          <div className="flex h-16 min-w-[140px] items-center justify-center rounded-2xl border border-border bg-card dark:border-white/10 dark:bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] px-5 shadow-[0_14px_30px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:h-[72px] sm:min-w-[160px] sm:px-6">
             {brand.logo ? (
               <img
                 src={brand.logo}

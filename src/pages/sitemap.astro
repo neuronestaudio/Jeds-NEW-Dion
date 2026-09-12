@@ -1,0 +1,100 @@
+---
+import Base from '@/layouts/Base.astro';
+import { SUBURBS, ZONES, suburbsInZone } from '@/data/suburbs';
+import type { Zone } from '@/data/suburbs';
+
+/**
+ * Human-readable sitemap: every page the site builds, grouped. The suburb
+ * lists come from the same data as the pages themselves, so this can't drift.
+ * The XML sitemap for search engines is a separate file (linked at the bottom).
+ */
+type Link = { href: string; label: string; note?: string };
+
+const groups: { title: string; links: Link[] }[] = [
+  {
+    title: 'Main pages',
+    links: [
+      { href: '/', label: 'Home' },
+      { href: '/services', label: 'Services' },
+      { href: '/service-areas', label: 'Service Areas', note: 'hub for every suburb page' },
+      { href: '/contact', label: 'Contact & Free Quote' },
+    ],
+  },
+  {
+    title: 'Service pages',
+    links: [
+      { href: '/service/split-system-installation', label: 'Split System Installation' },
+      { href: '/service/ducted-air-conditioning', label: 'Ducted Air Conditioning' },
+      { href: '/service/aircon-repair', label: 'Air Conditioning Repairs & Diagnostics' },
+    ],
+  },
+  {
+    title: 'Legal & utility',
+    links: [
+      { href: '/privacy', label: 'Privacy Policy' },
+      { href: '/terms', label: 'Terms & Conditions' },
+      { href: '/thank-you', label: 'Thank you', note: 'shown after a quote request; not indexed' },
+      { href: '/sitemap', label: 'Sitemap', note: 'this page' },
+      { href: '/sitemap-index.xml', label: 'XML sitemap', note: 'what search engines read' },
+    ],
+  },
+];
+
+const zones = (Object.keys(ZONES) as Zone[]).map((z) => ({ ...ZONES[z], suburbs: suburbsInZone(z) }));
+const total = groups.reduce((n, g) => n + g.links.length, 0) + SUBURBS.length;
+---
+
+<Base
+  title="Sitemap | JED Air Conditioning"
+  description="Every page on the JED Air Conditioning website: services, service areas across Sydney's North Shore and Eastern Suburbs, and how to get a quote."
+  path="/sitemap"
+>
+  <section class="container mx-auto px-4 pb-16 pt-28 sm:px-6 sm:pt-32 lg:px-10">
+    <div class="mb-10 max-w-2xl sm:mb-14">
+      <span class="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.22em] text-primary">Site index</span>
+      <h1 class="mb-3 text-3xl sm:text-4xl md:text-5xl">Sitemap</h1>
+      <p class="text-muted-foreground sm:text-lg">
+        All {total} pages on the site, grouped. Suburb pages are listed under their region.
+      </p>
+    </div>
+
+    <div class="grid gap-10 md:grid-cols-3 md:gap-8">
+      {groups.map((g) => (
+        <div>
+          <h2 class="mb-4 text-lg font-bold sm:text-xl">{g.title}</h2>
+          <ul class="space-y-2">
+            {g.links.map((l) => (
+              <li>
+                <a href={l.href} class="font-medium text-foreground underline-offset-4 hover:text-primary hover:underline">{l.label}</a>
+                {l.note && <span class="ml-2 text-sm text-muted-foreground">— {l.note}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-14 space-y-12">
+      {zones.map((z) => (
+        <div>
+          <div class="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 class="text-lg font-bold sm:text-xl">
+              <a href={`/service-areas#${z.id}`} class="hover:text-primary">{z.label}</a>
+            </h2>
+            <span class="text-sm text-muted-foreground">{z.suburbs.length} pages</span>
+          </div>
+          <ul class="grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
+            {z.suburbs.map((s) => (
+              <li>
+                <a href={`/service-area/${s.slug}`} class="text-foreground underline-offset-4 hover:text-primary hover:underline">
+                  {s.name}
+                </a>
+                <span class="ml-1.5 text-xs text-muted-foreground">{s.postcode}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

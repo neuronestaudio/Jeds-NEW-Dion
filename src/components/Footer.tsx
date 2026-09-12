@@ -1,5 +1,6 @@
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import jedLogo from '@/assets/Jedlogo.jpg?url';
+import logoOnLight from '@/assets/brand/jed-logo-on-light.png?url';
+import logoOnDark from '@/assets/brand/jed-logo-on-dark.png?url';
 
 const footerLinks = {
   services: [
@@ -34,13 +35,8 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <img 
-              src={jedLogo} 
-              alt="JED Air Conditioning" 
-              className="h-10 sm:h-12 w-auto mb-4 mix-blend-lighten opacity-95"
-              loading="lazy"
-              decoding="async"
-            />
+            <img src={logoOnDark} alt="JED Air Conditioning" className="hidden h-10 w-auto dark:block sm:h-12 mb-4" />
+            <img src={logoOnLight} alt="JED Air Conditioning" className="h-10 w-auto dark:hidden sm:h-12 mb-4" />
             <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-sm">
               Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
               <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs

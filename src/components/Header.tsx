@@ -3,7 +3,10 @@ import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // `?url` — under Astro an image import is a metadata object, not a URL string.
-import jedLogo from '@/assets/Jedlogo.jpg?url';
+// One transparent mark per theme; the old JPG carried its own black plate.
+import logoOnLight from '@/assets/brand/jed-logo-on-light.png?url';
+import logoOnDark from '@/assets/brand/jed-logo-on-dark.png?url';
+import { ThemeToggle } from './ThemeToggle';
 import { trackEvent } from '@/lib/analytics';
 
 const navLinks = [
@@ -67,9 +70,14 @@ export function Header() {
             {/* Logo */}
             <a href="/" className="flex items-center gap-3 justify-self-center lg:justify-self-start">
               <img
-                src={jedLogo}
+                src={logoOnDark}
                 alt="JED Air Conditioning"
-                className="h-10 sm:h-12 md:h-14 lg:h-18 w-auto mix-blend-lighten opacity-95"
+                className="hidden h-10 w-auto dark:block sm:h-12 md:h-14 lg:h-18"
+              />
+              <img
+                src={logoOnLight}
+                alt="JED Air Conditioning"
+                className="h-10 w-auto dark:hidden sm:h-12 md:h-14 lg:h-18"
               />
             </a>
 
@@ -128,6 +136,7 @@ export function Header() {
             {/* Desktop CTAs. lg, not md — at md the header is still the
                 three-column mobile grid, and a fourth child would break it. */}
             <div className="hidden lg:flex items-center gap-3">
+              <ThemeToggle />
               <Button variant="call" size="sm" asChild>
                 <a
                   href="tel:0434308070"
@@ -145,17 +154,20 @@ export function Header() {
               </Button>
             </div>
 
+            <div className="lg:hidden justify-self-end flex items-center gap-2">
+            <ThemeToggle />
             {/* Mobile Menu Button — same 40px footprint as the call button so
                 the two sides of the grid balance and both clear the 44px
                 touch-target guidance once padding is counted. */}
             <button
-              className="lg:hidden justify-self-end inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors active:bg-foreground/10"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors active:bg-foreground/10"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
+            </div>
           </div>
         </div>
 
