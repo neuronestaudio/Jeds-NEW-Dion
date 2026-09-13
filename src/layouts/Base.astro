@@ -4,6 +4,10 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { SITE, businessJsonLd } from '@/data/site';
+// The splash reuses the hero lockup's held frame (see HeroSection.tsx) — the
+// same white-mark-on-crushed-black plate, keyed with `screen` here since the
+// splash background is dark carbon regardless of site theme.
+import splashStill from '@/assets/hero/lockup.png?url';
 
 interface Props {
   title: string;
@@ -69,6 +73,74 @@ const blocks = [businessJsonLd, ...jsonLd];
     <slot name="head" />
   </head>
   <body>
+    <!--
+      Entrance splash: carbon-mesh + brushed-metal backdrop with the JED
+      lockup building itself, sped up. Shows once per browser session (not
+      once per page — sessionStorage, not per-route) and only when motion is
+      not reduced. Plain HTML/CSS/JS rather than a hydrated island: it has to
+      exist and be dismissable before React ever hydrates, the same reason
+      the theme switch above is an inline script and not a component.
+    -->
+    <div id="jed-splash" aria-hidden="true">
+      <div class="jed-splash__bg"></div>
+      <div class="jed-splash__sheen"></div>
+      <div class="jed-splash__mark">
+        <img id="jed-splash-still" src={splashStill} alt="" decoding="async" />
+        <video id="jed-splash-video" src="/splash-lockup.mp4" muted playsinline preload="auto" tabindex="-1"></video>
+      </div>
+    </div>
+    <script is:inline>
+      (function () {
+        var KEY = 'jed-splash-shown';
+        var el = document.getElementById('jed-splash');
+        if (!el) return;
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var shown;
+        try {
+          shown = sessionStorage.getItem(KEY);
+        } catch (e) {
+          shown = null; // private mode etc. — fail open, just don't persist
+        }
+        if (shown || reduce) {
+          el.remove();
+          return;
+        }
+        try {
+          sessionStorage.setItem(KEY, '1');
+        } catch (e) {}
+
+        var video = document.getElementById('jed-splash-video');
+        var still = document.getElementById('jed-splash-still');
+        var done = false;
+        function dismiss() {
+          if (done) return;
+          done = true;
+          el.classList.add('is-leaving');
+          window.setTimeout(function () {
+            el.remove();
+          }, 450);
+        }
+        video.addEventListener('playing', function () {
+          still.style.opacity = '0';
+          video.style.opacity = '1';
+        });
+        // A touch of hold after the build finishes so the finished mark
+        // registers before the whole screen fades, without turning this
+        // into a long wait.
+        video.addEventListener('ended', function () {
+          window.setTimeout(dismiss, 350);
+        });
+        video.addEventListener('error', dismiss);
+        video.muted = true;
+        video.play().catch(dismiss);
+
+        // Always escapable: a click, a key, or a hard cap if anything hangs.
+        el.addEventListener('click', dismiss);
+        window.addEventListener('keydown', dismiss, { once: true });
+        window.setTimeout(dismiss, 3200);
+      })();
+    </script>
+
     <Header client:load />
     <main id="main-content" role="main" tabindex="-1" class="min-h-screen pb-24 lg:pb-0">
       <slot />

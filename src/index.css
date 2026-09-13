@@ -182,12 +182,19 @@
        position: sticky child. clip actually removes it. This is a backstop —
        overflow still gets fixed where it happens, see .section-glow::before. */
     overflow-x: clip;
+    /* Kills the Chrome/Edge trackpad "swipe to go back" preview, which slides
+       the page's normal-flow content sideways as you swipe (the fixed header
+       stays pinned, so it looks intact while the hero's text and lockup are
+       cut off on the left) — that visual, not a layout bug, is what a two-
+       finger swipe over the hero's `overflow-hidden` section was producing. */
+    overscroll-behavior-x: none;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
     overflow-x: clip;
+    overscroll-behavior-x: none;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -968,3 +975,54 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (prefers-reduced-motion: reduce) {
   .sam__world, .sam__sub path, .sam__lbl, .sam__zone, .sam__card { transition: none !important; }
 }
+
+/* =========================================================================
+   Entrance splash (src/layouts/Base.astro) — carbon-mesh + brushed-metal
+   backdrop, the JED lockup building itself. Fixed dark palette regardless of
+   site theme (this is a one-shot brand moment, not a themed surface), so the
+   mark is keyed with a plain `screen` blend, no per-theme invert needed.
+   ========================================================================= */
+#jed-splash {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background: hsl(220 8% 8%);
+  opacity: 1;
+  transition: opacity 0.45s ease;
+}
+#jed-splash.is-leaving { opacity: 0; pointer-events: none; }
+
+.jed-splash__bg {
+  position: absolute; inset: 0;
+  background: url('/textures/carbon-mesh.png') center / 168px repeat;
+  opacity: 0.9;
+}
+/* Brushed-metal / "space grey" sheen: a soft diagonal highlight band plus a
+   top-down metallic gradient, laid over the weave rather than replacing it —
+   the plain tile alone read as flat fabric, not brushed metal. */
+.jed-splash__sheen {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(115deg, transparent 30%, hsl(210 12% 82% / 0.16) 47%, hsl(210 15% 92% / 0.26) 50%, hsl(210 12% 82% / 0.16) 53%, transparent 70%),
+    radial-gradient(120% 85% at 50% -10%, hsl(210 15% 88% / 0.22), transparent 60%),
+    linear-gradient(180deg, hsl(220 10% 30% / 0.5), hsl(220 10% 10% / 0.65) 55%, hsl(220 12% 4% / 0.85) 100%);
+  mix-blend-mode: overlay;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .jed-splash__sheen { animation: jed-splash-sheen 2.6s ease-in-out 1; }
+}
+@keyframes jed-splash-sheen {
+  from { background-position: -30% 0, 0 0, 0 0; }
+  to { background-position: 30% 0, 0 0, 0 0; }
+}
+
+.jed-splash__mark {
+  position: relative; z-index: 1;
+  width: min(62vw, 460px); aspect-ratio: 842 / 326;
+}
+.jed-splash__mark > * {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: center;
+  mix-blend-mode: screen;
+  transition: opacity 0.25s ease;
+}
+#jed-splash-video { opacity: 0; }

@@ -87,15 +87,15 @@ export function HeroSection({ variant = 'a' }: Props) {
     return () => window.clearInterval(id);
   }, []);
 
-  // opacity-90, not 100: "ninety percent solid" by request. See the note on
+  // opacity-70, not 100: "70% solid, 30% transparent" by request. See the note on
   // .hero-lockup in index.css for why it is on these and not the wrapper.
   const lockup = (
     <span className="hero-lockup" aria-hidden="true">
-      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
+      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-70'} decoding="async" />
       <video
         ref={stingRef}
         src="/hero-sting.mp4"
-        className={lockupPlaying ? 'opacity-90' : 'opacity-0'}
+        className={lockupPlaying ? 'opacity-70' : 'opacity-0'}
         onPlaying={() => setLockupPlaying(true)}
         muted
         playsInline
@@ -123,7 +123,11 @@ export function HeroSection({ variant = 'a' }: Props) {
           />
           {/* seam: page colour fading onto the photo's left edge */}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:58%_100%] lg:bg-no-repeat" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent lg:hidden dark:lg:block dark:lg:from-background/60" />
+          {/* Flat veil on top of the seam gradient, both themes: the panel
+              was still near full-strength on the right at lg+, which read as
+              "too solid" once the lockup became the hero's real subject. This
+              knocks the whole photo back to roughly 15% visible. */}
+          <div className="absolute inset-0 bg-background/85" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -132,15 +136,16 @@ export function HeroSection({ variant = 'a' }: Props) {
           <img
             src={loungeWide}
             alt=""
-            className="h-full w-full object-cover object-[62%_40%] dark:brightness-[0.82]"
+            className="h-full w-full object-cover object-[62%_40%]"
             decoding="async"
             fetchPriority="high"
           />
-          {/* Light: no veil — the render is shown at full strength and the dark
-              ink reads on the bright room. Dark: white copy on a bright photo
-              needs a wash, kept as light as legibility allows. */}
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/45 to-transparent dark:block" />
-          <div className="absolute inset-0 hidden bg-gradient-to-t from-background/75 via-transparent to-transparent dark:block" />
+          {/* The room is now ambient texture behind the lockup, not the
+              subject — a flat veil at 85% page colour in both themes keeps
+              it present but quiet (previously light ran the photo at full
+              strength with no veil at all, which read as "too solid" once
+              the lockup carried the hero). */}
+          <div className="absolute inset-0 bg-background/85" />
         </div>
       )}
 
