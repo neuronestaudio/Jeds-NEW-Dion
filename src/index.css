@@ -651,64 +651,116 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (min-width: 640px) { .pill-header { padding-inline: 1rem; } }
 @media (min-width: 1024px) { .pill-header { padding-inline: 1.5rem; } }
 .pill-header > * { pointer-events: auto; }
+
+/* The glass itself is page colour, so the bar belongs to whichever theme is
+   on; the silk only supplies grain. `isolation` keeps the texture's blend
+   inside the bar instead of letting it reach the photo behind. */
 .pill-shell, .pill-menu {
-  color: #fff;
-  background:
-    linear-gradient(180deg, hsl(0 0% 100% / 0.07), hsl(0 0% 100% / 0) 45%),
-    linear-gradient(0deg, hsl(240 8% 5% / 0.42), hsl(240 8% 5% / 0.42)),
-    url('/textures/header-silk.jpg') center / cover no-repeat;
-  border: 1px solid hsl(0 0% 100% / 0.14);
-  box-shadow: 0 18px 44px -18px rgb(0 0 0 / 0.7), inset 0 1px 0 hsl(0 0% 100% / 0.14);
+  position: relative;
+  isolation: isolate;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background) / 0.78);
+  border: 1px solid hsl(var(--foreground) / 0.14);
+  box-shadow: 0 18px 44px -22px hsl(240 8% 10% / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.7);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
 }
+.dark .pill-shell, .dark .pill-menu {
+  background: hsl(var(--background) / 0.72);
+  border-color: hsl(0 0% 100% / 0.13);
+  box-shadow: 0 22px 50px -22px rgb(0 0 0 / 0.85), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+}
+
+/* Texture pass. soft-light reads both ways — the silk's folds darken a light
+   bar and its highlights lift a dark one — so one image serves both themes
+   instead of the bar being black everywhere. Clipped by its own radius
+   rather than `overflow: hidden`, which would eat the services dropdown. */
+.pill-shell::before, .pill-menu::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit; pointer-events: none;
+  background: url('/textures/header-silk.jpg') center / cover no-repeat;
+  mix-blend-mode: soft-light;
+  opacity: 0.3;
+}
+.dark .pill-shell::before, .dark .pill-menu::before { opacity: 0.55; }
+
 .pill-shell {
-  position: relative; margin-inline: auto; max-width: 1400px;
+  margin-inline: auto; max-width: 1400px;
   height: var(--header-h); border-radius: 9999px;
-  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease, box-shadow 0.35s ease;
 }
+/* Past the fold the bar sits over copy rather than a photo, so it firms up. */
 .pill-header[data-scrolled] .pill-shell {
   height: calc(var(--header-h) - 0.5rem);
-  box-shadow: 0 24px 54px -20px rgb(0 0 0 / 0.8), inset 0 1px 0 hsl(0 0% 100% / 0.14);
+  background: hsl(var(--background) / 0.92);
+  box-shadow: 0 24px 54px -24px hsl(240 8% 10% / 0.45), inset 0 1px 0 hsl(0 0% 100% / 0.7);
 }
+.dark .pill-header[data-scrolled] .pill-shell {
+  background: hsl(var(--background) / 0.9);
+  box-shadow: 0 26px 58px -24px rgb(0 0 0 / 0.9), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+}
+
+/* The bar is translucent because it floats over a photo; the menu is a
+   navigation surface that has to be readable over anything under it, so it
+   sits nearly opaque instead of showing the trust bar through the links. */
 .pill-menu {
   margin: 0.5rem auto 0; max-width: 1400px;
   border-radius: 1.5rem; padding: 0.75rem;
+  background: hsl(var(--background) / 0.97);
   max-height: calc(100svh - var(--header-clear) - 6rem); overflow-y: auto;
 }
-.pill-nav-link { font-size: 0.875rem; font-weight: 500; color: hsl(0 0% 100% / 0.72); transition: color 0.2s ease; }
-.pill-nav-link:hover { color: #fff; }
+.dark .pill-menu { background: hsl(var(--background) / 0.96); }
+.pill-menu::before { opacity: 0.16; }
+.dark .pill-menu::before { opacity: 0.4; }
+
+.pill-nav-link { font-size: 0.875rem; font-weight: 500; color: hsl(var(--foreground) / 0.7); transition: color 0.2s ease; }
+.pill-nav-link:hover { color: hsl(var(--foreground)); }
+
 .pill-dropdown {
   position: absolute; left: 0; top: calc(100% + 0.85rem); min-width: 264px; padding: 0.5rem;
-  border-radius: 1.25rem; color: #fff;
-  background: linear-gradient(180deg, hsl(240 8% 9% / 0.98), hsl(240 8% 6% / 0.98));
-  border: 1px solid hsl(0 0% 100% / 0.12);
-  box-shadow: 0 24px 50px -18px rgb(0 0 0 / 0.8);
+  border-radius: 1.25rem; color: hsl(var(--foreground));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 24px 50px -22px hsl(240 8% 10% / 0.45);
 }
+.dark .pill-dropdown { box-shadow: 0 24px 50px -18px rgb(0 0 0 / 0.8); }
 /* bridges the gap under the trigger so the pointer can travel down without
    the menu closing on the way */
 .pill-dropdown::before { content: ""; position: absolute; left: 0; right: 0; top: -0.9rem; height: 0.9rem; }
-.pill-dropdown a { display: block; padding: 0.6rem 0.85rem; border-radius: 0.75rem; font-size: 0.875rem; color: hsl(0 0% 100% / 0.8); transition: background 0.2s ease, color 0.2s ease; }
-.pill-dropdown a:hover { background: hsl(0 0% 100% / 0.1); color: #fff; }
+.pill-dropdown a { display: block; padding: 0.6rem 0.85rem; border-radius: 0.75rem; font-size: 0.875rem; color: hsl(var(--foreground) / 0.78); transition: background 0.2s ease, color 0.2s ease; }
+.pill-dropdown a:hover { background: hsl(var(--foreground) / 0.07); color: hsl(var(--foreground)); }
 
 /* =========================================================================
-   Hero logo sting (src/components/HeroSection.tsx) — the JED wordmark clip
-   keyed over the lounge. Black is removed with a blend, not an alpha channel:
-   screen on the dark theme (black adds nothing, the white mark lights up);
-   inverted + multiply on light, where the plate becomes white and drops out
-   and the mark prints as ink — a white-on-black sting would vanish against
-   white walls. Half strength by request; a soft mask hides any residual
-   compression haze at the crop edges. Desktop only.
+   Hero logo lockup (src/components/HeroSection.tsx)
+   The recovered JED sting, in the flow of the hero copy where the headline
+   used to be: the mark builds itself on load and holds, and the wording sits
+   underneath it at supporting size.
+
+   Black is removed with a blend, not an alpha channel — no alpha codec plays
+   in every browser. Dark theme: `screen`, where black adds nothing and the
+   white mark lights up. Light theme: `invert(1)` turns the plate white and
+   the mark to ink, then `multiply` drops the white out — a white-on-black
+   sting would be invisible against a pale wall.
+
+   A blend only reaches as far as its stacking context, so nothing between
+   this and the hero background may create one: the copy column deliberately
+   carries no z-index, and the lockup is NOT wrapped in a framer-motion
+   element (an animated opacity or transform would isolate it and the plate
+   would reappear as a grey box).
    ========================================================================= */
-.hero-sting {
-  /* Anchored to the right edge and sized from the viewport — a left anchor
-     plus max-width let the wordmark run off the frame once the cap bound. */
-  position: absolute; right: 4%; top: 37%;
-  width: clamp(420px, 46vw, 760px); height: auto; aspect-ratio: 920 / 372;
-  object-fit: contain; pointer-events: none;
-  opacity: 0.5;
-  filter: invert(1);
+.hero-lockup {
+  position: relative; display: block;
+  width: min(100%, 296px); aspect-ratio: 920 / 372;
+  margin-bottom: 0.5rem;
+  pointer-events: none;
+  filter: invert(1) contrast(1.06);
   mix-blend-mode: multiply;
-  -webkit-mask-image: radial-gradient(ellipse 85% 95% at 50% 50%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(ellipse 85% 95% at 50% 50%, #000 55%, transparent 100%);
 }
-.dark .hero-sting { filter: none; mix-blend-mode: screen; }
-@media (prefers-reduced-motion: reduce) { .hero-sting { display: none !important; } }
+.dark .hero-lockup { filter: contrast(1.06); mix-blend-mode: screen; }
+.hero-lockup > * {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: left center;
+  transition: opacity 0.3s ease;
+}
+@media (min-width: 640px) { .hero-lockup { width: min(100%, 400px); margin-bottom: 0.75rem; } }
+@media (min-width: 1024px) { .hero-lockup { width: min(100%, 512px); } }

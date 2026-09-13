@@ -3,7 +3,8 @@ import { Button } from './ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 // `?url` — under Astro an image import is a metadata object, not a URL string.
-// The pill is black silk in both themes, so only the on-dark mark is needed.
+// The pill is page colour now, so it needs a mark per theme again.
+import logoOnLight from '@/assets/brand/jed-logo-on-light.png?url';
 import logoOnDark from '@/assets/brand/jed-logo-on-dark.png?url';
 import { ThemeToggle } from './ThemeToggle';
 import { trackEvent } from '@/lib/analytics';
@@ -23,13 +24,15 @@ const serviceLinks = [
   { label: 'Repairs & Diagnostics', href: '/service/aircon-repair' },
 ];
 
-/** Round on-dark control: the phone-size call and menu buttons. */
+/** Round control: the phone-size call and menu buttons. */
 const ROUND_CONTROL =
-  'inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 active:bg-white/25';
+  'inline-flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground/5 text-foreground transition-colors hover:bg-foreground/10 active:bg-foreground/15';
 
 /**
- * Floating pill header. One oval of black silk (see .pill-shell in index.css)
- * sits over the page in both themes and compacts once the page has scrolled.
+ * Floating pill header — a frosted bar in page colour with the silk supplying
+ * grain rather than the fill (see .pill-shell in index.css), so it belongs to
+ * whichever theme is on instead of being black in both. It compacts and firms
+ * up once the page has scrolled.
  *
  * Below lg the row is a three-column grid — call button, logo, toggle + menu —
  * so the logo is dead centre whatever the side controls measure, scrolled or
@@ -76,7 +79,9 @@ export function Header() {
 
       <header className="pill-header" data-scrolled={scrolled ? '' : undefined}>
         <div className="pill-shell">
-          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center px-2 sm:px-3 lg:flex lg:justify-between lg:pl-7 lg:pr-3">
+          {/* Side padding has to clear the pill's own curve, not just its box —
+              at 0.5rem the controls sat right on the radius. */}
+          <div className="grid h-full grid-cols-[1fr_auto_1fr] items-center px-3 sm:px-4 lg:flex lg:justify-between lg:pl-10 lg:pr-4">
             {/* Mobile: quick-call, left slot */}
             <a
               href="tel:0434308070"
@@ -87,17 +92,25 @@ export function Header() {
               <Phone className="h-[18px] w-[18px]" />
             </a>
 
-            {/* Logo. 90% opacity by request — the mark sits into the silk
-                rather than on top of it. */}
+            {/* Logo, one mark per theme. 90% opacity by request — it sits into
+                the bar rather than on top of it. */}
             <a
               href="/"
               className="flex items-center justify-self-center lg:justify-self-start"
               aria-label="JED Air Conditioning — home"
             >
               <img
-                src={logoOnDark}
+                src={logoOnLight}
                 alt="JED Air Conditioning"
-                className={`w-auto opacity-90 transition-[height] duration-300 ${
+                className={`w-auto opacity-90 transition-[height] duration-300 dark:hidden ${
+                  scrolled ? 'h-9 sm:h-10 lg:h-11' : 'h-10 sm:h-11 lg:h-[52px]'
+                }`}
+              />
+              <img
+                src={logoOnDark}
+                alt=""
+                aria-hidden="true"
+                className={`hidden w-auto opacity-90 transition-[height] duration-300 dark:block ${
                   scrolled ? 'h-9 sm:h-10 lg:h-11' : 'h-10 sm:h-11 lg:h-[52px]'
                 }`}
               />
@@ -147,7 +160,7 @@ export function Header() {
             {/* Desktop CTAs. lg, not md — at md the row is still the
                 three-column grid, and a fourth child would break it. */}
             <div className="hidden items-center gap-2.5 lg:flex">
-              <ThemeToggle tone="onDark" />
+              <ThemeToggle />
               <Button variant="call" size="sm" className="rounded-full px-4" asChild>
                 <a
                   href="tel:0434308070"
@@ -168,7 +181,7 @@ export function Header() {
             {/* Mobile: theme + menu, right slot. Same footprint as the call
                 button so the grid balances around the logo. */}
             <div className="flex items-center justify-self-end gap-2 lg:hidden">
-              <ThemeToggle tone="onDark" />
+              <ThemeToggle />
               <button
                 className={ROUND_CONTROL}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -196,21 +209,21 @@ export function Header() {
                   <a
                     key={link.label}
                     href={link.href}
-                    className="rounded-xl px-4 py-3 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                    className="rounded-xl px-4 py-3 text-foreground/85 transition-colors hover:bg-foreground/[0.07] hover:text-foreground"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
                   </a>
                 ))}
-                <div className="mt-2 border-t border-white/10 pt-2">
-                  <p className="px-4 pb-1 pt-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-white/50">
+                <div className="mt-2 border-t border-border pt-2">
+                  <p className="px-4 pb-1 pt-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-foreground/50">
                     Services
                   </p>
                   {serviceLinks.slice(1).map((l) => (
                     <a
                       key={l.href + l.label}
                       href={l.href}
-                      className="block rounded-xl px-4 py-3 text-white/85 transition-colors hover:bg-white/10 hover:text-white"
+                      className="block rounded-xl px-4 py-3 text-foreground/85 transition-colors hover:bg-foreground/[0.07] hover:text-foreground"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {l.label}

@@ -1,7 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Phone, ShieldCheck, BadgeCheck, Award, Leaf } from 'lucide-react';
 import { Button } from './ui/button';
+// The held final frame of /hero-sting.mp4, keyed the same way. It is what
+// shows before the clip starts and instead of it whenever the clip cannot
+// play — autoplay refused, reduced motion, JS off — so the lockup is never
+// missing. Regenerate both together: see the ffmpeg recipe in the repo notes.
+import lockupStill from '@/assets/hero/lockup.png?url';
 // Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
 // with different built-in padding, which renders as dark boxes at mismatched
 // sizes. Regenerate with: node scripts/clean-brand-logos.mjs
@@ -14,10 +19,10 @@ import loungeWide from '@/assets/hero/lounge.jpg?url';
 import loungePortrait from '@/assets/hero/lounge-portrait.jpg?url';
 
 /**
- * Hero, to the layered design: one room photo, the title stacked on three
- * lines at the left, and a frosted trust bar along the bottom edge. No form
- * here — the quote panel is the section directly below, and every CTA
- * scrolls to it.
+ * Hero, to the layered design: one room photo, the JED lockup building itself
+ * where the headline used to be, the wording underneath it at supporting
+ * size, and a frosted trust bar along the bottom edge. No form here — the
+ * quote panel is the section directly below, and every CTA scrolls to it.
  *
  * Two variants, same copy and bar:
  *   a — the wide lounge as a full-bleed backdrop (the homepage).
@@ -44,16 +49,37 @@ type Props = { variant?: 'a' | 'b' };
 export function HeroSection({ variant = 'a' }: Props) {
   const isB = variant === 'b';
 
-  // The attribute alone does not satisfy every autoplay policy; setting the
-  // property before play() does. Failure is silent — the room is the hero,
-  // the sting is a garnish.
+  /**
+   * The lockup clip is started here rather than by the `autoplay` attribute:
+   * that way the reduced-motion check actually wins, and setting `muted` as a
+   * property first satisfies autoplay policies the attribute alone does not.
+   * Until it reports `playing` the still holds the space, so a refused
+   * autoplay leaves the finished mark on screen instead of an empty box.
+   */
   const stingRef = useRef<HTMLVideoElement>(null);
+  const [lockupPlaying, setLockupPlaying] = useState(false);
   useEffect(() => {
     const v = stingRef.current;
-    if (!v) return;
+    if (!v || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     v.muted = true;
     v.play().catch(() => {});
   }, []);
+
+  const lockup = (
+    <span className="hero-lockup" aria-hidden="true">
+      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-100'} decoding="async" />
+      <video
+        ref={stingRef}
+        src="/hero-sting.mp4"
+        className={lockupPlaying ? 'opacity-100' : 'opacity-0'}
+        onPlaying={() => setLockupPlaying(true)}
+        muted
+        playsInline
+        preload="auto"
+        tabIndex={-1}
+      />
+    </span>
+  );
 
   return (
     <section
@@ -91,28 +117,15 @@ export function HeroSection({ variant = 'a' }: Props) {
               needs a wash, kept as light as legibility allows. */}
           <div className="absolute inset-0 hidden bg-gradient-to-r from-background/85 via-background/45 to-transparent dark:block" />
           <div className="absolute inset-0 hidden bg-gradient-to-t from-background/75 via-transparent to-transparent dark:block" />
-          {/* The JED logo sting, keyed over the couch at half strength — see
-              .hero-sting in index.css for the black removal. The clip is
-              cropped above its tagline row (the supplied file spells
-              "MAINTENAANCE • INSTALATION") and fades at both ends so the loop
-              breathes rather than snaps. Desktop only: on phones the copy
-              owns the frame. */}
-          <video
-            ref={stingRef}
-            className="hero-sting hidden lg:block"
-            src="/hero-sting.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            tabIndex={-1}
-          />
         </div>
       )}
 
-      {/* Copy */}
-      <div className="container relative z-10 mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
+      {/* Copy. No z-index here on purpose: the lockup below blends with the
+          room photo, and a z-index would make this column its own stacking
+          context, trapping the blend and turning the mark's plate into a grey
+          box. Both this and the backdrop are positioned, so DOM order already
+          paints the copy on top. */}
+      <div className="container relative mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
         <div className={isB ? 'max-w-xl lg:max-w-[50%]' : 'max-w-2xl'}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -149,20 +162,24 @@ export function HeroSection({ variant = 'a' }: Props) {
             Sydney air conditioning specialists
           </motion.p>
 
-          {/* Three lines, as designed, in Bebas Neue — the condensed caps face
-              from the Next Lvl Protection heroes. Sizes are set from the
-              column: "ENGINEERED FOR" is ~5.5em wide, and the copy column is
-              max-w-2xl, so 7.2rem is the ceiling before it wraps. font-normal
-              is load-bearing: the face has one weight and the base h1 rule
-              would otherwise ask the browser to fake a bold. */}
+          {/* The mark carries the top of the hero; deliberately NOT inside a
+              motion element, whose animated opacity/transform would isolate
+              the blend that removes its black plate. */}
+          {lockup}
+
+          {/* The wording now sits under the lockup at supporting size — still
+              Bebas Neue, the condensed caps face from the Next Lvl Protection
+              heroes, but two lines instead of three so it reads as a strapline
+              rather than competing with the mark above it. font-normal is
+              load-bearing: the face has one weight, and the base h1 rule would
+              otherwise ask the browser to fake a bold. */}
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-condensed mb-6 text-[3.6rem] font-normal uppercase leading-[0.92] tracking-[-0.01em] sm:text-[5rem] lg:text-[6.4rem] xl:text-[7.2rem]"
+            className="font-condensed mb-5 text-[2rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[2.5rem] lg:text-[3rem] xl:text-[3.4rem]"
           >
-            <span className="block">Comfort,</span>
-            <span className="block">Engineered for</span>
+            <span className="block">Comfort, Engineered for</span>
             <span className="block text-gradient">Modern Living</span>
           </motion.h1>
 
