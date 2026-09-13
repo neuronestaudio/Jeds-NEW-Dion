@@ -993,8 +993,16 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 
 .jed-splash__bg {
   position: absolute; inset: 0;
-  background: url('/textures/carbon-mesh.png') center / 168px repeat;
-  opacity: 0.9;
+  /* Real hex-weave carbon fibre (the supplied file), not a woven-cloth
+     stand-in — its native tile is 18x32 (9:16), so background-size keeps
+     that exact ratio or the hexagons stretch into ovals. Alpha in the
+     source PNG is pre-boosted to full range (see the notes where it's
+     processed) so it reads as a sharp metal mesh at this scale instead of
+     the barely-there watermark its native 36-75 alpha band would give. */
+  background-color: hsl(220 8% 6%);
+  background-image: url('/textures/carbon-mesh.png');
+  background-size: 46px 81.8px;
+  background-repeat: repeat;
 }
 /* Brushed-metal / "space grey" sheen: a soft diagonal highlight band plus a
    top-down metallic gradient, laid over the weave rather than replacing it —
@@ -1026,3 +1034,66 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   transition: opacity 0.25s ease;
 }
 #jed-splash-video { opacity: 0; }
+
+/* =========================================================================
+   Work gallery — full-bleed diagonal panel strip (src/components/WorkMarquee.tsx)
+   Reference: a car-detailing studio's "Gallery" section — contiguous skewed
+   photo panels, edge to edge, no gaps, no rounded corners. Same two-box skew
+   technique as .svcslant (src/components/ServicePathways.tsx): the panel is
+   skewed, its photo is counter-skewed and over-scaled so it still fills the
+   parallelogram after the skew clips the rectangle's corners. Unlike
+   .svcslant this scrolls — panels are fixed-width flex children (not
+   flex:1), so the -50% marquee loop math still holds regardless of the skew,
+   which is a paint-time transform and never touches layout width.
+   ========================================================================= */
+.wgallery {
+  --slant: -8deg;
+  height: clamp(300px, 34vw, 420px);
+}
+.wgallery__panel {
+  position: relative; flex: 0 0 auto; overflow: hidden;
+  width: clamp(148px, 15vw, 208px); height: 100%;
+  transform: skewX(var(--slant));
+  cursor: zoom-in;
+  background: hsl(240 7% 4%);
+}
+/* A hairline overlap, not a gap: at the shared skewed edge, two adjacent
+   rectangles' anti-aliasing can leave a 1px seam of the page background. */
+.wgallery__panel + .wgallery__panel { margin-left: -1px; }
+.wgallery__img {
+  position: absolute; inset: 0 -55%;
+  background: var(--img) center / cover no-repeat;
+  transform: skewX(calc(var(--slant) * -1)) scale(1.22);
+  filter: saturate(0.96) brightness(0.86);
+  transition: filter 0.5s ease, transform 0.6s ease;
+}
+.wgallery__panel:hover .wgallery__img,
+.wgallery__panel:focus-visible .wgallery__img {
+  filter: saturate(1.05) brightness(0.62);
+  transform: skewX(calc(var(--slant) * -1)) scale(1.28);
+}
+.wgallery__cap {
+  position: absolute; inset: 0; z-index: 1;
+  transform: skewX(calc(var(--slant) * -1));
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 1.1rem;
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.wgallery__panel:hover .wgallery__cap,
+.wgallery__panel:focus-visible .wgallery__cap { opacity: 1; }
+.wgallery__cap-inner {
+  width: 78%; text-align: center; color: #fff;
+  text-shadow: 0 2px 10px rgb(0 0 0 / 0.7);
+}
+.wgallery__cap-type {
+  display: block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: hsl(197 85% 78%); margin-bottom: 0.25rem;
+}
+.wgallery__cap-loc { display: block; font-size: 0.78rem; font-weight: 600; line-height: 1.25; }
+@media (max-width: 639px) {
+  .wgallery { height: 240px; }
+  .wgallery__panel { width: 118px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wgallery__img, .wgallery__cap { transition: none; }
+}

@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 /**
- * "Our Recent Work" as two continuously-scrolling rows travelling in opposite
- * directions.
+ * "Our Recent Work" as two continuously-scrolling rows of full-bleed,
+ * contiguous diagonal panels — a detailing-studio gallery wall, not rounded
+ * cards in a carousel. Geometry lives in .wgallery* (index.css), the same
+ * skew-the-box / counter-skew-the-photo technique as ServicePathways.
  *
  * Each row holds two identical copies of its tiles and slides by exactly -50%,
- * so copy 2 arrives where copy 1 started and the loop never seams. Tiles carry
- * a right margin rather than the track carrying `gap`, because a gap would make
- * the track an odd half-gap wider than twice a copy and the loop would jump.
+ * so copy 2 arrives where copy 1 started and the loop never seams. Panels
+ * touch edge to edge (a 1px negative margin kills the anti-aliasing seam,
+ * not a real gap) — a `gap` would make the track an odd half-gap wider than
+ * twice a copy and the loop would jump.
  *
  * Hovering anywhere in a strip pauses both rows (see .marquee-strip in
- * index.css) so a moving tile can actually be clicked.
+ * index.css) so a moving panel can actually be clicked.
  */
 
 // Resolved through import.meta.glob rather than `new URL(..., import.meta.url)`
@@ -62,26 +65,18 @@ function MarqueeTile({ tile, onOpen }: { tile: Tile; onOpen: () => void }) {
       type="button"
       onClick={onOpen}
       aria-label={`Enlarge ${tile.title}, ${tile.location}`}
-      className="group/tile relative mr-4 w-[240px] shrink-0 cursor-zoom-in overflow-hidden rounded-xl border border-border transition-colors duration-300 hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 sm:mr-5 sm:w-[300px] lg:w-[360px]"
+      className="wgallery__panel"
+      style={{ ['--img' as string]: `url("${resolveAsset(tile.file)}")` } as CSSProperties}
     >
-      <img
-        src={resolveAsset(tile.file)}
-        alt={`${tile.title} — ${tile.location}`}
-        loading="lazy"
-        decoding="async"
-        width={360}
-        height={270}
-        className="aspect-[4/3] w-full object-cover object-[50%_100%] transition-transform duration-500 group-hover/tile:scale-[1.04]"
-      />
-
-      <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/95 via-background/25 to-transparent opacity-0 transition-opacity duration-300 group-hover/tile:opacity-100" />
-
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-3 p-4 text-left opacity-0 transition-all duration-300 group-hover/tile:translate-y-0 group-hover/tile:opacity-100">
-        <span className="mb-2 inline-block rounded-full bg-primary/20 px-3 py-1 text-xs font-medium text-primary">
-          {tile.type}
+      {/* The image is a background on a counter-skewed layer, not an <img> —
+          object-fit can't be skew-compensated with a scale offset the way a
+          plain background-image can. */}
+      <span className="wgallery__img" aria-hidden="true" />
+      <span className="wgallery__cap">
+        <span className="wgallery__cap-inner">
+          <span className="wgallery__cap-type">{tile.type}</span>
+          <span className="wgallery__cap-loc">{tile.location}</span>
         </span>
-        <span className="block truncate text-sm font-semibold">{tile.title}</span>
-        <span className="block text-xs text-muted-foreground">{tile.location}</span>
       </span>
     </button>
   );
@@ -108,7 +103,7 @@ function MarqueeRow({
 
   return (
     <div
-      className={`marquee-track flex w-max ${
+      className={`marquee-track wgallery flex w-max ${
         direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right'
       }`}
       style={{ ['--marquee-duration' as string]: `${duration}s` }}
@@ -128,7 +123,10 @@ export function WorkMarquee() {
           thousand pixels wide, so without it the whole document scrolls
           sideways on mobile. Slightly different speeds per row stop the two
           drifting in lockstep. */}
-      <div className="marquee-strip marquee-mask flex flex-col gap-4 overflow-hidden sm:gap-5">
+      {/* No mask this time: a masked fade reads as a card carousel with soft
+          edges; a full-bleed gallery wall of contiguous panels should run
+          flush to both edges of the viewport instead. */}
+      <div className="marquee-strip flex flex-col gap-1 overflow-hidden sm:gap-1.5">
         <MarqueeRow tiles={ROW_ONE} direction="left" duration={70} onOpen={setActive} />
         <MarqueeRow tiles={ROW_TWO} direction="right" duration={85} onOpen={setActive} />
       </div>

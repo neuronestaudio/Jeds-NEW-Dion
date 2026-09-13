@@ -172,8 +172,8 @@ export function Footer() {
             <span>✓ Daikin Certified Dealer</span>
             <span>✓ Haier Certified Dealer</span>
             <span>✓ Manufacturer‑Trained Service Agents</span>
-            <span>✓ 5-Year Workmanship Warranty</span>
-            <span>✓ 10+ Years Experience</span>
+            <span>✓ 10-Year Workmanship Warranty</span>
+            <span>✓ 25+ Years Experience Combined</span>
           </div>
         </div>
       </div>

@@ -15,13 +15,13 @@ const trustItems = [
   },
   {
     icon: Shield,
-    label: '5-Year Warranty',
+    label: '10-Year Warranty',
     sublabel: 'On All Labour',
   },
   {
     icon: Clock,
-    label: '10+ Years',
-    sublabel: 'Experience',
+    label: '25+ Years',
+    sublabel: 'Combined Experience',
   },
 ];
 

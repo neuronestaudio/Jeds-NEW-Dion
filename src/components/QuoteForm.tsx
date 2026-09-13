@@ -89,7 +89,7 @@ export function QuoteForm() {
                   'Free, no-obligation assessment',
                   'Response within 24 hours',
                   'Transparent upfront pricing',
-                  '5-year workmanship warranty',
+                  '10-year workmanship warranty',
                   'Daikin certified installations',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-3">

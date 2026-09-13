@@ -3,9 +3,9 @@ import { Award, BadgeCheck, Clock, Shield } from 'lucide-react';
 /** The business's own published claims, as shown in the footer and homepage. */
 const BADGES = [
   { icon: Award, label: 'Daikin & Haier Certified Dealer' },
-  { icon: Shield, label: '5-Year Workmanship Warranty' },
+  { icon: Shield, label: '10-Year Workmanship Warranty' },
   { icon: BadgeCheck, label: 'Fully Licensed & Insured' },
-  { icon: Clock, label: '10+ Years Experience' },
+  { icon: Clock, label: '25+ Years Experience Combined' },
 ];
 
 type Props = { layout?: 'row' | 'stack' };

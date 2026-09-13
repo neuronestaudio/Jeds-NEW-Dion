@@ -37,7 +37,7 @@ import loungePortrait from '@/assets/hero/lounge-portrait.jpg?url';
 const TRUST = [
   { icon: ShieldCheck, label: 'Fully Licensed & Insured', sub: 'Your home in safe hands' },
   { icon: BadgeCheck, label: 'Daikin & Haier Certified', sub: 'Authorised dealer & installer' },
-  { icon: Award, label: '5-Year Workmanship Warranty', sub: 'On all labour' },
+  { icon: Award, label: '10-Year Workmanship Warranty', sub: 'On all labour' },
   { icon: Leaf, label: 'Energy Efficient Solutions', sub: 'Comfort today. A cleaner tomorrow.' },
 ];
 
@@ -123,11 +123,11 @@ export function HeroSection({ variant = 'a' }: Props) {
           />
           {/* seam: page colour fading onto the photo's left edge */}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:58%_100%] lg:bg-no-repeat" />
-          {/* Flat veil on top of the seam gradient, both themes: the panel
-              was still near full-strength on the right at lg+, which read as
-              "too solid" once the lockup became the hero's real subject. This
-              knocks the whole photo back to roughly 15% visible. */}
-          <div className="absolute inset-0 bg-background/85" />
+          {/* Light veil on top of the seam gradient, both themes: a bare
+              whisper of page colour to settle the photo without washing it
+              out — an 85%-strength veil here (previous pass) made the panel
+              read as blown-out white rather than "quiet". */}
+          <div className="absolute inset-0 bg-background/15" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -140,12 +140,12 @@ export function HeroSection({ variant = 'a' }: Props) {
             decoding="async"
             fetchPriority="high"
           />
-          {/* The room is now ambient texture behind the lockup, not the
-              subject — a flat veil at 85% page colour in both themes keeps
-              it present but quiet (previously light ran the photo at full
-              strength with no veil at all, which read as "too solid" once
-              the lockup carried the hero). */}
-          <div className="absolute inset-0 bg-background/85" />
+          {/* A light veil, both themes: enough page colour to settle the
+              photo without dulling it. The photo should stay the dominant
+              visual here at roughly 85% strength — an 85%-opacity veil
+              (previous pass) inverted that and blew the room out to
+              near-white, which read as "way too bright", not quiet. */}
+          <div className="absolute inset-0 bg-background/15" />
         </div>
       )}
 
@@ -188,7 +188,7 @@ export function HeroSection({ variant = 'a' }: Props) {
             transition={{ duration: 0.5, delay: 0.05 }}
             className="mb-4 text-xs font-semibold uppercase tracking-[0.26em] text-primary"
           >
-            Sydney air conditioning specialists
+            Certified Sydney air conditioning specialists
           </motion.p>
 
           {/* The mark carries the top of the hero; deliberately NOT inside a

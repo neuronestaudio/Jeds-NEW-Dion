@@ -20,13 +20,13 @@ const reasons = [
   },
   {
     icon: Shield,
-    title: '5-Year Workmanship Warranty',
+    title: '10-Year Workmanship Warranty',
     description: 'Complete peace of mind with our comprehensive labour warranty on all installations',
   },
   {
     icon: Clock,
-    title: '10+ Years Experience',
-    description: 'Decade of expertise serving Sydney homes and businesses with quality work',
+    title: '25+ Years Experience Combined',
+    description: 'Over two decades of combined expertise serving Sydney homes and businesses with quality work',
   },
   {
     icon: BadgeCheck,
