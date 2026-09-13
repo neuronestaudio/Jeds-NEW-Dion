@@ -1,8 +1,17 @@
 ---
-import { SUBURBS, ZONES } from '@/data/suburbs';
+/**
+ * "Areas We Service" — the vector diagram of every suburb JED publishes a
+ * page for (ServiceAreaMap), with a plain, collapsible list of the same
+ * links underneath. The list is not decoration: it is the crawlable,
+ * no-JS, screen-reader route to the 116 suburb pages, grouped by zone.
+ */
+import ServiceAreaMap from '@/components/ServiceAreaMap.astro';
+import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
 
-const north = SUBURBS.filter((s) => s.zone === 'north');
-const east = SUBURBS.filter((s) => s.zone === 'east');
+const MAP_ZONES: Zone[] = ['north', 'upper', 'beaches', 'east'];
+const byZone = (zone: Zone) =>
+  SUBURBS.filter((s) => s.zone === zone).sort((a, b) => a.name.localeCompare(b.name));
+const total = MAP_ZONES.reduce((n, z) => n + byZone(z).length, 0);
 ---
 
 <section class="py-12 sm:py-16 md:py-20 border-t border-border bg-card/20">
@@ -12,48 +21,49 @@ const east = SUBURBS.filter((s) => s.zone === 'east');
         <span class="eyebrow">Service areas</span>
         <h2 class="text-2xl sm:text-3xl font-bold mb-2">Areas We Service</h2>
         <p class="text-muted-foreground text-sm sm:text-base max-w-2xl">
-          Local air conditioning installs, servicing and repairs across Sydney’s North Shore and Eastern Suburbs.
+          Every one of the {total} suburbs below has its own page — drawn here from its gazetted boundary, across the
+          Lower and Upper North Shore, the Northern Beaches and the Eastern Suburbs.
         </p>
       </div>
       <a href="/service-areas" class="q-kicker inline-flex items-center gap-2 text-[hsl(var(--q-teal))] hover:underline">
         All service areas →
       </a>
     </div>
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="glass-card p-5 sm:p-6">
-        <h3 class="font-semibold mb-3">
-          <a href={`/service-areas#${ZONES.north.id}`} class="hover:text-primary transition-colors">{ZONES.north.label}</a>
-        </h3>
-        <ul class="flex flex-wrap gap-2">
-          {north.map((s) => (
-            <li>
-              <a
-                href={`/service-area/${s.slug}`}
-                class="inline-block rounded-full border border-border bg-card/60 px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
-              >
-                {s.name}
-              </a>
-            </li>
-          ))}
-        </ul>
+
+    <ServiceAreaMap />
+
+    <details class="sam-list mt-5">
+      <summary class="q-kicker inline-flex cursor-pointer items-center gap-2 text-foreground/60 hover:text-foreground">
+        Browse all {total} suburbs as a list <span aria-hidden="true">+</span>
+      </summary>
+      <div class="mt-5 grid gap-6 md:grid-cols-2">
+        {MAP_ZONES.map((zone) => (
+          <div class="glass-card p-5 sm:p-6">
+            <h3 class="font-semibold mb-3">
+              <a href={`/service-areas#${ZONES[zone].id}`} class="hover:text-primary transition-colors">{ZONES[zone].label}</a>
+              <span class="ml-2 text-xs font-medium text-muted-foreground">{byZone(zone).length}</span>
+            </h3>
+            <ul class="flex flex-wrap gap-2">
+              {byZone(zone).map((s) => (
+                <li>
+                  <a
+                    href={`/service-area/${s.slug}`}
+                    class="inline-block rounded-full border border-border bg-card/90 px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
+                  >
+                    {s.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-      <div class="glass-card p-5 sm:p-6">
-        <h3 class="font-semibold mb-3">
-          <a href={`/service-areas#${ZONES.east.id}`} class="hover:text-primary transition-colors">{ZONES.east.label}</a>
-        </h3>
-        <ul class="flex flex-wrap gap-2">
-          {east.map((s) => (
-            <li>
-              <a
-                href={`/service-area/${s.slug}`}
-                class="inline-block rounded-full border border-border bg-card/60 px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
-              >
-                {s.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    </details>
   </div>
 </section>
+
+<style>
+  .sam-list summary::-webkit-details-marker { display: none; }
+  .sam-list summary { list-style: none; }
+  .sam-list[open] summary span { transform: rotate(45deg); display: inline-block; }
+</style>

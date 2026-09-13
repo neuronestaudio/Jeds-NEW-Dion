@@ -29,6 +29,7 @@ const sections = [
   { id: 'who-we-share-it-with', title: 'Who we share it with' },
   { id: 'overseas', title: 'Overseas disclosure' },
   { id: 'cookies', title: 'Cookies & analytics' },
+  { id: 'advertising', title: 'Advertising & lead forms' },
   { id: 'marketing', title: 'Marketing & follow-up' },
   { id: 'security', title: 'Security & retention' },
   { id: 'your-rights', title: 'Access, correction & deletion' },
@@ -158,6 +159,12 @@ const contact = [
                 unit we have supplied or installed for you.
               </li>
               <li>
+                <strong class="text-foreground">Advertising platforms (Meta and Google).</strong> When we advertise on Facebook, Instagram or
+                Google, those platforms may receive limited information about your visit to this website, and Meta shares
+                with us the details you enter in one of our lead forms on Facebook or Instagram. See
+                <a href="#advertising" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">Advertising &amp; lead forms</a>.
+              </li>
+              <li>
                 <strong class="text-foreground">Website hosting (Vercel)</strong>, which keeps standard server logs.
               </li>
               <li>
@@ -193,8 +200,35 @@ const contact = [
             </p>
           </article>
 
+          <article id="advertising" class="glass-card scroll-mt-28 p-6 sm:p-8">
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">7. Advertising &amp; lead forms</h2>
+            <p class="mb-4">
+              We advertise our services on <strong class="text-foreground">Facebook and Instagram (Meta)</strong> and on
+              <strong class="text-foreground">Google</strong>. To measure those ads and show them to people who are likely to be
+              interested, we may use the Meta Pixel, Meta’s Conversions API and Google Ads conversion tracking and
+              remarketing on this website. These tools set or read cookies and similar identifiers, and tell Meta or
+              Google that a device visited our site or completed an action such as requesting a quote. They do not
+              give us your name from your social media account.
+            </p>
+            <p class="mb-4">
+              <strong class="text-foreground">Lead forms on Facebook and Instagram.</strong> If you fill in one of our instant forms inside
+              Facebook or Instagram, Meta sends us the details you enter — typically your name, phone number, email,
+              suburb and the service you are interested in — and we handle them exactly as an enquiry made on this
+              website: we use them to contact you about your quote, store them in our customer management system,
+              and never sell them. Meta’s own handling of that information is governed by Meta’s Privacy Policy.
+            </p>
+            <p>
+              You can control ad personalisation in your
+              <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener noreferrer" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">Facebook ad preferences</a> and
+              <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">Google ads settings</a>, and opt out of interest-based
+              advertising across many networks at
+              <a href="https://www.youronlinechoices.com.au" target="_blank" rel="noopener noreferrer" class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">youronlinechoices.com.au</a>.
+              Blocking cookies in your browser also stops these tools working.
+            </p>
+          </article>
+
           <article id="marketing" class="glass-card scroll-mt-28 p-6 sm:p-8">
-            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">7. Marketing &amp; follow-up</h2>
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">8. Marketing &amp; follow-up</h2>
             <p>
               We will contact you about the enquiry or job you have raised, including reminders about servicing where
               relevant. We do not add you to bulk marketing lists without asking first. To stop follow-up messages,
@@ -203,7 +237,7 @@ const contact = [
           </article>
 
           <article id="security" class="glass-card scroll-mt-28 p-6 sm:p-8">
-            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">8. Security &amp; retention</h2>
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">9. Security &amp; retention</h2>
             <p class="mb-4">
               The website is served over HTTPS and enquiries are transmitted encrypted. Access to our customer system is
               limited to the people who need it to serve you. No method of storage or transmission is completely
@@ -217,7 +251,7 @@ const contact = [
           </article>
 
           <article id="your-rights" class="glass-card scroll-mt-28 p-6 sm:p-8">
-            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">9. Access, correction &amp; deletion</h2>
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">10. Access, correction &amp; deletion</h2>
             <p>
               You can ask us what personal information we hold about you, ask us to correct it, or ask us to delete it
               where we no longer need it. Email <a href={`mailto:${SITE.email}`} class="text-[hsl(var(--q-teal))] underline-offset-2 hover:underline">{SITE.email}</a> and we will respond within 30 days. We may need to confirm your identity first.
@@ -225,7 +259,7 @@ const contact = [
           </article>
 
           <article id="complaints" class="glass-card scroll-mt-28 p-6 sm:p-8">
-            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">10. Complaints</h2>
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">11. Complaints</h2>
             <p>
               If you believe we have mishandled your personal information, contact us first and we will investigate and
               reply in writing. If you are not satisfied with our response you can complain to the Office of the
@@ -234,7 +268,7 @@ const contact = [
           </article>
 
           <article id="changes" class="glass-card scroll-mt-28 p-6 sm:p-8">
-            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">11. Changes to this policy</h2>
+            <h2 class="mb-3 text-xl font-semibold sm:text-2xl">12. Changes to this policy</h2>
             <p>
               We update this page when the way we handle information changes. The date at the top shows the current
               version. Continuing to use the website or our services after a change means you accept the updated policy.
@@ -243,7 +277,7 @@ const contact = [
 
           <div id="contact" class="q-teal scroll-mt-28 p-5 sm:p-6">
             <div class="mb-4 flex items-baseline justify-between gap-3">
-              <h2 class="text-xl font-semibold text-white sm:text-2xl">12. Contact us</h2>
+              <h2 class="text-xl font-semibold text-white sm:text-2xl">13. Contact us</h2>
               <span class="q-kicker text-white/70">Privacy questions</span>
             </div>
             <ul class="grid gap-3 sm:grid-cols-3">

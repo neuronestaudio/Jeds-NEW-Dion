@@ -1,0 +1,367 @@
+---
+/**
+ * ServiceAreaMap — every suburb JED publishes a page for, drawn from its real
+ * gazetted outline as one on-brand vector diagram. No tiles, no map library:
+ * the 116 polygons in src/data/suburbBoundaries.ts are projected here at
+ * build time into SVG paths, so the browser gets ~90 KB of markup (≈25 KB
+ * over the wire) and nothing else.
+ *
+ * Interaction (src script below, progressive): hover shows a tooltip, the
+ * zone chips dim everything else and zoom the view to that zone, the search
+ * box jumps to a suburb, and a click on a suburb zooms to it and fills the
+ * detail card — a second click (or the card's button) opens its page. Every
+ * suburb is a real <a href>, so with no JS at all each one is still a link,
+ * and the plain list under the map (see ServiceAreasTeaser) carries the
+ * same links for crawlers.
+ *
+ * Projection is equirectangular with the longitude axis scaled by
+ * cos(latitude) — over a 40 km patch at 34°S the distortion is well under a
+ * percent, which is more than good enough for a diagram. Coordinates are
+ * rounded to a tenth of a viewBox unit to keep the path data short.
+ */
+import { ArrowRight } from 'lucide-react';
+import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
+import { SUBURB_BOUNDARIES } from '@/data/suburbBoundaries';
+
+const MAP_ZONES: Zone[] = ['north', 'upper', 'beaches', 'east'];
+const items = SUBURBS.filter((s) => s.zone !== 'regional' && SUBURB_BOUNDARIES[s.slug]);
+
+let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+for (const s of items) {
+  for (const ring of SUBURB_BOUNDARIES[s.slug].rings) {
+    for (const [lng, lat] of ring) {
+      if (lng < minLng) minLng = lng;
+      if (lng > maxLng) maxLng = lng;
+      if (lat < minLat) minLat = lat;
+      if (lat > maxLat) maxLat = lat;
+    }
+  }
+}
+const kx = Math.cos(((minLat + maxLat) / 2) * (Math.PI / 180));
+const PAD = 16;
+const W = 720;
+const scale = (W - PAD * 2) / ((maxLng - minLng) * kx);
+const H = Math.round((maxLat - minLat) * scale + PAD * 2);
+const px = (lng: number) => Math.round(((lng - minLng) * kx * scale + PAD) * 10) / 10;
+const py = (lat: number) => Math.round(((maxLat - lat) * scale + PAD) * 10) / 10;
+
+type Box = [number, number, number, number];
+const shapes = items.map((s) => {
+  const b = SUBURB_BOUNDARIES[s.slug];
+  const box: Box = [Infinity, Infinity, -Infinity, -Infinity];
+  const d = b.rings
+    .map((ring) =>
+      ring
+        .map(([lng, lat], i) => {
+          const x = px(lng), y = py(lat);
+          if (x < box[0]) box[0] = x;
+          if (y < box[1]) box[1] = y;
+          if (x > box[2]) box[2] = x;
+          if (y > box[3]) box[3] = y;
+          return `${i ? 'L' : 'M'}${x} ${y}`;
+        })
+        .join('') + 'Z',
+    )
+    .join('');
+  const cx = s.centre ? px(s.centre[0]) : (box[0] + box[2]) / 2;
+  const cy = s.centre ? py(s.centre[1]) : (box[1] + box[3]) / 2;
+  return { slug: s.slug, name: s.name, postcode: s.postcode, zone: s.zone, areaKm2: s.areaKm2, d, cx, cy, box };
+});
+
+const zoneBox: Record<string, Box> = { all: [PAD, PAD, W - PAD, H - PAD] };
+for (const sh of shapes) {
+  const z = zoneBox[sh.zone] ?? (zoneBox[sh.zone] = [Infinity, Infinity, -Infinity, -Infinity]);
+  z[0] = Math.min(z[0], sh.box[0]); z[1] = Math.min(z[1], sh.box[1]);
+  z[2] = Math.max(z[2], sh.box[2]); z[3] = Math.max(z[3], sh.box[3]);
+}
+const counts = Object.fromEntries(MAP_ZONES.map((z) => [z, shapes.filter((s) => s.zone === z).length])) as Record<Zone, number>;
+const zoneShort: Record<string, string> = Object.fromEntries(MAP_ZONES.map((z) => [z, ZONES[z].short]));
+---
+
+<div
+  class="sam"
+  data-zone="all"
+  data-w={W}
+  data-h={H}
+  data-zones={JSON.stringify(zoneBox)}
+  data-zone-names={JSON.stringify(zoneShort)}
+  style={`--sam-ar: ${W} / ${H}`}
+>
+  {/* Left: zones as legend + filter */}
+  <div class="sam__side sam__side--zones">
+    <span class="q-kicker text-foreground/55">Explore by zone</span>
+    <div class="sam__zones" role="group" aria-label="Filter the map by zone">
+      <button type="button" class="sam__zone is-on" data-zone="all">
+        <i class="sam__dot sam__dot--all" aria-hidden="true"></i>
+        <span class="sam__zone-name">All areas</span>
+        <span class="sam__zone-n">{shapes.length}</span>
+      </button>
+      {MAP_ZONES.map((z) => (
+        <button type="button" class="sam__zone" data-zone={z}>
+          <i class="sam__dot" style={`--z: var(--z-${z})`} aria-hidden="true"></i>
+          <span class="sam__zone-name">{ZONES[z].label}</span>
+          <span class="sam__zone-n">{counts[z]}</span>
+        </button>
+      ))}
+    </div>
+    <p class="sam__hint">
+      Tap or hover a suburb to zoom in; tap it again to open its page.
+    </p>
+  </div>
+
+  {/* Centre: the diagram */}
+  <div class="sam__stage">
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" role="group" aria-label="Diagram of the Sydney suburbs JED Air Conditioning services, drawn from their gazetted boundaries">
+      <g class="sam__world">
+        {shapes.map((s) => (
+          <a
+            class="sam__sub"
+            href={`/service-area/${s.slug}`}
+            data-slug={s.slug}
+            data-name={s.name}
+            data-postcode={s.postcode}
+            data-zone={s.zone}
+            data-area={s.areaKm2 ?? ''}
+            data-box={s.box.join(',')}
+            aria-label={`${s.name} ${s.postcode} — open the service area page`}
+          >
+            <path d={s.d} />
+            <text class="sam__lbl" x={s.cx} y={s.cy} text-anchor="middle" dominant-baseline="middle">{s.name}</text>
+          </a>
+        ))}
+      </g>
+    </svg>
+    <div class="sam__tip" role="tooltip" hidden>
+      <b class="sam__tip-name"></b>
+      <span class="sam__tip-meta"></span>
+    </div>
+    <div class="sam__ctls" aria-label="Map zoom">
+      <button type="button" data-act="in" aria-label="Zoom in">+</button>
+      <button type="button" data-act="out" aria-label="Zoom out">&minus;</button>
+      <button type="button" data-act="reset" aria-label="Reset the view">&#8634;</button>
+    </div>
+  </div>
+
+  {/* Right: find + detail */}
+  <div class="sam__side sam__side--detail">
+    <label class="sam__search">
+      <span class="q-kicker block text-foreground/55">Find your suburb</span>
+      <input type="search" list="sam-suburbs" placeholder="Start typing…" autocomplete="off" spellcheck="false" />
+    </label>
+    <datalist id="sam-suburbs">
+      {shapes.map((s) => <option value={s.name} />)}
+    </datalist>
+
+    <div class="sam__card" data-empty>
+      <span class="q-kicker sam__card-zone text-[hsl(var(--q-teal))]">Selected suburb</span>
+      <strong class="sam__card-name">Pick a suburb on the map</strong>
+      <span class="sam__card-meta">Its postcode, zone and size show here.</span>
+      <a class="q-btn sam__card-link" href="/service-areas">
+        <span class="sam__card-link-text">All service areas</span>
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  type Box = [number, number, number, number];
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+  function init(root: HTMLElement) {
+    const W = Number(root.dataset.w);
+    const H = Number(root.dataset.h);
+    const zones = JSON.parse(root.dataset.zones!) as Record<string, Box>;
+    const zoneNames = JSON.parse(root.dataset.zoneNames!) as Record<string, string>;
+    const stage = root.querySelector<HTMLElement>('.sam__stage')!;
+    const svg = stage.querySelector('svg')!;
+    const world = root.querySelector<SVGGElement>('.sam__world')!;
+    const subs = Array.from(root.querySelectorAll<SVGAElement>('a.sam__sub'));
+    const tip = root.querySelector<HTMLElement>('.sam__tip')!;
+    const tipName = tip.querySelector<HTMLElement>('.sam__tip-name')!;
+    const tipMeta = tip.querySelector<HTMLElement>('.sam__tip-meta')!;
+    const card = root.querySelector<HTMLElement>('.sam__card')!;
+    const cardZone = card.querySelector<HTMLElement>('.sam__card-zone')!;
+    const cardName = card.querySelector<HTMLElement>('.sam__card-name')!;
+    const cardMeta = card.querySelector<HTMLElement>('.sam__card-meta')!;
+    const cardLink = card.querySelector<HTMLAnchorElement>('.sam__card-link')!;
+    const cardLinkText = card.querySelector<HTMLElement>('.sam__card-link-text')!;
+    const input = root.querySelector<HTMLInputElement>('.sam__search input')!;
+    const zoneButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('.sam__zone'));
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let s = 1, tx = 0, ty = 0;
+    let selected: SVGAElement | null = null;
+    const boxOf = (a: Element): Box => (a as HTMLElement).dataset.box!.split(',').map(Number) as Box;
+
+    // Rendered size of one viewBox unit — the SVG is letterboxed with `meet`,
+    // so it is the smaller of the two ratios, not clientWidth / W.
+    const unit = () => {
+      const r = svg.getBoundingClientRect();
+      return Math.min(r.width / W, r.height / H);
+    };
+
+    function apply(animate = true) {
+      world.style.transition = animate && !reduce ? `transform 0.8s ${EASE}` : 'none';
+      world.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+      world.style.setProperty('--k', String(1 / s));
+      root.classList.toggle('is-zoomed', s > 1.04);
+      fitLabels();
+    }
+    function clamp() {
+      tx = Math.min(0, Math.max(W - W * s, tx));
+      ty = Math.min(0, Math.max(H - H * s, ty));
+    }
+    function zoomTo(b: Box, pad: number, max: number) {
+      const bw = Math.max(b[2] - b[0], 1), bh = Math.max(b[3] - b[1], 1);
+      s = Math.min(max, Math.max(1, Math.min(W / (bw * pad), H / (bh * pad))));
+      tx = W / 2 - s * ((b[0] + b[2]) / 2);
+      ty = H / 2 - s * ((b[1] + b[3]) / 2);
+      clamp();
+      apply();
+    }
+    function zoomBy(f: number) {
+      const cx = (W / 2 - tx) / s, cy = (H / 2 - ty) / s;
+      s = Math.min(9, Math.max(1, s * f));
+      tx = W / 2 - s * cx; ty = H / 2 - s * cy;
+      clamp();
+      apply();
+    }
+    // A label is shown only when its suburb is wide enough on screen to hold it.
+    function fitLabels() {
+      const u = unit() * s;
+      for (const a of subs) {
+        const b = boxOf(a);
+        a.classList.toggle('is-fit', (b[2] - b[0]) * u >= 64 && (b[3] - b[1]) * u >= 22);
+      }
+    }
+
+    function setZone(z: string) {
+      root.dataset.zone = z;
+      for (const btn of zoneButtons) btn.classList.toggle('is-on', btn.dataset.zone === z);
+      if (selected) { selected.classList.remove('is-selected'); selected = null; }
+      card.setAttribute('data-empty', '');
+      zoomTo(zones[z], z === 'all' ? 1 : 1.14, 6);
+    }
+
+    function describe(a: SVGAElement) {
+      const d = a.dataset;
+      const area = d.area ? ` · ${d.area} km²` : '';
+      return { name: d.name!, meta: `${d.postcode} · ${zoneNames[d.zone!] ?? ''}${area}` };
+    }
+
+    function select(a: SVGAElement) {
+      if (selected) selected.classList.remove('is-selected');
+      selected = a;
+      a.classList.add('is-selected');
+      const { name, meta } = describe(a);
+      cardZone.textContent = zoneNames[a.dataset.zone!] ?? 'Selected suburb';
+      cardName.textContent = name;
+      cardMeta.textContent = meta;
+      cardLink.href = a.getAttribute('href')!;
+      cardLinkText.textContent = `Open ${name}`;
+      card.removeAttribute('data-empty');
+      // Bring its zone in first if we are on the overview, then frame the suburb.
+      if (root.dataset.zone !== a.dataset.zone) {
+        root.dataset.zone = a.dataset.zone!;
+        for (const btn of zoneButtons) btn.classList.toggle('is-on', btn.dataset.zone === a.dataset.zone);
+      }
+      zoomTo(boxOf(a), 3.4, 9);
+    }
+
+    // Click: first click selects and zooms, a click on the selected suburb
+    // follows the link. Without JS every suburb is already a plain link.
+    let dragged = false;
+    svg.addEventListener('click', (e) => {
+      const a = (e.target as Element).closest<SVGAElement>('a.sam__sub');
+      if (!a) return;
+      if (dragged) { e.preventDefault(); return; }
+      if (a === selected) return;
+      e.preventDefault();
+      select(a);
+    });
+    svg.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const a = (e.target as Element).closest<SVGAElement>('a.sam__sub');
+      if (a && a !== selected) { e.preventDefault(); select(a); }
+    });
+
+    // Tooltip follows the pointer; hidden for touch, where there is no hover.
+    svg.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      const a = (e.target as Element).closest<SVGAElement>('a.sam__sub');
+      if (!a) { tip.hidden = true; return; }
+      const { name, meta } = describe(a);
+      tipName.textContent = name;
+      tipMeta.textContent = meta;
+      tip.hidden = false;
+      const r = stage.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const flip = x > r.width - 190;
+      tip.style.left = `${flip ? x - 14 : x + 14}px`;
+      tip.style.top = `${y + 14}px`;
+      tip.classList.toggle('is-flip', flip);
+    });
+    svg.addEventListener('pointerleave', () => { tip.hidden = true; });
+
+    // Mouse / pen drag pans once zoomed in. Touch is left to the page scroll.
+    // Pointer capture is taken only once the pointer has actually travelled:
+    // capturing on pointerdown retargets the following `click` to the <svg>,
+    // so a plain click on a suburb never reached its link once zoomed in.
+    let drag: { id: number; x: number; y: number; tx: number; ty: number } | null = null;
+    svg.addEventListener('pointerdown', (e) => {
+      dragged = false;
+      if (e.pointerType === 'touch' || s <= 1.04 || e.button !== 0) return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, tx, ty };
+    });
+    svg.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      const u = unit();
+      const dx = (e.clientX - drag.x) / u, dy = (e.clientY - drag.y) / u;
+      if (!dragged) {
+        if (Math.abs(dx) + Math.abs(dy) <= 3) return;
+        dragged = true;
+        root.classList.add('is-dragging');
+        svg.setPointerCapture(drag.id);
+      }
+      tx = drag.tx + dx; ty = drag.ty + dy;
+      clamp();
+      apply(false);
+    });
+    const endDrag = () => { drag = null; root.classList.remove('is-dragging'); };
+    svg.addEventListener('pointerup', endDrag);
+    svg.addEventListener('pointercancel', endDrag);
+
+    for (const btn of zoneButtons) btn.addEventListener('click', () => setZone(btn.dataset.zone!));
+    root.querySelectorAll<HTMLButtonElement>('.sam__ctls button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const act = btn.dataset.act;
+        if (act === 'in') zoomBy(1.6);
+        else if (act === 'out') zoomBy(1 / 1.6);
+        else setZone('all');
+      });
+    });
+
+    const findByName = (q: string) => {
+      const n = q.trim().toLowerCase();
+      if (!n) return null;
+      return subs.find((a) => a.dataset.name!.toLowerCase() === n)
+        ?? subs.find((a) => a.dataset.name!.toLowerCase().startsWith(n))
+        ?? null;
+    };
+    input.addEventListener('change', () => { const a = findByName(input.value); if (a) select(a); });
+    input.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const a = findByName(input.value);
+      if (!a) return;
+      e.preventDefault();
+      if (a === selected) window.location.href = a.getAttribute('href')!;
+      else select(a);
+    });
+
+    window.addEventListener('resize', fitLabels, { passive: true });
+    apply(false);
+  }
+
+  document.querySelectorAll<HTMLElement>('.sam').forEach(init);
+</script>
