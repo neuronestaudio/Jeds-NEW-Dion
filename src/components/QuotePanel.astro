@@ -14,7 +14,9 @@ import {
 } from 'lucide-react';
 import { SITE } from '@/data/site';
 import { QUOTE_FAQS } from '@/data/faqs';
-import lounge from '@/assets/hero/lounge.jpg?url';
+// Its own room, not the hero's — the panel previously reused the hero's
+// lounge render, which meant the same photo appeared twice on the homepage.
+import quoteRoom from '@/assets/hero/quote-room.jpg?url';
 
 interface Props {
   /** h1 on /contact, h2 when embedded on the homepage. */
@@ -53,9 +55,10 @@ const why = [
 ---
 
 <section id={id} class="q-scene relative isolate overflow-hidden py-14 sm:py-20 lg:py-24 scroll-mt-24">
-  {/* Backdrop: the lounge render, softened, under a page-colour veil. */}
+  {/* Backdrop: a bright, plant-filled living room, softened under a
+      page-colour veil — deliberately different from the hero's own render. */}
   <div class="absolute inset-0 -z-10" aria-hidden="true">
-    <img src={lounge} alt="" class="h-full w-full scale-105 object-cover object-[60%_35%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
+    <img src={quoteRoom} alt="" class="h-full w-full scale-105 object-cover object-[50%_45%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
     <div class="absolute inset-0 bg-background/60 dark:bg-background/75"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-background/80"></div>
   </div>

@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-react';
 import BorderBeam from './BorderBeam';
+// Client-supplied render, low native resolution (236x419) — framed small and
+// portrait rather than stretched, which is what it was cropped for anyway.
+import airconGlow from '@/assets/why-aircon.jpg?url';
 
 const reasons = [
   {
@@ -65,7 +68,7 @@ export function WhyChooseUs() {
               As certified Daikin and Haier dealers and authorised service agents, we install systems to manufacturer standards — ensuring warranty protection, optimal performance and long-term reliability.
               Whether you're installing a new ducted system, upgrading an older split system, or fitting out an apartment or commercial property, our licensed technicians deliver compliant, energy-efficient installations tailored to your space.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="mb-6 flex flex-wrap gap-4 sm:mb-8">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
                 <CheckCircle className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">Residential</span>
@@ -78,6 +81,19 @@ export function WhyChooseUs() {
                 <CheckCircle className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">All Brands</span>
               </div>
+            </div>
+
+            {/* The accent photo: framed small and portrait, sitting under the
+                copy rather than as a full-bleed background — the source is
+                236x419, and stretching it wider would go soft. */}
+            <div className="max-w-[220px] overflow-hidden rounded-2xl border border-border shadow-[0_18px_40px_-24px_hsl(240_8%_10%/0.4)] sm:max-w-[260px]">
+              <img
+                src={airconGlow}
+                alt="A Daikin split system cooling a Sydney living room"
+                loading="lazy"
+                decoding="async"
+                className="aspect-[236/419] w-full object-cover"
+              />
             </div>
           </motion.div>
 
