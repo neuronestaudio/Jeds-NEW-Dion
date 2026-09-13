@@ -424,15 +424,26 @@
 @media (prefers-reduced-motion: reduce) { .sc-card.is-active .sc-glare { display: none; } }
 
 /* =========================================================================
-   Service pathways — diagonal photo panels (src/components/ServicePathways.tsx)
-   Ported from the Formula Mobile Detailing services strip. The skew is on the
-   panel and an equal-and-opposite skew on its photo and copy, so the frame is
-   angled and the type is not. Hovering grows one panel's flex share and the
-   others give it back, which reveals the line of copy.
+   Service pathways — diagonal glass panels (src/components/ServicePathways.tsx)
+   Ported from the Formula Mobile Detailing services strip, reworked as glass:
+   the skew is on the panel and an equal-and-opposite skew on its photo and
+   copy, so the frame is angled and the type is not. Hovering grows one
+   panel's flex share and the others give it back, which reveals the copy.
+
+   Layers inside each panel, back to front:
+     ::before          an oversized conic gradient turning behind everything
+                       (the beam — same idea as BorderBeam.tsx, done in CSS
+                       because the frame is a skewed shape, not a rounded box)
+     .svcslant__img    the photo, inset by --rim so a strip of the beam shows
+                       around it as an animated outline
+     ::after           a light bottom gradient for legibility — the old wash
+                       took the photos to half brightness and read as mud
+     .svcslant__in     the copy on a frosted glass plate
    ========================================================================= */
 .svcslant {
   --slant: -11deg;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --rim: 1.5px;
   display: flex; gap: 14px;
   height: clamp(300px, 34vw, 420px);
   margin-top: clamp(1.8rem, 3vw, 2.6rem);
@@ -442,29 +453,55 @@
 .svcslant__i {
   position: relative; flex: 1 1 0; min-width: 0; overflow: hidden;
   transform: skewX(var(--slant));
-  background: hsl(var(--card));
+  /* the static rim — what shows in the --rim strip between beam passes */
+  background: hsl(0 0% 100% / 0.6);
   display: flex; align-items: center;
   color: #fff; text-decoration: none;
   transition: flex-grow 0.55s var(--ease);
+  box-shadow: 0 26px 54px -32px hsl(240 8% 10% / 0.35);
 }
+.dark .svcslant__i { background: hsl(0 0% 100% / 0.18); box-shadow: 0 26px 54px -30px rgb(0 0 0 / 0.8); }
 .svcslant__i::before {
+  content: ""; position: absolute; inset: -150%; z-index: 0;
+  background: conic-gradient(from 0deg,
+    transparent 0deg, transparent 265deg,
+    hsl(var(--primary) / 0.35) 300deg, hsl(var(--primary) / 0.9) 336deg,
+    hsl(197 75% 94%) 353deg, hsl(var(--primary) / 0.7) 357deg, transparent 360deg);
+  animation: svc-beam 18s linear infinite;
+  animation-delay: var(--beam-delay, 0s);
+}
+@keyframes svc-beam { to { transform: rotate(360deg); } }
+/* Two boxes, not one: the outer is the inset clip (its edges follow the
+   skewed frame), the inner is the counter-skewed, over-scaled photo. One box
+   with both jobs cannot work — the scale needed to fill the corners would
+   cover the rim. */
+.svcslant__img { position: absolute; inset: var(--rim); z-index: 1; overflow: hidden; }
+.svcslant__img::before {
   content: ""; position: absolute; inset: 0;
   background: var(--img) center / cover no-repeat;
   transform: skewX(calc(var(--slant) * -1)) scale(1.3);
-  filter: saturate(0.9) brightness(0.5);
+  filter: saturate(0.95) brightness(0.84);
   transition: filter 0.5s var(--ease), transform 0.8s var(--ease);
 }
 .svcslant__i::after {
-  content: ""; position: absolute; inset: 0;
-  background:
-    radial-gradient(70% 55% at 50% 50%, hsl(240 7% 4% / 0.62), transparent 78%),
-    linear-gradient(180deg, hsl(240 7% 4% / 0.42), hsl(240 7% 4% / 0.30) 45%, hsl(240 7% 4% / 0.72));
+  content: ""; position: absolute; inset: var(--rim); z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, hsl(0 0% 100% / 0.08), transparent 28%, hsl(240 7% 4% / 0.4) 100%);
+  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.35);
 }
 .svcslant__in {
-  position: relative; z-index: 1;
+  position: relative; z-index: 3;
   transform: skewX(calc(var(--slant) * -1));
-  padding: 1.4rem 1.3rem; width: 100%;
+  width: min(84%, 24rem); margin-inline: auto;
+  padding: 1.1rem 1.25rem;
   display: flex; flex-direction: column; align-items: center; text-align: center;
+  border-radius: 1rem;
+  background: hsl(0 0% 100% / 0.1);
+  border: 1px solid hsl(0 0% 100% / 0.3);
+  box-shadow: 0 16px 36px -24px rgb(0 0 0 / 0.6), inset 0 1px 0 hsl(0 0% 100% / 0.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.35);
+  backdrop-filter: blur(16px) saturate(1.35);
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.45);
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
 }
 .svcslant__name {
   display: flex; align-items: center; gap: 0.5rem;
@@ -479,7 +516,7 @@
 }
 .svcslant__blurb {
   display: block; margin-top: 0; max-width: 24rem; max-height: 0; overflow: hidden;
-  font-size: 0.86rem; line-height: 1.5; color: rgba(255, 255, 255, 0.78);
+  font-size: 0.86rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85);
   opacity: 0; transform: translateY(8px);
   /* Collapsed at rest (not just invisible) so the three labels sit on one
      baseline regardless of how each blurb wraps; grows open on hover. */
@@ -488,10 +525,11 @@
 .svcslant__feat {
   display: block; margin-top: 0.35rem;
   font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase;
-  color: hsl(var(--primary));
+  color: hsl(197 75% 88%);
 }
 .svcslant__i:hover { flex-grow: 2.4; }
-.svcslant__i:hover::before { filter: saturate(1.05) brightness(0.72); transform: skewX(calc(var(--slant) * -1)) scale(1.36); }
+.svcslant__i:hover .svcslant__img::before { filter: saturate(1.05) brightness(0.94); transform: skewX(calc(var(--slant) * -1)) scale(1.36); }
+.svcslant__i:hover .svcslant__in { background: hsl(0 0% 100% / 0.16); border-color: hsl(0 0% 100% / 0.45); }
 .svcslant__i:hover .svcslant__blurb { opacity: 1; transform: none; max-height: 9rem; margin-top: 0.5rem; }
 .svcslant__i:hover .svcslant__arrow { opacity: 1; transform: none; }
 .svcslant__i:focus-visible { flex-grow: 2.4; outline: 2px solid hsl(var(--primary)); outline-offset: -4px; }
@@ -500,13 +538,17 @@
 
 @media (max-width: 767px) {
   .svcslant { height: auto; flex-direction: column; gap: 10px; clip-path: none; --slant: 0deg; padding-inline: 1rem; }
-  .svcslant__i { height: 150px; flex: 0 0 auto; border-radius: 1rem; }
+  /* Taller than the old 150px: the blurb is always open here, and at 170px the glass plate covered the photo. */
+  .svcslant__i { height: 208px; flex: 0 0 auto; border-radius: 1rem; }
+  .svcslant__img, .svcslant__i::after { border-radius: calc(1rem - var(--rim)); }
   .svcslant__i:hover { flex-grow: 0; }
+  .svcslant__in { width: min(88%, 24rem); padding: 0.85rem 1rem; }
   .svcslant__blurb { opacity: 1; transform: none; max-height: none; margin-top: 0.5rem; }
   .svcslant__arrow { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .svcslant__i, .svcslant__i::before, .svcslant__blurb, .svcslant__arrow { transition: none; }
+  .svcslant__i, .svcslant__img::before, .svcslant__blurb, .svcslant__arrow, .svcslant__in { transition: none; }
+  .svcslant__i::before { animation: none; opacity: 0; }
 }
 
 /* =========================================================================
@@ -750,17 +792,30 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    ========================================================================= */
 .hero-lockup {
   position: relative; display: block;
-  width: min(100%, 296px); aspect-ratio: 920 / 372;
-  margin-bottom: 0.5rem;
+  /* The clip is cropped flush to the settled mark (842x326, ink 2px from the
+     edge), so the box edge IS the logo edge and it lines up with the eyebrow,
+     headline and buttons in the column. The earlier crop carried 4% of black
+     on the left and the mark sat visibly indented from the copy. */
+  width: min(100%, 270px); aspect-ratio: 842 / 326;
+  margin-bottom: 0.75rem;
   pointer-events: none;
   filter: invert(1) contrast(1.06);
   mix-blend-mode: multiply;
 }
 .dark .hero-lockup { filter: contrast(1.06); mix-blend-mode: screen; }
+/* 90% solid by request. That opacity lives on the CHILDREN (see the
+   opacity-90 class in HeroSection), never on this wrapper: opacity below 1
+   creates a stacking context, which would trap the blend and bring the black
+   plate back. A child at 90% inside a blended group is fine. */
 .hero-lockup > * {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: left center;
   transition: opacity 0.3s ease;
 }
-@media (min-width: 640px) { .hero-lockup { width: min(100%, 400px); margin-bottom: 0.75rem; } }
-@media (min-width: 1024px) { .hero-lockup { width: min(100%, 512px); } }
+@media (min-width: 640px) { .hero-lockup { width: min(100%, 364px); margin-bottom: 1rem; } }
+@media (min-width: 1024px) { .hero-lockup { width: min(100%, 464px); } }
+
+/* Rotating headline under the lockup. Every phrase is written as exactly two
+   lines, so two line-boxes are reserved and a swap never moves the paragraph
+   and buttons beneath it. */
+.hero-headline { min-height: 1.9em; }

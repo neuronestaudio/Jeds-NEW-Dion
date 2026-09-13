@@ -74,13 +74,17 @@ export function ServicePathways() {
       {/* Full-bleed on purpose: the strip runs past the container so its cut
           edges read as part of the page, not a boxed widget. */}
       <div className="svcslant">
-        {pathways.map((p) => (
+        {pathways.map((p, i) => (
           <a
             key={p.id}
             href={p.href}
             className="svcslant__i"
-            style={{ ['--img' as string]: `url("${p.img}")` } as CSSProperties}
+            /* Beam laps are staggered so the three outlines never travel in
+               unison — that reads as decoration rather than three synced widgets. */
+            style={{ ['--img' as string]: `url("${p.img}")`, ['--beam-delay' as string]: `${-i * 6}s` } as CSSProperties}
           >
+            {/* Photo layer — inset by --rim so the beam shows around it. */}
+            <span className="svcslant__img" aria-hidden="true" />
             <span className="svcslant__in">
               <span className="svcslant__name">
                 {p.title}

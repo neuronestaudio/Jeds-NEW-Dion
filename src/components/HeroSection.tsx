@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowRight, Phone, ShieldCheck, BadgeCheck, Award, Leaf } from 'lucide-react';
 import { Button } from './ui/button';
 // The held final frame of /hero-sting.mp4, keyed the same way. It is what
@@ -41,6 +41,21 @@ const TRUST = [
   { icon: Leaf, label: 'Energy Efficient Solutions', sub: 'Comfort today. A cleaner tomorrow.' },
 ];
 
+/**
+ * Headline rotation under the lockup. Each phrase is split into its two lines
+ * by hand (second line carries the gradient) so every one occupies the same
+ * two line-boxes and the swap never shifts the layout. The first entry is the
+ * one crawlers and no-JS visitors get: it is the only one rendered on the
+ * server, and it is the SEO headline.
+ */
+const HEADLINES: ReadonlyArray<readonly [string, string]> = [
+  ['Smarter Comfort', 'for Sydney Homes.'],
+  ['Perfect Climate.', 'Every Season.'],
+  ['Better Air. Better Comfort.', 'Better Living.'],
+  ['Climate Control,', 'Engineered to Last.'],
+];
+const HEADLINE_MS = 4500;
+
 const DAIKIN_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Daikin-Logo.svg';
 const HAIER_LOGO_FALLBACK = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Haier_logo.svg';
 
@@ -58,20 +73,29 @@ export function HeroSection({ variant = 'a' }: Props) {
    */
   const stingRef = useRef<HTMLVideoElement>(null);
   const [lockupPlaying, setLockupPlaying] = useState(false);
+  const [headline, setHeadline] = useState(0);
   useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const v = stingRef.current;
-    if (!v || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    v.muted = true;
-    v.play().catch(() => {});
+    if (v) {
+      v.muted = true;
+      v.play().catch(() => {});
+    }
+    // Same gate as the clip: reduced motion means a still mark and a still
+    // headline, not a slideshow.
+    const id = window.setInterval(() => setHeadline((i) => (i + 1) % HEADLINES.length), HEADLINE_MS);
+    return () => window.clearInterval(id);
   }, []);
 
+  // opacity-90, not 100: "ninety percent solid" by request. See the note on
+  // .hero-lockup in index.css for why it is on these and not the wrapper.
   const lockup = (
     <span className="hero-lockup" aria-hidden="true">
-      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-100'} decoding="async" />
+      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
       <video
         ref={stingRef}
         src="/hero-sting.mp4"
-        className={lockupPlaying ? 'opacity-100' : 'opacity-0'}
+        className={lockupPlaying ? 'opacity-90' : 'opacity-0'}
         onPlaying={() => setLockupPlaying(true)}
         muted
         playsInline
@@ -167,21 +191,31 @@ export function HeroSection({ variant = 'a' }: Props) {
               the blend that removes its black plate. */}
           {lockup}
 
-          {/* The wording now sits under the lockup at supporting size — still
+          {/* The wording sits under the lockup at supporting size — still
               Bebas Neue, the condensed caps face from the Next Lvl Protection
-              heroes, but two lines instead of three so it reads as a strapline
-              rather than competing with the mark above it. font-normal is
-              load-bearing: the face has one weight, and the base h1 rule would
-              otherwise ask the browser to fake a bold. */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-condensed mb-5 text-[2rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[2.5rem] lg:text-[3rem] xl:text-[3.4rem]"
-          >
-            <span className="block">Comfort, Engineered for</span>
-            <span className="block text-gradient">Modern Living</span>
-          </motion.h1>
+              heroes — and rotates through HEADLINES. Only the active phrase is
+              in the DOM (the h1 stays a clean single headline for crawlers and
+              screen readers); .hero-headline reserves the two lines so the
+              swap never moves anything. `initial={false}` matters: without it
+              framer server-renders the entering phrase at opacity 0, and a
+              visitor whose JS never arrives gets an invisible headline.
+              font-normal is load-bearing: the face has one weight, and the
+              base h1 rule would otherwise ask the browser to fake a bold. */}
+          <h1 className="hero-headline font-condensed mb-5 text-[1.9rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[2.4rem] lg:text-[2.9rem] xl:text-[3.3rem]">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={headline}
+                initial={{ opacity: 0, y: '0.3em' }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: '-0.25em' }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                className="block"
+              >
+                <span className="block">{HEADLINES[headline][0]}</span>
+                <span className="block text-gradient">{HEADLINES[headline][1]}</span>
+              </motion.span>
+            </AnimatePresence>
+          </h1>
 
           <motion.p
             initial={{ opacity: 0, y: 30 }}
