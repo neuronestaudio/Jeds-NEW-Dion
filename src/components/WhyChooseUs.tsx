@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-react';
 import BorderBeam from './BorderBeam';
-// Client-supplied render, low native resolution (236x419) — framed small and
-// portrait rather than stretched, which is what it was cropped for anyway.
+// Client-supplied render (936x1681, portrait).
 import airconGlow from '@/assets/why-aircon.jpg?url';
 
 const reasons = [
@@ -83,16 +82,17 @@ export function WhyChooseUs() {
               </div>
             </div>
 
-            {/* The accent photo: framed small and portrait, sitting under the
-                copy rather than as a full-bleed background — the source is
-                236x419, and stretching it wider would go soft. */}
-            <div className="max-w-[220px] overflow-hidden rounded-2xl border border-border shadow-[0_18px_40px_-24px_hsl(240_8%_10%/0.4)] sm:max-w-[260px]">
+            {/* The accent photo: framed portrait, sitting under the copy
+                rather than as a full-bleed background — the column is narrow
+                and the render is tall, so a card reads better than cropping
+                it wide. */}
+            <div className="max-w-[280px] overflow-hidden rounded-2xl border border-border shadow-[0_18px_40px_-24px_hsl(240_8%_10%/0.4)] sm:max-w-[320px]">
               <img
                 src={airconGlow}
                 alt="A Daikin split system cooling a Sydney living room"
                 loading="lazy"
                 decoding="async"
-                className="aspect-[236/419] w-full object-cover"
+                className="aspect-[936/1681] w-full object-cover"
               />
             </div>
           </motion.div>
