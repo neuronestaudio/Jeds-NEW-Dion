@@ -570,15 +570,31 @@
    edge and a rim dark enough to find on the light theme.
    ========================================================================= */
 .brand-tile {
-  position: relative;
+  position: relative; isolation: isolate; overflow: hidden;
   border-radius: 1rem;
-  background: linear-gradient(160deg, hsl(0 0% 100% / 0.72), hsl(0 0% 100% / 0.40));
-  border: 1px solid hsl(240 8% 10% / 0.09);
-  box-shadow: 0 12px 30px -14px hsl(240 8% 10% / 0.28), inset 0 1px 0 hsl(0 0% 100% / 0.9);
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
+  /* Brushed chrome, not frosted glass: a banded silver gradient reading as
+     metal rather than translucent plastic. */
+  background: linear-gradient(160deg,
+    hsl(220 10% 98%) 0%, hsl(220 8% 88%) 22%, hsl(0 0% 100%) 38%,
+    hsl(220 8% 90%) 52%, hsl(0 0% 100%) 68%, hsl(220 10% 86%) 86%, hsl(220 8% 96%) 100%);
+  border: 1px solid hsl(220 10% 65% / 0.5);
+  box-shadow: 0 14px 32px -14px hsl(240 8% 10% / 0.32), inset 0 1px 0 hsl(0 0% 100% / 0.95), inset 0 -1px 0 hsl(220 10% 60% / 0.35);
 }
+/* The glare sweep — Dion's established "shiny badge" motif (see the
+   premier-design-tokens reference): a skewed light band drifting across on
+   a loop. Each tile runs on its own clock (staggered delay) so a whole row
+   of badges never flashes in unison. */
+.brand-tile::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(100deg, transparent, hsl(0 0% 100% / 0.85), transparent);
+  width: 45%; left: -65%;
+  transform: skewX(-20deg);
+  animation: brand-tile-shine 5.2s ease-in-out infinite;
+  animation-delay: var(--shine-delay, 0s);
+}
+@keyframes brand-tile-shine { 0% { left: -65%; } 24%, 100% { left: 150%; } }
 .brand-logo {
+  position: relative; z-index: 2;
   width: 7.75rem;
   height: calc(2.5rem * var(--logo-scale, 1));
   object-fit: contain;
@@ -586,15 +602,19 @@
 @media (min-width: 640px) {
   .brand-logo { width: 9rem; }
 }
-/* Dark theme: a light chip, not a dark one. The marks are brand-coloured ink
-   (Daikin blue, Fujitsu red, Panasonic near-black...) and used to be flattened
-   to white here, which lost every brand's colour; a bright chip keeps them as
-   the brands draw them — the same white-chip-on-dark-plate the supplied files
-   had, done deliberately this time. */
+/* Dark theme: the same brushed-metal chip, a touch cooler and deeper so it
+   still reads as a badge floating on a dark strip rather than a flat cutout.
+   Marks stay brand-coloured ink either way — that is what the light chip is
+   for, not white silhouettes. */
 .dark .brand-tile {
-  background: linear-gradient(160deg, hsl(0 0% 100% / 0.94), hsl(210 16% 92% / 0.88));
-  border-color: hsl(0 0% 100% / 0.45);
-  box-shadow: 0 18px 38px -16px rgb(0 0 0 / 0.85), inset 0 1px 0 hsl(0 0% 100% / 0.95);
+  background: linear-gradient(160deg,
+    hsl(220 8% 90%) 0%, hsl(220 6% 78%) 22%, hsl(0 0% 98%) 38%,
+    hsl(220 8% 80%) 52%, hsl(0 0% 97%) 68%, hsl(220 8% 74%) 86%, hsl(220 8% 86%) 100%);
+  border-color: hsl(220 10% 40% / 0.6);
+  box-shadow: 0 18px 38px -16px rgb(0 0 0 / 0.85), inset 0 1px 0 hsl(0 0% 100% / 0.9), inset 0 -1px 0 hsl(220 15% 30% / 0.4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-tile::after { animation: none; opacity: 0; }
 }
 
 /* =========================================================================
@@ -1200,3 +1220,75 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 .why-pill svg { color: hsl(197 85% 78%); }
 @media (min-width: 640px) { .why-pill { font-size: 0.74rem; padding: 0.4rem 0.75rem; } }
+
+/* =========================================================================
+   Hero decorative texture (src/components/HeroSection.tsx) — corner stripe
+   accents and a concentric-rings motif, the same "premium texture" language
+   as the splash screen and the quote panel's own decorative rings, so the
+   hero doesn't read as a flat photo with type on it.
+   ========================================================================= */
+.hero-deco-stripe {
+  position: absolute; pointer-events: none;
+  width: clamp(150px, 17vw, 260px); height: clamp(150px, 17vw, 260px);
+  /* Teal accent, not white — white at any tasteful opacity disappeared
+     against the room photo's own bright wall/ceiling area behind it; the
+     accent colour reads against both the light and dark parts of a mixed
+     photo instead of only the dark ones. */
+  background: repeating-linear-gradient(135deg,
+    hsl(var(--primary) / 0.55) 0px, hsl(var(--primary) / 0.55) 2px,
+    transparent 2px, transparent 15px);
+}
+.dark .hero-deco-stripe {
+  background: repeating-linear-gradient(135deg,
+    hsl(197 85% 72% / 0.5) 0px, hsl(197 85% 72% / 0.5) 2px,
+    transparent 2px, transparent 15px);
+}
+.hero-deco-stripe--tr {
+  right: 0; top: 0;
+  -webkit-mask-image: linear-gradient(to bottom left, #000 0%, transparent 65%);
+  mask-image: linear-gradient(to bottom left, #000 0%, transparent 65%);
+}
+.hero-deco-rings {
+  /* Anchored well above the trust bar (which starts at lg:bottom-8 with its
+     own frosted fill) rather than at the true corner — anchoring at the
+     corner buried most of the rings under that bar, leaving only a sliver
+     visible above it. */
+  position: absolute; left: -3.5rem; bottom: 7rem; z-index: 0; pointer-events: none;
+  width: clamp(200px, 20vw, 300px); height: clamp(200px, 20vw, 300px);
+  color: hsl(var(--primary) / 0.6);
+}
+.dark .hero-deco-rings { color: hsl(197 85% 72% / 0.55); }
+@media (max-width: 1023px) {
+  .hero-deco-stripe, .hero-deco-rings { display: none; }
+}
+
+/* =========================================================================
+   Phone number metal fill (src/components/HeroSection.tsx, light theme
+   only) — Dion's established brushed-chrome text treatment (see the
+   premier-design-tokens reference): a banded silver-to-white gradient
+   text-fill with a slow shine sweep. Dark theme keeps plain text — the
+   effect assumes a light badge, which is what the button is in light mode.
+   ========================================================================= */
+.hero-phone-metal {
+  /* Peak stops capped at 90% lightness, not pure white: the button itself is
+     a solid white/near-white fill, and a fully white peak in the gradient
+     briefly matched it exactly as it swept past, making a whole word
+     vanish. A subtle dark edge on the text holds definition through every
+     phase of the loop regardless of what the gradient is doing underneath. */
+  background-image: linear-gradient(90deg,
+    hsl(220 10% 55%) 0%, hsl(220 10% 90%) 12%, hsl(220 12% 82%) 28%,
+    hsl(220 10% 60%) 45%, hsl(220 10% 90%) 62%, hsl(220 10% 55%) 78%,
+    hsl(220 10% 88%) 90%, hsl(220 10% 58%) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 1px 1px hsl(220 15% 20% / 0.35);
+  animation: hero-phone-shine 6s ease-in-out infinite;
+}
+.dark .hero-phone-metal {
+  background-image: none; -webkit-background-clip: initial; background-clip: initial;
+  color: inherit; animation: none;
+}
+@keyframes hero-phone-shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero-phone-metal { animation: none; background-position: 0 0; }
+}

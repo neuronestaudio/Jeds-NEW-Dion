@@ -11,15 +11,21 @@ export function QuoteFormInline() {
       className="relative z-10"
     >
       {/* The one panel on the page that converts — give it the slowest, most
-          deliberate beam rather than another static rim. No opaque card fill
-          here (that was the pre-redesign look): QuotePanel now wraps this in
-          .q-teal directly, and an opaque white card in between would sit the
-          wizard's light-on-dark heading text right back on white — the exact
-          "how it looked before this fix" bug. Each option row inside the
-          wizard is already its own bg-card chip, so the surface still reads
-          as distinct rows, just without a second card wrapping all of them. */}
+          deliberate beam rather than another static rim.
+
+          This inner surface needs an OPAQUE fill, just not a white one:
+          BorderBeam paints two oversized, blurred conic-gradient "glow"
+          spans behind its children and relies on an opaque card surface to
+          mask them down to a thin rim. Stripping that fill entirely (the
+          previous fix, made to stop white-on-white text) left the glow with
+          nothing to hide behind, so it bled across the whole card as a
+          washed-out diagonal sweep — a second, less obvious bug from the
+          same change. Solid navy keeps the mask AND the light-on-dark text
+          from .q-teal's scoped tokens correct; each option row inside the
+          wizard is still its own bg-card chip, so the surface still reads
+          as distinct rows, just without a second full-card wrapper. */}
       <BorderBeam duration={26}>
-      <div className="rounded-[calc(1rem-1.5px)] p-5 sm:p-6 md:p-8">
+      <div className="rounded-[calc(1rem-1.5px)] bg-[hsl(var(--q-teal-deeper))] p-5 sm:p-6 md:p-8">
       <QuoteWizard
         source="hero-inline"
         compact

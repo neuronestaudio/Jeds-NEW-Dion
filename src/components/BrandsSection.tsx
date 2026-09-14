@@ -48,12 +48,16 @@ const SCROLL_DURATION_S = 40;
 export function BrandsSection() {
   const copy = (hidden: boolean) => (
     <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
-      {BRANDS.map((brand) => (
+      {BRANDS.map((brand, i) => (
         <div key={`${brand.name}-${hidden ? 'b' : 'a'}`} className="mr-3 shrink-0 sm:mr-4">
-          {/* Glass tile: translucent surface + blur so the wash behind shows
-              through, a bright top edge and a darker rim so the panel has a
-              findable edge on both themes. */}
-          <div className="brand-tile flex h-[78px] min-w-[180px] items-center justify-center px-7 sm:h-[88px] sm:min-w-[204px] sm:px-8">
+          {/* Brushed-metal badge: a shiny sweep loops across each tile (see
+              .brand-tile in index.css). Staggered per tile so a whole row of
+              badges never glints at once — that read as one flashing strip
+              rather than individual pieces of metal catching the light. */}
+          <div
+            className="brand-tile flex h-[78px] min-w-[180px] items-center justify-center px-7 sm:h-[88px] sm:min-w-[204px] sm:px-8"
+            style={{ ['--shine-delay' as string]: `${-(i % 6) * 0.9}s` }}
+          >
             <img
               src={brand.logo}
               alt={`${brand.name} logo`}

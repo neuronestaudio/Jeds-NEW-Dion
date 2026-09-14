@@ -63,12 +63,16 @@ export function WhyChooseUs() {
     <section id="about" className="py-12 sm:py-16 md:py-24 bg-card/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* Left: copy, unchanged. */}
+          {/* Left: copy. Centred on mobile, back to the original left
+              alignment from lg — a left-aligned block reads unbalanced on a
+              narrow phone screen where it is the full-width, top element
+              rather than one half of a two-column row. */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="text-center lg:text-left"
           >
             <span className="eyebrow">Why JED</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5 sm:mb-6">
@@ -79,18 +83,22 @@ export function WhyChooseUs() {
               As certified Daikin and Haier dealers and authorised service agents, we install systems to manufacturer standards — ensuring warranty protection, optimal performance and long-term reliability.
               Whether you're installing a new ducted system, upgrading an older split system, or fitting out an apartment or commercial property, our licensed technicians deliver compliant, energy-efficient installations tailored to your space.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Residential</span>
+            {/* One line even on the narrowest phone: at the old px-4/gap-4/
+                text-sm sizing the three pills totalled well over 400px, so
+                "All Brands" wrapped to its own line. Mobile now runs smaller
+                padding, gap and icons; sm: and up is the original sizing. */}
+            <div className="flex flex-nowrap justify-center gap-1.5 sm:flex-wrap sm:justify-start sm:gap-4">
+              <div className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-primary/10 px-2 py-1.5 sm:gap-2 sm:px-4 sm:py-2">
+                <CheckCircle className="h-3.5 w-3.5 shrink-0 text-primary sm:h-5 sm:w-5" />
+                <span className="text-[11px] font-medium sm:text-sm">Residential</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Commercial</span>
+              <div className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-primary/10 px-2 py-1.5 sm:gap-2 sm:px-4 sm:py-2">
+                <CheckCircle className="h-3.5 w-3.5 shrink-0 text-primary sm:h-5 sm:w-5" />
+                <span className="text-[11px] font-medium sm:text-sm">Commercial</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">All Brands</span>
+              <div className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-primary/10 px-2 py-1.5 sm:gap-2 sm:px-4 sm:py-2">
+                <CheckCircle className="h-3.5 w-3.5 shrink-0 text-primary sm:h-5 sm:w-5" />
+                <span className="text-[11px] font-medium sm:text-sm">All Brands</span>
               </div>
             </div>
           </motion.div>

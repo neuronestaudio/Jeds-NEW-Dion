@@ -129,11 +129,12 @@ export function HeroSection({ variant = 'a' }: Props) {
           />
           {/* seam: page colour fading onto the photo's left edge */}
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/10 lg:from-background lg:via-background lg:to-transparent lg:[background-size:58%_100%] lg:bg-no-repeat" />
-          {/* Light veil on top of the seam gradient, both themes: a bare
-              whisper of page colour to settle the photo without washing it
-              out — an 85%-strength veil here (previous pass) made the panel
-              read as blown-out white rather than "quiet". */}
-          <div className="absolute inset-0 bg-background/15" />
+          {/* A bare whisper of page colour in light, so the photo settles
+              without washing out — an 85%-strength veil here (previous pass)
+              made the panel read as blown-out white rather than "quiet".
+              Dark theme wants more than a colour-matched whisper: a flat 30%
+              black shadow, independent of the page background token. */}
+          <div className="absolute inset-0 bg-background/15 dark:bg-black/30" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -146,13 +147,40 @@ export function HeroSection({ variant = 'a' }: Props) {
             decoding="async"
             fetchPriority="high"
           />
-          {/* A light veil, both themes: enough page colour to settle the
-              photo without dulling it. The photo should stay the dominant
-              visual here at roughly 85% strength — an 85%-opacity veil
-              (previous pass) inverted that and blew the room out to
-              near-white, which read as "way too bright", not quiet. */}
-          <div className="absolute inset-0 bg-background/15" />
+          {/* Light theme: enough page colour to settle the photo without
+              dulling it — the photo should stay the dominant visual here at
+              roughly 85% strength; an 85%-opacity veil (previous pass)
+              inverted that and blew the room out to near-white, which read
+              as "way too bright". Dark theme asks for something else: a
+              flat 30% black shadow rather than a colour-matched whisper. */}
+          <div className="absolute inset-0 bg-background/15 dark:bg-black/30" />
         </div>
+      )}
+
+      {/* Corner texture, variant A only ("the back background... some lines,
+          some stripes, some radial circles... more premium"). Positioned
+          clear of both the copy column and the hero-people card: the stripe
+          sits top-right near the header, the rings bottom-left near the CTA
+          row, both faint enough to read as texture, not decoration fighting
+          the photo. Desktop only — see the CSS media query. */}
+      {!isB && (
+        <>
+          <div className="hero-deco-stripe hero-deco-stripe--tr" aria-hidden="true" />
+          <svg
+            className="hero-deco-rings"
+            viewBox="0 0 200 200"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
+            <circle cx="100" cy="100" r="96" />
+            <circle cx="100" cy="100" r="80" />
+            <circle cx="100" cy="100" r="64" />
+            <circle cx="100" cy="100" r="48" />
+            <circle cx="100" cy="100" r="32" />
+          </svg>
+        </>
       )}
 
       {/* Real technicians, crossfading, over the empty wall/shelf area to
@@ -275,7 +303,11 @@ export function HeroSection({ variant = 'a' }: Props) {
                 onClick={() => trackEvent('cta_click', { location: `hero-${variant}`, type: 'call' })}
               >
                 <Phone className="h-5 w-5" />
-                0434 308 070
+                {/* Metal fill, light theme only — the button is a solid
+                    light badge there, which is what the brushed-chrome text
+                    effect assumes; dark theme's .hero-phone-metal override
+                    neutralises it back to plain text. */}
+                <span className="hero-phone-metal">0434 308 070</span>
               </a>
             </Button>
           </motion.div>

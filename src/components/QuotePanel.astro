@@ -71,7 +71,16 @@ const why = [
   <div class="container mx-auto px-4 sm:px-6 lg:px-10">
     <div class="mb-8 max-w-3xl sm:mb-10">
       <span class="q-eyebrow">Comfort for a brighter tomorrow</span>
-      <Heading class="mb-3 text-4xl sm:text-5xl lg:text-6xl">{heading}</Heading>
+      {/* Bigger and forced to two lines on mobile ("Your Comfort" /
+          "Starts Here") — at the old text-4xl it read as one small line
+          the width of the phone, which undersold the section opener. sm:
+          and up keep the original single-line sizing; heading is never
+          overridden with different text (see the two call sites), so a
+          hand-placed break is safe. */}
+      <Heading class="mb-3 text-5xl leading-[1.05] sm:text-5xl sm:leading-tight lg:text-6xl">
+        <span class="block sm:inline">Your Comfort</span>{' '}
+        <span class="block sm:inline">Starts Here</span>
+      </Heading>
       <p class="mb-5 text-base text-foreground/80 sm:text-lg">{subheading}</p>
       <ul class="flex flex-wrap gap-x-6 gap-y-2">
         {chips.map((c) => (
