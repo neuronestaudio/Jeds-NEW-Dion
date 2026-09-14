@@ -43,7 +43,7 @@ import jedAction2 from '@/assets/Jed Action 2.jpeg?url';
 const TRUST = [
   { icon: ShieldCheck, label: 'Fully Licensed & Insured', sub: 'Your home in safe hands' },
   { icon: BadgeCheck, label: 'Daikin & Haier Certified', sub: 'Authorised dealer & installer' },
-  { icon: Award, label: '10-Year Workmanship Warranty', sub: 'On all installations*' },
+  { icon: Award, label: '10-Year Workmanship Warranty', sub: 'On all installations' },
   { icon: Leaf, label: 'Energy Efficient Solutions', sub: 'Comfort today. A cleaner tomorrow.' },
 ];
 
@@ -96,7 +96,7 @@ export function HeroSection({ variant = 'a' }: Props) {
   // opacity-70, not 100: "70% solid, 30% transparent" by request. See the note on
   // .hero-lockup in index.css for why it is on these and not the wrapper.
   const lockup = (
-    <span className="hero-lockup" aria-hidden="true">
+    <span className="hero-lockup mx-auto block lg:mx-0" aria-hidden="true">
       <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-70'} decoding="async" />
       <video
         ref={stingRef}
@@ -134,7 +134,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               made the panel read as blown-out white rather than "quiet".
               Dark theme wants more than a colour-matched whisper: a flat 30%
               black shadow, independent of the page background token. */}
-          <div className="absolute inset-0 bg-background/15 dark:bg-black/30" />
+          <div className="absolute inset-0 bg-background/15 dark:bg-black/35" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -153,7 +153,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               inverted that and blew the room out to near-white, which read
               as "way too bright". Dark theme asks for something else: a
               flat 30% black shadow rather than a colour-matched whisper. */}
-          <div className="absolute inset-0 bg-background/15 dark:bg-black/30" />
+          <div className="absolute inset-0 bg-background/15 dark:bg-black/35" />
         </div>
       )}
 
@@ -203,12 +203,16 @@ export function HeroSection({ variant = 'a' }: Props) {
           box. Both this and the backdrop are positioned, so DOM order already
           paints the copy on top. */}
       <div className="container relative mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
-        <div className={isB ? 'max-w-xl lg:max-w-[50%]' : 'max-w-2xl'}>
+        {/* Centred on mobile ("centre align all the hero elements"), back
+            to the original left alignment from lg. mx-auto only matters
+            once the column is narrower than its container, i.e. below lg
+            for variant A; at lg it is naturally flush left already. */}
+        <div className={`text-center lg:text-left ${isB ? 'mx-auto max-w-xl lg:mx-0 lg:max-w-[50%]' : 'mx-auto max-w-2xl lg:mx-0'}`}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-6 inline-flex items-center gap-4 rounded-full border border-foreground/10 bg-background/70 px-5 py-2.5 shadow-[0_6px_24px_hsl(var(--foreground)/0.12)] backdrop-blur-md sm:gap-5 sm:px-6"
+            className="mx-auto mb-6 inline-flex items-center gap-4 rounded-full border border-foreground/10 bg-background/70 px-5 py-2.5 shadow-[0_6px_24px_hsl(var(--foreground)/0.12)] backdrop-blur-md sm:gap-5 sm:px-6 lg:mx-0"
             aria-label="Daikin and Haier certified dealer"
           >
             <img
@@ -234,7 +238,7 @@ export function HeroSection({ variant = 'a' }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.26em] text-primary"
+            className="mb-4 text-xs font-semibold uppercase tracking-[0.26em] text-[hsl(197_44%_40%)] [text-shadow:0_1px_2px_hsl(0_0%_100%/0.35)] dark:[text-shadow:0_1px_3px_hsl(220_30%_6%/0.6)]"
           >
             Certified Sydney air conditioning specialists
           </motion.p>
@@ -270,11 +274,16 @@ export function HeroSection({ variant = 'a' }: Props) {
             </AnimatePresence>
           </h1>
 
+          {/* Glass panel behind the copy: at full-strength photo behind it,
+              this text sat directly over whatever part of the room happened
+              to be there — the couch, the light wall — and lost contrast
+              wherever that was bright, in both themes. A frosted panel gives
+              it a consistent, legible surface regardless of what's behind. */}
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 max-w-xl text-base text-foreground/85 sm:text-lg md:text-xl"
+            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/75 px-4 py-3 text-base text-foreground/85 shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation,
             servicing and repairs for homes, apartments and commercial spaces across Sydney.
@@ -325,7 +334,7 @@ export function HeroSection({ variant = 'a' }: Props) {
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
           <ul className="hero-bar grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
             {TRUST.map((t) => (
-              <li key={t.label} className="flex items-center gap-4 px-5 py-4 sm:px-6 sm:py-5">
+              <li key={t.label} className="flex items-center justify-center gap-4 px-5 py-4 sm:px-6 sm:py-5 lg:justify-start">
                 {/* The icon is the node — drawn at the full 44px with a light
                     stroke, rather than a small glyph floating inside a ring. */}
                 <t.icon className="h-11 w-11 shrink-0 text-foreground [stroke-width:1.4]" aria-hidden="true" />
