@@ -85,13 +85,18 @@ const why = [
 
     <div class="q-glass">
       <div class="grid gap-5 lg:grid-cols-[1.25fr_1fr] lg:gap-6">
-        {/* The form — compact wizard on the homepage, the full form on /contact. */}
-        <div class="q-card p-5 sm:p-6 lg:p-7">
+        {/* The form — compact wizard on the homepage, the full form on /contact.
+            Teal, not the plain light card: this is the section's one actual
+            call to action, and it should read as the obvious focal point
+            next to the informational card beside it. */}
+        <div class="q-teal p-5 sm:p-6 lg:p-7">
           <slot />
         </div>
 
         <div class="flex flex-col gap-5 lg:gap-6">
-          <div class="q-teal p-5 sm:p-6">
+          {/* Neutral slate, not teal — informational, not the CTA, so it
+              recedes rather than competing with the form for attention. */}
+          <div class="q-slate p-5 sm:p-6">
             <div class="mb-4 flex items-baseline justify-between gap-3">
               <h3 class="text-xl font-semibold text-white sm:text-2xl">Contact Us Directly</h3>
               <span class="q-kicker text-white/70">We’re here to help</span>

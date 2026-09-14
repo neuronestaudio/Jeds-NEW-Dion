@@ -1,48 +1,59 @@
 import { motion } from 'framer-motion';
 import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-react';
-import BorderBeam from './BorderBeam';
 // Client-supplied render (936x1681, portrait).
 import airconGlow from '@/assets/why-aircon.jpg?url';
+// The header's own mark, watermarked small into the corner — the render is a
+// generic stock-style photo otherwise, and the client wants it read as JED's
+// own, not borrowed.
+import jedLogo from '@/assets/brand/jed-logo-on-dark.png?url';
 
 const reasons = [
   {
     icon: Shield,
     title: 'Manufacturer‑Trained Service Agents',
+    pill: 'Manufacturer-Trained',
     description: 'Daikin & Haier authorised service agents for faster diagnostics and repairs using genuine parts',
   },
   {
     icon: Award,
     title: 'Daikin Certified Dealer',
+    pill: 'Daikin Certified',
     description: 'Authorised dealer with access to full Daikin product range and genuine parts',
   },
   {
     icon: Award,
     title: 'Haier Certified Dealer',
+    pill: 'Haier Certified',
     description: 'Authorised Haier dealer with genuine parts and product support',
   },
   {
     icon: Shield,
     title: '10-Year Workmanship Warranty',
+    pill: '10-Year Warranty',
     description: 'Complete peace of mind with our comprehensive labour warranty on all installations',
   },
   {
     icon: Clock,
     title: '25+ Years Experience Combined',
+    pill: '25+ Yrs Experience',
     description: 'Over two decades of combined expertise serving Sydney homes and businesses with quality work',
   },
   {
     icon: BadgeCheck,
     title: 'Fully Licensed & Insured',
+    pill: 'Licensed & Insured',
     description: 'Qualified technicians with all required licences and comprehensive insurance',
   },
   {
     icon: CheckCircle,
     title: 'Upfront Pricing',
+    pill: 'Upfront Pricing',
     description: 'No surprises - detailed quotes before any work begins with no hidden fees',
   },
   {
     icon: Sparkles,
     title: 'Clean & Professional',
+    pill: 'Clean & Professional',
     description: 'Respectful technicians who leave your property spotless every time',
   },
 ];
@@ -52,6 +63,7 @@ export function WhyChooseUs() {
     <section id="about" className="py-12 sm:py-16 md:py-24 bg-card/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left: copy, unchanged. */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -67,7 +79,7 @@ export function WhyChooseUs() {
               As certified Daikin and Haier dealers and authorised service agents, we install systems to manufacturer standards — ensuring warranty protection, optimal performance and long-term reliability.
               Whether you're installing a new ducted system, upgrading an older split system, or fitting out an apartment or commercial property, our licensed technicians deliver compliant, energy-efficient installations tailored to your space.
             </p>
-            <div className="mb-6 flex flex-wrap gap-4 sm:mb-8">
+            <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg">
                 <CheckCircle className="w-5 h-5 text-primary" />
                 <span className="text-sm font-medium">Residential</span>
@@ -81,44 +93,45 @@ export function WhyChooseUs() {
                 <span className="text-sm font-medium">All Brands</span>
               </div>
             </div>
-
-            {/* The accent photo: framed portrait, sitting under the copy
-                rather than as a full-bleed background — the column is narrow
-                and the render is tall, so a card reads better than cropping
-                it wide. */}
-            <div className="max-w-[280px] overflow-hidden rounded-2xl border border-border shadow-[0_18px_40px_-24px_hsl(240_8%_10%/0.4)] sm:max-w-[320px]">
-              <img
-                src={airconGlow}
-                alt="A Daikin split system cooling a Sydney living room"
-                loading="lazy"
-                decoding="async"
-                className="aspect-[936/1681] w-full object-cover"
-              />
-            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-            {reasons.map((reason, index) => (
-              <motion.div
-                key={reason.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className={`h-full ${index >= 6 ? 'hidden sm:block' : ''}`}
-              >
-                <BorderBeam className="h-full" duration={16} delay={index * -2.1} hoverOnly>
-                <div className="h-full rounded-[calc(1rem-1.5px)] bg-card p-4 sm:p-5">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                  <reason.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="font-semibold mb-1">{reason.title}</h3>
-                <p className="text-muted-foreground text-sm">{reason.description}</p>
-                </div>
-                </BorderBeam>
-              </motion.div>
-            ))}
-          </div>
+          {/* Right: the photo, now the section's second visual anchor rather
+              than a small accent under the copy — full column width, a JED
+              watermark so it reads as the company's own work rather than
+              stock, and the eight reasons as a chip cloud on a bottom scrim
+              instead of a grid of eight separate cards competing with it
+              for space. */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="relative overflow-hidden rounded-2xl border border-border shadow-[0_24px_54px_-24px_hsl(240_8%_10%/0.45)]"
+          >
+            <img
+              src={airconGlow}
+              alt="A JED technician's Daikin split system cooling a Sydney living room"
+              loading="lazy"
+              decoding="async"
+              className="aspect-[4/5] w-full object-cover sm:aspect-[3/4] lg:aspect-[4/5]"
+            />
+            <img
+              src={jedLogo}
+              alt="JED Air Conditioning"
+              aria-hidden="true"
+              className="absolute left-4 top-4 h-7 w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-8"
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 pt-10 sm:p-5 sm:pt-12">
+              <ul className="flex flex-wrap gap-1.5 sm:gap-2">
+                {reasons.map((reason) => (
+                  <li key={reason.title} className="why-pill" title={reason.description}>
+                    <reason.icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
+                    {reason.pill}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -4,10 +4,14 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { SITE, businessJsonLd } from '@/data/site';
-// The splash reuses the hero lockup's held frame (see HeroSection.tsx) — the
-// same white-mark-on-crushed-black plate, keyed with `screen` here since the
-// splash background is dark carbon regardless of site theme.
-import splashStill from '@/assets/hero/lockup.png?url';
+// Splash backdrop: the hero's own room render, at 50% opacity, so the
+// splash is brand-consistent rather than an unrelated texture. The build-on
+// clip is re-cropped full width (1280 of 1280px — no horizontal crop at
+// all) and generously tall (520 of 720px): the earlier crop, tight around
+// the settled mark, clipped the gear's own motion streaks as it spun in.
+// This one has clear margin on every side.
+import splashBg from '@/assets/hero/lounge.jpg?url';
+import splashStill from '@/assets/hero/splash-lockup-still.png?url';
 
 interface Props {
   title: string;
@@ -74,16 +78,19 @@ const blocks = [businessJsonLd, ...jsonLd];
   </head>
   <body>
     <!--
-      Entrance splash: carbon-mesh + brushed-metal backdrop with the JED
-      lockup building itself, sped up. Shows once per browser session (not
-      once per page — sessionStorage, not per-route) and only when motion is
-      not reduced. Plain HTML/CSS/JS rather than a hydrated island: it has to
-      exist and be dismissable before React ever hydrates, the same reason
-      the theme switch above is an inline script and not a component.
+      Entrance splash: carbon-mesh + brushed-metal backdrop, the header's own
+      logo fading and scaling up to rest at 50% opacity over it. Shows once
+      per browser session (not once per page — sessionStorage, not per-route)
+      and only when motion is not reduced. Plain HTML/CSS/JS rather than a
+      hydrated island: it has to exist and be dismissable before React ever
+      hydrates, the same reason the theme switch above is an inline script.
     -->
     <div id="jed-splash" aria-hidden="true">
-      <div class="jed-splash__bg"></div>
-      <div class="jed-splash__sheen"></div>
+      <div class="jed-splash__bg">
+        <img src={splashBg} alt="" decoding="async" />
+      </div>
+      <div class="jed-splash__stripe jed-splash__stripe--tl"></div>
+      <div class="jed-splash__stripe jed-splash__stripe--br"></div>
       <div class="jed-splash__mark">
         <img id="jed-splash-still" src={splashStill} alt="" decoding="async" />
         <video id="jed-splash-video" src="/splash-lockup.mp4" muted playsinline preload="auto" tabindex="-1"></video>
@@ -128,7 +135,7 @@ const blocks = [businessJsonLd, ...jsonLd];
         // registers before the whole screen fades, without turning this
         // into a long wait.
         video.addEventListener('ended', function () {
-          window.setTimeout(dismiss, 350);
+          window.setTimeout(dismiss, 400);
         });
         video.addEventListener('error', dismiss);
         video.muted = true;
@@ -137,7 +144,7 @@ const blocks = [businessJsonLd, ...jsonLd];
         // Always escapable: a click, a key, or a hard cap if anything hangs.
         el.addEventListener('click', dismiss);
         window.addEventListener('keydown', dismiss, { once: true });
-        window.setTimeout(dismiss, 3200);
+        window.setTimeout(dismiss, 3400);
       })();
     </script>
 

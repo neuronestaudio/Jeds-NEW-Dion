@@ -3,7 +3,6 @@ import Base from '@/layouts/Base.astro';
 import HeroSection from '@/components/HeroSection';
 import QuoteSection from '@/components/QuoteSection.astro';
 import BrandsSection from '@/components/BrandsSection';
-import ServicePathways from '@/components/ServicePathways';
 import ReviewsSection from '@/components/ReviewsSection';
 import TrustBar from '@/components/TrustBar';
 import ServicesCoverflow from '@/components/ServicesCoverflow';
@@ -24,11 +23,15 @@ import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
   <HeroSection client:load />
   <QuoteSection />
   <BrandsSection client:visible />
-  <ServicePathways client:visible />
+  {/* Was two overlapping "what we offer" sections — the plain diagonal-panel
+      "How Can We Help?" (ServicePathways) and this carousel. The carousel is
+      the more complete, more recently built version, so it now stands alone
+      in the earlier slot the other one held. ServicePathways.tsx is unused
+      but left intact, not deleted. */}
+  <ServicesCoverflow client:visible />
   <SocialReels client:visible />
   <ReviewsSection client:visible />
   <TrustBar client:visible />
-  <ServicesCoverflow client:visible />
   <ProjectsGallery client:visible />
   <WhyChooseUs client:visible />
   <ProcessSection client:visible />

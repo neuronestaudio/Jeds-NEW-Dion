@@ -394,7 +394,13 @@
 .sc-shade { position: absolute; inset: 0; background: linear-gradient(0deg, hsl(240 7% 5% / 0.97) 12%, hsl(240 7% 5% / 0.55) 48%, hsl(240 7% 5% / 0.1) 74%); }
 .sc-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: clamp(18px, 2vw, 26px); }
 .sc-num { font-size: 0.74rem; letter-spacing: 0.16em; font-weight: 600; color: hsl(var(--primary)); }
-.sc-title { font-size: clamp(1.25rem, 2.1vw, 1.7rem); line-height: 1.1; margin: 0.5rem 0; }
+.sc-title { font-size: clamp(1.25rem, 2.1vw, 1.7rem); line-height: 1.1; margin: 0.5rem 0; color: #fff; }
+/* .sc-title had no explicit colour and inherited the page's default
+   text-foreground — white on the .sc-shade gradient in dark theme by
+   accident, but dark ink on the same dark shade in light theme, which
+   is the low-contrast title the light-theme screenshot showed. This
+   card always sits on a fixed dark shade regardless of site theme, the
+   same reason .sc-desc and .sc-num already hardcode their colours. */
 .sc-desc { color: hsl(0 0% 82%); font-size: 0.92rem; line-height: 1.5; max-width: 40ch; margin-bottom: 1rem; transition: opacity 0.5s ease; }
 .sc-desc b { color: #fff; font-weight: 600; }
 .sc-card:not(.is-active) .sc-actions { display: none; }
@@ -661,6 +667,24 @@
   background: linear-gradient(160deg, hsl(var(--q-teal-deep)), hsl(var(--q-teal-deeper)));
   border: 1px solid hsl(191 40% 40% / 0.35);
   box-shadow: 0 24px 50px -24px hsl(var(--q-teal-deeper) / 0.9), inset 0 1px 0 hsl(0 0% 100% / 0.12);
+  /* Existing .q-teal content (Footer's contact strip, this same card
+     elsewhere) already hardcodes text-white throughout, so this is a no-op
+     there. It matters for the quote wizard, now hosted inside .q-teal too:
+     its headings/labels use the theme's default text-foreground /
+     text-muted-foreground, which resolve dark in the light theme — this
+     scopes them to the same light-on-dark pair the site's own .dark theme
+     uses, so the wizard reads correctly without touching its component code. */
+  --foreground: 0 0% 100%;
+  --muted-foreground: 240 2% 68%;
+}
+/* A quieter neutral card — for content that should sit on a dark surface
+   without competing with .q-teal's brand-colour weight (e.g. "Contact Us
+   Directly" once "Get a Free Quote" takes the teal treatment instead). */
+.q-slate {
+  border-radius: 1.25rem; color: #fff;
+  background: linear-gradient(160deg, hsl(240 5% 26%), hsl(240 6% 16%));
+  border: 1px solid hsl(0 0% 100% / 0.12);
+  box-shadow: 0 20px 44px -24px hsl(240 8% 6% / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.1);
 }
 .q-row { display: flex; align-items: center; gap: 0.85rem; padding: 0.7rem 0.85rem; border-radius: 0.9rem; background: hsl(0 0% 100% / 0.08); border: 1px solid hsl(0 0% 100% / 0.12); transition: background 0.2s ease, border-color 0.2s ease; }
 a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% / 0.28); }
@@ -977,61 +1001,82 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
-   Entrance splash (src/layouts/Base.astro) — carbon-mesh + brushed-metal
-   backdrop, the JED lockup building itself. Fixed dark palette regardless of
-   site theme (this is a one-shot brand moment, not a themed surface), so the
-   mark is keyed with a plain `screen` blend, no per-theme invert needed.
+   Entrance splash (src/layouts/Base.astro) — the hero's own room render at
+   50% opacity under a dark vignette (brand-consistent, not an unrelated
+   texture), two corner stripe accents, and the JED build-on clip playing at
+   full strength. Fixed dark palette regardless of site theme — a one-shot
+   brand moment, not a themed surface.
    ========================================================================= */
 #jed-splash {
   position: fixed; inset: 0; z-index: 200;
   display: grid; place-items: center;
-  background: hsl(220 8% 8%);
+  overflow: hidden;
+  background: hsl(220 8% 6%);
   opacity: 1;
   transition: opacity 0.45s ease;
 }
 #jed-splash.is-leaving { opacity: 0; pointer-events: none; }
 
-.jed-splash__bg {
-  position: absolute; inset: 0;
-  /* Real hex-weave carbon fibre (the supplied file), not a woven-cloth
-     stand-in — its native tile is 18x32 (9:16), so background-size keeps
-     that exact ratio or the hexagons stretch into ovals. Alpha in the
-     source PNG is pre-boosted to full range (see the notes where it's
-     processed) so it reads as a sharp metal mesh at this scale instead of
-     the barely-there watermark its native 36-75 alpha band would give. */
-  background-color: hsl(220 8% 6%);
-  background-image: url('/textures/carbon-mesh.png');
-  background-size: 46px 81.8px;
-  background-repeat: repeat;
+.jed-splash__bg { position: absolute; inset: 0; }
+.jed-splash__bg img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 62% 40%; /* the hero's own framing */
+  opacity: 0.5;
 }
-/* Brushed-metal / "space grey" sheen: a soft diagonal highlight band plus a
-   top-down metallic gradient, laid over the weave rather than replacing it —
-   the plain tile alone read as flat fabric, not brushed metal. */
-.jed-splash__sheen {
-  position: absolute; inset: 0;
+/* Vignette: darkest at the corners and edges (which is also where the
+   stripe accents sit, so they read against something) fading clear over
+   the centre, so the logo stays legible regardless of what part of the
+   room ends up behind it. */
+.jed-splash__bg::after {
+  content: ""; position: absolute; inset: 0;
   background:
-    linear-gradient(115deg, transparent 30%, hsl(210 12% 82% / 0.16) 47%, hsl(210 15% 92% / 0.26) 50%, hsl(210 12% 82% / 0.16) 53%, transparent 70%),
-    radial-gradient(120% 85% at 50% -10%, hsl(210 15% 88% / 0.22), transparent 60%),
-    linear-gradient(180deg, hsl(220 10% 30% / 0.5), hsl(220 10% 10% / 0.65) 55%, hsl(220 12% 4% / 0.85) 100%);
-  mix-blend-mode: overlay;
+    radial-gradient(120% 95% at 50% 48%, transparent 28%, hsl(220 8% 6% / 0.82) 100%),
+    linear-gradient(180deg, hsl(220 8% 6% / 0.35), hsl(220 8% 6% / 0.55));
 }
-@media (prefers-reduced-motion: no-preference) {
-  .jed-splash__sheen { animation: jed-splash-sheen 2.6s ease-in-out 1; }
+
+/* Corner stripes — a modern/premium accent, not a full pattern: a handful of
+   thin diagonal lines anchored in two opposite corners, masked so they fade
+   toward the centre instead of stopping on a hard edge. */
+.jed-splash__stripe {
+  /* No z-index: DOM order alone puts this above .jed-splash__bg and below
+     .jed-splash__mark, and a z-index here would give this its own stacking
+     context — exactly the mistake below, just on the wrong element. */
+  position: absolute; pointer-events: none;
+  width: clamp(160px, 20vw, 300px); height: clamp(160px, 20vw, 300px);
+  background: repeating-linear-gradient(135deg,
+    hsl(197 80% 72% / 0.55) 0px, hsl(197 80% 72% / 0.55) 2px,
+    transparent 2px, transparent 20px);
 }
-@keyframes jed-splash-sheen {
-  from { background-position: -30% 0, 0 0, 0 0; }
-  to { background-position: 30% 0, 0 0, 0 0; }
+.jed-splash__stripe--tl {
+  left: 0; top: 0;
+  -webkit-mask-image: linear-gradient(to bottom right, #000 0%, transparent 62%);
+  mask-image: linear-gradient(to bottom right, #000 0%, transparent 62%);
+}
+.jed-splash__stripe--br {
+  right: 0; bottom: 0;
+  -webkit-mask-image: linear-gradient(to top left, #000 0%, transparent 62%);
+  mask-image: linear-gradient(to top left, #000 0%, transparent 62%);
 }
 
 .jed-splash__mark {
-  position: relative; z-index: 1;
-  width: min(62vw, 460px); aspect-ratio: 842 / 326;
+  /* No z-index: it would give this its own stacking context, which would
+     trap the child's mix-blend-mode inside it — the mark would blend with
+     nothing but itself, and the black plate would stay solid black exactly
+     as it did before this was noticed. DOM order alone (this is the last
+     child of #jed-splash) already paints it above the photo and stripes. */
+  position: relative;
+  width: min(70vw, 560px); aspect-ratio: 1280 / 520;
 }
-.jed-splash__mark > * {
+.jed-splash__mark img,
+.jed-splash__mark video {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: contain; object-position: center;
-  mix-blend-mode: screen;
   transition: opacity 0.25s ease;
+  /* The source clip is ink on a plain black plate, not real alpha — screen
+     drops the black out and leaves only the white mark, so it floats
+     directly over the photo and stripes instead of sitting in a hard black
+     box (which is exactly what it did at full opacity with no blend). */
+  mix-blend-mode: screen;
 }
 #jed-splash-video { opacity: 0; }
 
@@ -1097,3 +1142,61 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (prefers-reduced-motion: reduce) {
   .wgallery__img, .wgallery__cap { transition: none; }
 }
+
+/* =========================================================================
+   Hero "real team" card (src/components/HeroSection.tsx, variant A only)
+   A small crossfading window of real JED technicians on real jobs, sitting
+   over the room render's empty wall/shelf area — so the hero shows real
+   people from the company immediately, not only a staged, peopleless
+   interior. Desktop only, pure CSS crossfade (no JS, no video).
+   ========================================================================= */
+.hero-people {
+  position: absolute; z-index: 1;
+  right: 6%; top: 30%;
+  width: clamp(220px, 17vw, 260px); aspect-ratio: 3 / 4;
+  border-radius: 1.1rem; overflow: hidden;
+  border: 1px solid hsl(0 0% 100% / 0.5);
+  box-shadow: 0 26px 54px -22px hsl(240 8% 6% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.6);
+}
+.hero-people img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  opacity: 0;
+  animation: hero-people-fade 7s ease-in-out infinite;
+}
+.hero-people img:first-child { animation-delay: -3.5s; }
+/* Two layers sharing one keyframe, exactly half a cycle out of phase via the
+   negative delay above — the classic pure-CSS crossfade, no JS timer. */
+@keyframes hero-people-fade {
+  0%, 42% { opacity: 1; }
+  50%, 92% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.hero-people__tag {
+  position: absolute; inset-inline: 0.6rem; bottom: 0.6rem; z-index: 1;
+  padding: 0.4rem 0.65rem; border-radius: 0.6rem;
+  font-size: 0.68rem; font-weight: 600; line-height: 1.25; color: #fff;
+  background: hsl(240 8% 6% / 0.55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-people img { animation: none; opacity: 0; }
+  .hero-people img:first-child { opacity: 1; }
+}
+
+/* =========================================================================
+   WhyChooseUs reason pills (src/components/WhyChooseUs.tsx) — the eight
+   reasons embedded directly on the accent photo as a chip cloud over a
+   bottom scrim, replacing a grid of eight separate bordered cards. Fixed
+   light-on-dark regardless of site theme, since the scrim under them is
+   always a dark gradient over the photo.
+   ========================================================================= */
+.why-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.65rem; border-radius: 9999px;
+  font-size: 0.68rem; font-weight: 600; white-space: nowrap; color: #fff;
+  background: hsl(0 0% 100% / 0.14);
+  border: 1px solid hsl(0 0% 100% / 0.25);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.why-pill svg { color: hsl(197 85% 78%); }
+@media (min-width: 640px) { .why-pill { font-size: 0.74rem; padding: 0.4rem 0.75rem; } }

@@ -108,7 +108,7 @@ export function AddressAutocomplete({
   required,
   placeholder = 'Start typing your address…',
   labelClassName = 'block text-sm font-medium mb-2',
-  inputClassName = 'w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors',
+  inputClassName = 'w-full px-4 py-3 bg-card text-card-foreground border border-border rounded-lg focus:outline-none focus:border-primary transition-colors',
   confirmedAddress,
 }: Props) {
   const reactId = useId();
@@ -376,11 +376,11 @@ export function AddressAutocomplete({
 
         <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
           {isLoading ? (
-            <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+            <Loader2 className="w-4 h-4 text-card-foreground/50 animate-spin" />
           ) : confirmedAddress ? (
             <Check className="w-4 h-4 text-primary" />
           ) : (
-            <MapPin className="w-4 h-4 text-muted-foreground" />
+            <MapPin className="w-4 h-4 text-card-foreground/50" />
           )}
         </div>
       </div>
@@ -411,9 +411,9 @@ export function AddressAutocomplete({
             >
               <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
               <span className="min-w-0">
-                <span className="block truncate text-sm font-medium">{s.primary}</span>
+                <span className="block truncate text-sm font-medium text-card-foreground">{s.primary}</span>
                 {s.secondary && (
-                  <span className="block truncate text-xs text-muted-foreground">{s.secondary}</span>
+                  <span className="block truncate text-xs text-card-foreground/65">{s.secondary}</span>
                 )}
               </span>
             </li>

@@ -346,12 +346,18 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     }
   };
 
+  // text-card-foreground, not the bare default: this form can sit directly
+  // on a dark backdrop (QuotePanel's .q-teal scopes --foreground to white for
+  // exactly that), but the input itself is always an opaque light bg-card
+  // box regardless of what is behind it — --card-foreground is a separate
+  // token this component never repoints, so typed text stays dark ink on
+  // that light box in every context instead of turning invisible white-on-white.
   const labelClass = compact
     ? 'block text-[11px] sm:text-xs font-medium mb-2'
     : 'block text-sm font-medium mb-2';
   const inputClass = compact
-    ? 'w-full px-4 py-3 text-sm sm:text-base bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors'
-    : 'w-full px-4 py-3 bg-card border border-border rounded-lg focus:outline-none focus:border-primary transition-colors';
+    ? 'w-full px-4 py-3 text-sm sm:text-base bg-card text-card-foreground border border-border rounded-lg focus:outline-none focus:border-primary transition-colors'
+    : 'w-full px-4 py-3 bg-card text-card-foreground border border-border rounded-lg focus:outline-none focus:border-primary transition-colors';
 
   const slide = {
     enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 32 : -32 }),
@@ -406,7 +412,7 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                         ? 'bg-primary text-primary-foreground'
                         : active
                           ? 'bg-primary/20 text-primary ring-2 ring-primary/50'
-                          : 'bg-card text-muted-foreground ring-1 ring-border/50'
+                          : 'bg-card text-card-foreground/70 ring-1 ring-border/50'
                     }`}
                   >
                     {done ? <Check className="h-4 w-4" /> : n}
@@ -501,12 +507,12 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                         <s.icon className="h-5 w-5 text-primary" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold transition-colors group-hover:text-primary">
+                        <span className="block text-sm font-semibold text-card-foreground transition-colors group-hover:text-primary">
                           {s.title}
                         </span>
-                        <span className="block text-xs text-muted-foreground">{s.description}</span>
+                        <span className="block text-xs text-card-foreground/65">{s.description}</span>
                       </span>
-                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-card-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
                     </button>
                   );
                 })}
@@ -547,12 +553,12 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                         <u.icon className="h-5 w-5 text-primary" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold transition-colors group-hover:text-primary">
+                        <span className="block text-sm font-semibold text-card-foreground transition-colors group-hover:text-primary">
                           {u.title}
                         </span>
-                        <span className="block text-xs text-muted-foreground">{u.description}</span>
+                        <span className="block text-xs text-card-foreground/65">{u.description}</span>
                       </span>
-                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-card-foreground/50 transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
                     </button>
                   );
                 })}

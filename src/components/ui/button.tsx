@@ -46,8 +46,12 @@ const buttonVariants = cva(
           // Light band mid-gradient so the drift is legible, not just a fade.
           "bg-[linear-gradient(110deg,hsl(var(--secondary)),hsl(var(--primary))_35%,hsl(197_72%_74%)_50%,hsl(var(--primary))_65%,hsl(var(--secondary)))] " +
           "hover:shadow-[0_12px_32px_hsl(var(--primary)/0.45)]",
+        // Solid, not translucent: this sits over hero photos and section-glow
+        // backdrops, and a transparent fill let the button nearly disappear
+        // against a bright or busy background. bg-background is opaque in
+        // both themes, so contrast holds regardless of what is behind it.
         heroOutline:
-          "relative overflow-hidden border-2 border-foreground/80 bg-transparent text-foreground font-bold " +
+          "relative overflow-hidden border-2 border-foreground/80 bg-background text-foreground font-bold shadow-md " +
           "hover:bg-foreground/10 hover:border-foreground hover:-translate-y-0.5 active:translate-y-0 " +
           "before:content-[''] before:absolute before:inset-0 before:-translate-x-full " +
           "before:bg-gradient-to-r before:from-transparent before:via-foreground/15 before:to-transparent " +
