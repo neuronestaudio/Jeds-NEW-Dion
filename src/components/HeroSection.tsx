@@ -218,9 +218,10 @@ export function HeroSection({ variant = 'a' }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.26em] text-[hsl(197_44%_40%)] [text-shadow:0_1px_2px_hsl(0_0%_100%/0.35)] dark:[text-shadow:0_1px_3px_hsl(220_30%_6%/0.6)]"
+            className="mb-4 text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-[hsl(197_44%_40%)] [text-shadow:0_1px_2px_hsl(0_0%_100%/0.35)] dark:[text-shadow:0_1px_3px_hsl(220_30%_6%/0.6)]"
           >
-            Certified Sydney air conditioning specialists
+            <span className="block">Certified installer &amp; dealer</span>
+            <span className="block">Sydney air conditioning specialists</span>
           </motion.p>
 
           {/* The mark carries the top of the hero; deliberately NOT inside a
@@ -238,7 +239,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               visitor whose JS never arrives gets an invisible headline.
               font-normal is load-bearing: the face has one weight, and the
               base h1 rule would otherwise ask the browser to fake a bold. */}
-          <h1 className="hero-headline font-condensed mb-5 text-[1.9rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[2.4rem] lg:text-[2.9rem] xl:text-[3.3rem]">
+          <h1 className="hero-headline font-condensed mb-5 text-[4.75rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[6rem] lg:text-[7.25rem] xl:text-[8.25rem]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={headline}
@@ -263,7 +264,7 @@ export function HeroSection({ variant = 'a' }: Props) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/75 px-4 py-3 text-base text-foreground/85 shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
+            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/80 px-4 py-3 text-base text-foreground/85 shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation,
             servicing and repairs for homes, apartments and commercial spaces across Sydney.
@@ -313,17 +314,31 @@ export function HeroSection({ variant = 'a' }: Props) {
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
           <ul className="hero-bar grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-            {TRUST.map((t) => (
-              <li key={t.label} className="flex items-center justify-center gap-4 px-5 py-4 sm:px-6 sm:py-5 lg:justify-start">
-                {/* The icon is the node — drawn at the full 44px with a light
-                    stroke, rather than a small glyph floating inside a ring. */}
-                <t.icon className="h-11 w-11 shrink-0 text-foreground [stroke-width:1.4]" aria-hidden="true" />
-                <span className="min-w-0">
-                  <span className="block text-sm font-semibold leading-tight sm:text-base">{t.label}</span>
-                  <span className="mt-0.5 block text-xs text-foreground/70 sm:text-sm">{t.sub}</span>
-                </span>
-              </li>
-            ))}
+            {TRUST.map((t) => {
+              // "Energy Efficient Solutions" called out bigger/more prominent
+              // than its three neighbours, by request — a larger leaf icon
+              // and bolder, primary-coloured label rather than the plain
+              // foreground text the others use.
+              const isEnergy = t.label === 'Energy Efficient Solutions';
+              return (
+                <li key={t.label} className="flex items-center justify-center gap-4 px-5 py-4 sm:px-6 sm:py-5 lg:justify-start">
+                  {/* The icon is the node — drawn at the full 44px with a light
+                      stroke, rather than a small glyph floating inside a ring. */}
+                  <t.icon
+                    className={
+                      isEnergy
+                        ? 'h-16 w-16 shrink-0 text-primary [stroke-width:1.4]'
+                        : 'h-11 w-11 shrink-0 text-foreground [stroke-width:1.4]'
+                    }
+                    aria-hidden="true"
+                  />
+                  <span className="min-w-0">
+                    <span className={isEnergy ? 'block text-base font-bold leading-tight text-primary sm:text-lg' : 'block text-sm font-semibold leading-tight sm:text-base'}>{t.label}</span>
+                    <span className={isEnergy ? 'mt-0.5 block text-sm text-foreground/80 sm:text-base' : 'mt-0.5 block text-xs text-foreground/70 sm:text-sm'}>{t.sub}</span>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </motion.div>

@@ -163,7 +163,7 @@ export function WhyChooseUs() {
               src={jedLogo}
               alt="JED Air Conditioning"
               aria-hidden="true"
-              className="absolute left-4 top-4 h-14 w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-16"
+              className="absolute left-4 top-4 h-[10.5rem] w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-48"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 pt-10 sm:p-5 sm:pt-12">
               {/* A grid, not flex-wrap: content-driven widths made

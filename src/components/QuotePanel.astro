@@ -105,10 +105,10 @@ const why = [
         <div class="flex flex-col gap-5 lg:gap-6">
           {/* Neutral slate, not teal — informational, not the CTA, so it
               recedes rather than competing with the form for attention. */}
-          <div class="q-slate p-5 sm:p-6">
+          <div class="q-slate q-slate--glow p-5 sm:p-6">
             <div class="mb-4 flex items-baseline justify-between gap-3">
-              <h3 class="text-xl font-semibold text-white sm:text-2xl">Contact Us Directly</h3>
-              <span class="q-kicker text-white/70">We’re here to help</span>
+              <h3 class="text-xl font-semibold text-white sm:text-2xl">Contact Us <span class="q-slate-accent">Directly</span></h3>
+              <span class="q-kicker text-white/90">We’re here to help</span>
             </div>
             <ul class="space-y-3">
               {contact.map((c) => {
@@ -118,10 +118,10 @@ const why = [
                     <Row href={c.href} class="q-row">
                       <span class="q-row-icon"><c.icon className="h-[18px] w-[18px]" aria-hidden="true" /></span>
                       <span class="min-w-0 flex-1">
-                        <span class="block text-xs text-white/65">{c.label}</span>
-                        <span class="block truncate text-[15px] font-semibold text-white">{c.value}</span>
+                        <span class="q-row-label block text-xs">{c.label}</span>
+                        <span class="q-row-value block truncate text-[15px] font-semibold">{c.value}</span>
                       </span>
-                      {c.href && <ChevronRight className="h-4 w-4 shrink-0 text-white/70" aria-hidden="true" />}
+                      {c.href && <span class="q-row-chevron"><ChevronRight className="h-4 w-4" aria-hidden="true" /></span>}
                     </Row>
                   </li>
                 );
