@@ -16,7 +16,7 @@ const trustItems = [
   {
     icon: Shield,
     label: '10-Year Warranty',
-    sublabel: 'On All Labour',
+    sublabel: 'On All Installations*',
   },
   {
     icon: Clock,

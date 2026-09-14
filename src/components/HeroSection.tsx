@@ -43,7 +43,7 @@ import jedAction2 from '@/assets/Jed Action 2.jpeg?url';
 const TRUST = [
   { icon: ShieldCheck, label: 'Fully Licensed & Insured', sub: 'Your home in safe hands' },
   { icon: BadgeCheck, label: 'Daikin & Haier Certified', sub: 'Authorised dealer & installer' },
-  { icon: Award, label: '10-Year Workmanship Warranty', sub: 'On all labour' },
+  { icon: Award, label: '10-Year Workmanship Warranty', sub: 'On all installations*' },
   { icon: Leaf, label: 'Energy Efficient Solutions', sub: 'Comfort today. A cleaner tomorrow.' },
 ];
 
