@@ -6,6 +6,11 @@ import airconGlow from '@/assets/why-aircon.jpg?url';
 // generic stock-style photo otherwise, and the client wants it read as JED's
 // own, not borrowed.
 import jedLogo from '@/assets/brand/jed-logo-on-dark.png?url';
+// Same marks as the marquee strip, reused here as a small static badge row —
+// the empty space below the Residential/Commercial/All Brands chips needed
+// something, and "every brand we install" is exactly what BrandsSection
+// already proves further down the page.
+import { BRANDS } from './BrandsSection';
 
 const reasons = [
   {
@@ -101,6 +106,37 @@ export function WhyChooseUs() {
                 <span className="text-[11px] font-medium sm:text-sm">All Brands</span>
               </div>
             </div>
+
+            {/* Fills what was otherwise a large block of empty space under
+                the three chips, and backs up "All Brands" above with the
+                actual list of them. */}
+            <div className="mt-7 sm:mt-9">
+              <span className="mb-3 block text-xs font-bold uppercase tracking-[0.2em] text-primary sm:text-sm">
+                Why JEDs?
+              </span>
+              <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 sm:gap-2.5">
+                {BRANDS.map((brand) => (
+                  <div
+                    key={brand.name}
+                    /* Fixed light chip, not a theme token: the marks are
+                       brand-coloured ink (same files as BrandsSection),
+                       so they need the same light background in both
+                       themes rather than turning illegible on a dark one. */
+                    className="flex h-10 items-center justify-center rounded-lg border border-black/10 bg-white px-2 shadow-sm sm:h-11"
+                    title={brand.name}
+                  >
+                    <img
+                      src={brand.logo}
+                      alt={brand.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-4 w-auto object-contain opacity-90 sm:h-[18px]"
+                      style={{ transform: `scale(${brand.scale ?? 1})` }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           {/* Right: the photo, now the section's second visual anchor rather
@@ -127,10 +163,15 @@ export function WhyChooseUs() {
               src={jedLogo}
               alt="JED Air Conditioning"
               aria-hidden="true"
-              className="absolute left-4 top-4 h-7 w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-8"
+              className="absolute left-4 top-4 h-14 w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-16"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 pt-10 sm:p-5 sm:pt-12">
-              <ul className="flex flex-wrap gap-1.5 sm:gap-2">
+              {/* A grid, not flex-wrap: content-driven widths made
+                  "Manufacturer-Trained" and "Upfront Pricing" wildly
+                  different sizes. Fixed columns give all eight the same
+                  footprint, with the label wrapping inside its own cell
+                  instead of forcing the pill wider. */}
+              <ul className="grid grid-cols-2 gap-1.5 sm:gap-2">
                 {reasons.map((reason) => (
                   <li key={reason.title} className="why-pill" title={reason.description}>
                     <reason.icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />

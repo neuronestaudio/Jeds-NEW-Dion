@@ -28,7 +28,9 @@ type Brand = {
   scale?: number;
 };
 
-const BRANDS: Brand[] = [
+// Exported for WhyChooseUs's smaller "Why JEDs?" badge row — same marks,
+// no need to re-import every logo file a second time.
+export const BRANDS: Brand[] = [
   { name: 'Daikin', logo: daikin },
   { name: 'Haier', logo: haier, scale: 0.86 },
   { name: 'Mitsubishi Electric', logo: mitsubishi, scale: 1.12 },

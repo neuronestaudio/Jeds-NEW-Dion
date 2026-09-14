@@ -847,7 +847,7 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
      edge), so the box edge IS the logo edge and it lines up with the eyebrow,
      headline and buttons in the column. The earlier crop carried 4% of black
      on the left and the mark sat visibly indented from the copy. */
-  width: min(100%, 270px); aspect-ratio: 842 / 326;
+  width: min(92vw, 460px); aspect-ratio: 842 / 326;
   margin-bottom: 0.75rem;
   pointer-events: none;
   filter: invert(1) contrast(1.06);
@@ -870,8 +870,13 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (min-width: 1024px) {
   .hero-lockup > * { object-position: left center; }
 }
-@media (min-width: 640px) { .hero-lockup { width: min(100%, 364px); margin-bottom: 1rem; } }
-@media (min-width: 1024px) { .hero-lockup { width: min(100%, 464px); } }
+/* Sized in vw, not against the copy column's own max-width, so the mark can
+   grow well past the column and read as the hero's dominant element rather
+   than a small mark above the headline — the "make the logo the forefront"
+   request, once the crossfade card that used to occupy this space was
+   dropped. Still capped in px so it doesn't run away on ultrawide screens. */
+@media (min-width: 640px) { .hero-lockup { width: min(80vw, 640px); margin-bottom: 1rem; } }
+@media (min-width: 1024px) { .hero-lockup { width: min(58vw, 860px); } }
 
 /* Rotating headline under the lockup. Every phrase is written as exactly two
    lines, so two line-boxes are reserved and a swap never moves the paragraph
@@ -1171,72 +1176,26 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
-   Hero "real team" card (src/components/HeroSection.tsx, variant A only)
-   A small crossfading window of real JED technicians on real jobs, sitting
-   over the room render's empty wall/shelf area — so the hero shows real
-   people from the company immediately, not only a staged, peopleless
-   interior. Desktop only, pure CSS crossfade (no JS, no video).
-   ========================================================================= */
-.hero-people {
-  position: absolute; z-index: 1;
-  /* Pulled in from the edge — at 6% it sat isolated in the far corner, well
-     past the empty gap between it and the copy column. */
-  right: 22%; top: 30%;
-  width: clamp(220px, 17vw, 260px); aspect-ratio: 3 / 4;
-  border-radius: 1.1rem; overflow: hidden;
-  border: 1px solid hsl(0 0% 100% / 0.5);
-  box-shadow: 0 26px 54px -22px hsl(240 8% 6% / 0.55), inset 0 1px 0 hsl(0 0% 100% / 0.6);
-}
-.hero-people img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0;
-  animation: hero-people-fade 7s ease-in-out infinite;
-}
-.hero-people img:first-child { animation-delay: -3.5s; }
-/* The rooftop photo's actual aircon/ductwork unit sits hard against the
-   source frame's own right edge (it's partially cropped by the original
-   photographer, not by us), low in the shot. A lighter zoom left it a
-   barely-visible sliver at the corner; this zooms in enough that the
-   ductwork reads as an obvious, identifiable part of the shot. */
-.hero-people img:first-child {
-  transform: scale(2.3);
-  transform-origin: 100% 61%;
-}
-/* Two layers sharing one keyframe, exactly half a cycle out of phase via the
-   negative delay above — the classic pure-CSS crossfade, no JS timer. */
-@keyframes hero-people-fade {
-  0%, 42% { opacity: 1; }
-  50%, 92% { opacity: 0; }
-  100% { opacity: 1; }
-}
-.hero-people__tag {
-  position: absolute; inset-inline: 0.6rem; bottom: 0.6rem; z-index: 1;
-  padding: 0.4rem 0.65rem; border-radius: 0.6rem;
-  font-size: 0.68rem; font-weight: 600; line-height: 1.25; color: #fff;
-  background: hsl(240 8% 6% / 0.55);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-people img { animation: none; opacity: 0; }
-  .hero-people img:first-child { opacity: 1; }
-}
-
-/* =========================================================================
    WhyChooseUs reason pills (src/components/WhyChooseUs.tsx) — the eight
    reasons embedded directly on the accent photo as a chip cloud over a
    bottom scrim, replacing a grid of eight separate bordered cards. Fixed
    light-on-dark regardless of site theme, since the scrim under them is
-   always a dark gradient over the photo.
+   always a dark gradient over the photo. The eight sit in a 2-column grid
+   (see the <ul>) rather than flex-wrap, so every pill gets the same width
+   instead of hugging its own text — this rule just centres each one's
+   content and lets a longer label wrap onto a second line in that shared
+   width, rather than forcing the pill wider than its neighbours.
    ========================================================================= */
 .why-pill {
-  display: inline-flex; align-items: center; gap: 0.35rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.35rem;
+  width: 100%; text-align: center;
   padding: 0.35rem 0.65rem; border-radius: 9999px;
-  font-size: 0.68rem; font-weight: 600; white-space: nowrap; color: #fff;
+  font-size: 0.68rem; font-weight: 600; white-space: normal; color: #fff;
   background: hsl(0 0% 100% / 0.14);
   border: 1px solid hsl(0 0% 100% / 0.25);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
-.why-pill svg { color: hsl(197 85% 78%); }
+.why-pill svg { color: hsl(197 85% 78%); flex-shrink: 0; }
 @media (min-width: 640px) { .why-pill { font-size: 0.74rem; padding: 0.4rem 0.75rem; } }
 
 /* =========================================================================

@@ -17,12 +17,6 @@ import { trackEvent } from '@/lib/analytics';
 // retouched off the unit — JED sells Daikin and Haier.
 import loungeWide from '@/assets/hero/lounge.jpg?url';
 import loungePortrait from '@/assets/hero/lounge-portrait.jpg?url';
-// Real technicians, real jobs — the same photos WorkMarquee captions "JED in
-// Action". Crossfaded into a small card in the empty wall/shelf area of the
-// room render, so the hero shows real people from the company immediately,
-// not just a staged, peopleless interior.
-import jedAction1 from '@/assets/JED action 1.jpeg?url';
-import jedAction2 from '@/assets/Jed Action 2.jpeg?url';
 
 /**
  * Hero, to the layered design: one room photo, the JED lockup building itself
@@ -181,20 +175,6 @@ export function HeroSection({ variant = 'a' }: Props) {
             <circle cx="100" cy="100" r="32" />
           </svg>
         </>
-      )}
-
-      {/* Real technicians, crossfading, over the empty wall/shelf area to
-          the right of the couch — desktop only ("on the web browser
-          version"), and only for variant A, where that area is actually
-          empty (B's portrait panel has no equivalent free space). No
-          z-index: it is a sibling of the copy column, not an ancestor, so
-          it cannot touch the lockup's blend regardless. */}
-      {!isB && (
-        <div className="hero-people hidden lg:block" aria-hidden="true">
-          <img src={jedAction1} alt="" decoding="async" />
-          <img src={jedAction2} alt="" decoding="async" />
-          <span className="hero-people__tag">Real JED techs, real Sydney jobs</span>
-        </div>
       )}
 
       {/* Copy. No z-index here on purpose: the lockup below blends with the
