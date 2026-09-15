@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Rewrite src/data/suburbs.ts with all 116 suburbs + the 5 regional pages.
+"""Rewrite src/data/suburbs.ts with all 116 Sydney suburbs.
 
 Merge rule: where a suburb already had hand-written copy, that copy wins. The
 generated data only adds what the old file did not have — boundary-derived area and
@@ -27,9 +27,8 @@ ZONE_DEFS = [
     ("upper",    "upper-north-shore",  "Upper North Shore & Hornsby", "Upper North Shore"),
     ("beaches",  "northern-beaches",   "Northern Beaches",            "Northern Beaches"),
     ("east",     "eastern-suburbs",    "Eastern Suburbs",             "Eastern Suburbs"),
-    ("regional", "regional",           "Regional NSW & ACT",          "Regional"),
 ]
-ZONE_ORDER = ["north", "upper", "beaches", "east", "regional"]
+ZONE_ORDER = ["north", "upper", "beaches", "east"]
 
 
 def q(s):
@@ -70,18 +69,6 @@ def merged():
             "updated": UPDATED if not old else old.get("updated", UPDATED),
         }
         out.append(rec)
-    # the five regional pages keep their existing shape untouched
-    for slug, old in existing.items():
-        if old["zone"] != "regional":
-            continue
-        out.append({
-            "slug": slug, "name": old["name"], "zone": "regional", "group": old["group"],
-            "profile": None, "postcode": old["postcode"], "areaKm2": None, "centre": None,
-            "tagline": old["tagline"], "metaDescription": old["metaDescription"],
-            "intro": old["intro"], "neighbours": old["neighbours"], "landmarks": [],
-            "issues": old.get("issues"), "faq": old.get("faq"),
-            "handwritten": True, "updated": old.get("updated", UPDATED),
-        })
     order = {z: i for i, z in enumerate(ZONE_ORDER)}
     out.sort(key=lambda r: (order[r["zone"]], r["name"]))
     return out
@@ -104,7 +91,7 @@ def emit(rows):
     A(" * preserved across regeneration — see the merge rule in that script.")
     A(" */")
     A("")
-    A("export type Zone = 'north' | 'upper' | 'beaches' | 'east' | 'regional';")
+    A("export type Zone = 'north' | 'upper' | 'beaches' | 'east';")
     A("")
     A("export const ZONES: Record<Zone, { id: string; label: string; short: string }> = {")
     for key, zid, label, short in ZONE_DEFS:
@@ -121,7 +108,6 @@ def emit(rows):
     A("  name: string;")
     A("  zone: Zone;")
     A("  group: GroupKey;")
-    A("  /** Absent on the regional pages, which are not a single suburb. */")
     A("  profile?: Profile;")
     A("  postcode: string;")
     A("  /** Land area in km², computed from the boundary polygon. */")

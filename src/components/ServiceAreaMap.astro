@@ -24,7 +24,7 @@ import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
 import { SUBURB_BOUNDARIES } from '@/data/suburbBoundaries';
 
 const MAP_ZONES: Zone[] = ['north', 'upper', 'beaches', 'east'];
-const items = SUBURBS.filter((s) => s.zone !== 'regional' && SUBURB_BOUNDARIES[s.slug]);
+const items = SUBURBS.filter((s) => SUBURB_BOUNDARIES[s.slug]);
 
 let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
 for (const s of items) {

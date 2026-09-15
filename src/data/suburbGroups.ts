@@ -7,7 +7,7 @@
  * Every claim here is general HVAC practice, not a JED-specific promise.
  */
 
-export type GroupKey = 'beachside' | 'harbourside' | 'apartment' | 'suburban' | 'regional';
+export type GroupKey = 'beachside' | 'harbourside' | 'apartment' | 'suburban';
 
 export interface Issue {
   title: string;
@@ -170,41 +170,6 @@ export const SUBURB_GROUPS: Record<GroupKey, SuburbGroup> = {
     ],
   },
 
-  regional: {
-    label: 'Regional NSW & ACT',
-    issues: [
-      {
-        title: 'Sizing for the local climate',
-        body: 'Regional climates run hotter, colder or more humid than inner Sydney, and a system sized for a Sydney apartment won’t perform the same in {suburb}. We size for the local conditions and how the home is built and insulated.',
-      },
-      {
-        title: 'Heating performance in cold winters',
-        body: 'For colder areas, reverse-cycle heating capacity matters as much as cooling. Unit selection for {suburb} weighs winter performance, not just summer.',
-      },
-      {
-        title: 'Coastal salt exposure',
-        body: 'Where {suburb} is near the coast, the same salt-air corrosion issues as Sydney’s beachside suburbs apply — corrosion-protected units and regular servicing are worth specifying.',
-      },
-      {
-        title: 'Scheduling and travel',
-        body: 'Work in {suburb} is scheduled in advance rather than same-day. Get in touch with your job details and we’ll confirm availability and timing.',
-      },
-    ],
-    faq: [
-      {
-        q: 'Do you travel to {suburb}?',
-        a: 'Yes — installs and servicing in {suburb} are scheduled in advance. Send through your job details and we’ll confirm availability for your dates.',
-      },
-      {
-        q: 'Which system suits a colder climate?',
-        a: 'A reverse-cycle system sized for its heating capacity, not just cooling. We recommend based on the local climate and how the home is insulated.',
-      },
-      {
-        q: 'Can you service an existing system in {suburb}?',
-        a: 'Yes. Servicing and repairs in {suburb} are booked as scheduled visits; tell us the brand and the fault and we’ll confirm what we can do.',
-      },
-    ],
-  },
 };
 
 export function fillSuburb(text: string, suburb: string): string {

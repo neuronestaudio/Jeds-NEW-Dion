@@ -12,14 +12,13 @@ import type { Faq, GroupKey, Issue } from './suburbGroups';
  * preserved across regeneration — see the merge rule in that script.
  */
 
-export type Zone = 'north' | 'upper' | 'beaches' | 'east' | 'regional';
+export type Zone = 'north' | 'upper' | 'beaches' | 'east';
 
 export const ZONES: Record<Zone, { id: string; label: string; short: string }> = {
   north: { id: 'lower-north-shore', label: 'Lower North Shore', short: 'Lower North Shore' },
   upper: { id: 'upper-north-shore', label: 'Upper North Shore & Hornsby', short: 'Upper North Shore' },
   beaches: { id: 'northern-beaches', label: 'Northern Beaches', short: 'Northern Beaches' },
   east: { id: 'eastern-suburbs', label: 'Eastern Suburbs', short: 'Eastern Suburbs' },
-  regional: { id: 'regional', label: 'Regional NSW & ACT', short: 'Regional' },
 };
 
 /** Install archetype — what actually changes the job in this suburb. */
@@ -32,7 +31,6 @@ export interface Suburb {
   name: string;
   zone: Zone;
   group: GroupKey;
-  /** Absent on the regional pages, which are not a single suburb. */
   profile?: Profile;
   postcode: string;
   /** Land area in km², computed from the boundary polygon. */
@@ -5267,92 +5265,6 @@ export const SUBURBS: Suburb[] = [
       },
     ],
     updated: '2026-09-13',
-  },
-  // ─── Regional NSW & ACT ──────────────────────────────────────────
-  {
-    slug: 'blue-mountains',
-    name: 'Blue Mountains',
-    zone: 'regional',
-    group: 'regional',
-    postcode: '2780',
-    tagline: 'Cold winters at altitude — heating performance comes first.',
-    metaDescription:
-      'Reverse-cycle air conditioning installation and servicing in the Blue Mountains, scheduled in advance. Systems sized for cold mountain winters and older homes. Daikin & Haier certified.',
-    intro: [
-      'The Blue Mountains sit high enough that winters are genuinely cold — Katoomba and the upper mountains regularly see frost and occasional snow — so a system here is chosen for its heating performance at least as much as its cooling. Many homes are older weatherboard or brick cottages with limited insulation, which affects sizing.',
-      'Blue Mountains installs and servicing are scheduled in advance. Send us your suburb and job details to confirm availability.',
-    ],
-    neighbours: ['Katoomba', 'Leura', 'Springwood', 'Blaxland', 'Wentworth Falls'],
-    handwritten: true,
-    updated: '2026-09-11',
-  },
-  {
-    slug: 'canberra',
-    name: 'Canberra',
-    zone: 'regional',
-    group: 'regional',
-    postcode: '2600',
-    tagline: 'Hot summers, cold winters — reverse-cycle sized for both.',
-    metaDescription:
-      'Reverse-cycle air conditioning installation and servicing in Canberra, scheduled in advance. Ducted and split systems sized for the ACT’s hot summers and cold winters. Free quotes.',
-    intro: [
-      'Canberra’s inland climate swings further than Sydney’s — hot, dry summers and cold winters with regular frosts — so systems are specified for heating capacity as carefully as cooling. Ducted reverse-cycle is common in the larger family homes across the ACT’s suburbs.',
-      'Canberra installs and servicing are scheduled in advance. Send through your job details to confirm availability and timing.',
-    ],
-    neighbours: ['Belconnen', 'Woden', 'Gungahlin', 'Tuggeranong', 'Queanbeyan'],
-    handwritten: true,
-    updated: '2026-09-11',
-  },
-  {
-    slug: 'central-coast',
-    name: 'Central Coast',
-    zone: 'regional',
-    group: 'regional',
-    postcode: '2250',
-    tagline: 'Coastal and lakeside homes between Sydney and Newcastle.',
-    metaDescription:
-      'Air conditioning installation and servicing on the Central Coast, scheduled in advance. Corrosion-aware coastal installs for homes around Gosford, Terrigal and the lakes. Free quotes.',
-    intro: [
-      'The Central Coast runs from Gosford and the lakes out to the beaches at Terrigal and Avoca, with a housing mix from older weatherboard cottages to new estates. Humidity and salt exposure vary block by block, which is why unit selection and outdoor placement are assessed on site rather than assumed.',
-      'Central Coast jobs are scheduled in advance. Get in touch with your suburb and job details and we’ll confirm availability.',
-    ],
-    neighbours: ['newcastle', 'Gosford', 'Terrigal', 'Erina', 'The Entrance', 'Woy Woy'],
-    handwritten: true,
-    updated: '2026-09-11',
-  },
-  {
-    slug: 'newcastle',
-    name: 'Newcastle',
-    zone: 'regional',
-    group: 'regional',
-    postcode: '2300',
-    tagline: 'Scheduled installs and servicing in Newcastle and the Hunter.',
-    metaDescription:
-      'Air conditioning installation, servicing and repairs in Newcastle, scheduled in advance. Systems sized for humid coastal summers and salt air. Daikin & Haier certified. Free quotes.',
-    intro: [
-      'Newcastle’s coastal position means humid summers and salt air near the beaches from Newcastle through Merewether, with a mix of inner-city terraces and suburban family homes. Coastal corrosion protection and sizing for humidity are the design points that differ from an inland Sydney job.',
-      'Work in Newcastle and the Hunter is scheduled in advance. Send through your job details and we’ll confirm availability and timing.',
-    ],
-    neighbours: ['central-coast', 'Merewether', 'Hamilton', 'Lake Macquarie', 'Maitland'],
-    handwritten: true,
-    updated: '2026-09-11',
-  },
-  {
-    slug: 'wollongong',
-    name: 'Wollongong',
-    zone: 'regional',
-    group: 'regional',
-    postcode: '2500',
-    tagline: 'Coastal Illawarra homes under the escarpment.',
-    metaDescription:
-      'Air conditioning installation, servicing and repairs in Wollongong and the Illawarra, scheduled in advance. Corrosion-aware coastal installs, Daikin & Haier certified. Free quotes.',
-    intro: [
-      'Wollongong and the Illawarra run along a narrow strip between the escarpment and the ocean, so salt air reaches most suburbs and summers are warm and humid. Housing ranges from older cottages near the city centre to newer homes in the northern and southern suburbs.',
-      'Illawarra jobs are scheduled in advance. Tell us your suburb and what you need and we’ll confirm availability.',
-    ],
-    neighbours: ['North Wollongong', 'Fairy Meadow', 'Figtree', 'Shellharbour', 'Thirroul'],
-    handwritten: true,
-    updated: '2026-09-11',
   },
 ];
 

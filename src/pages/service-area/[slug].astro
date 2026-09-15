@@ -30,8 +30,7 @@ const faqs = [...(suburb.faq ?? []), ...group.faq].map((f) => ({
 }));
 const neighbours = suburb.neighbours.map(neighbourLink);
 
-const isRegional = suburb.zone === 'regional';
-const hasMap = !isRegional && Boolean(suburb.centre);
+const hasMap = Boolean(suburb.centre);
 const title = `Air Conditioning ${suburb.name} | Installation, Service & Repairs | JED`;
 
 const serviceLd = {
@@ -46,7 +45,7 @@ const serviceLd = {
     name: suburb.name,
     containedInPlace: {
       '@type': 'AdministrativeArea',
-      name: suburb.slug === 'canberra' ? 'Australian Capital Territory' : 'New South Wales',
+      name: 'New South Wales',
     },
   },
 };
@@ -109,7 +108,7 @@ const serviceLd = {
       <div class={hasMap ? 'grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-12 items-start' : ''}>
         <div class="space-y-5 text-muted-foreground text-base md:text-lg max-w-3xl">
           <h2 class="text-2xl sm:text-3xl font-bold text-foreground">
-            {isRegional ? `Servicing ${suburb.name}` : `Local to ${suburb.name}`}
+            Local to {suburb.name}
           </h2>
           {suburb.intro.map((p) => <p>{p}</p>)}
         </div>
@@ -137,12 +136,10 @@ const serviceLd = {
   <section class="py-12 md:py-16 border-t border-border bg-card/30">
     <div class="container mx-auto px-4 sm:px-6 lg:px-10">
       <h2 class="text-2xl sm:text-3xl font-bold mb-2">
-        {isRegional ? `What to plan for in ${suburb.name}` : `Common air conditioning issues in ${suburb.name}`}
+        Common air conditioning issues in {suburb.name}
       </h2>
       <p class="text-muted-foreground mb-8 max-w-3xl">
-        {isRegional
-          ? 'The things that change once a job is outside Sydney — and how they’re handled.'
-          : `The property types and conditions in ${suburb.name} shape how a system should be specified and installed. These are the ones that come up most.`}
+        The property types and conditions in {suburb.name} shape how a system should be specified and installed. These are the ones that come up most.
       </p>
       <div class="grid gap-4 sm:grid-cols-2">
         {issues.map((issue) => (

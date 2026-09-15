@@ -1,7 +1,7 @@
 # Suburb page data
 
 Generates `src/data/suburbs.ts` and `src/data/suburbBoundaries.ts` — 116 Sydney
-suburb pages plus the 5 regional pages.
+suburb pages.
 
 Nothing here runs at build time or at runtime. Boundaries are fetched once and
 committed, so the site never calls a geocoding API.
