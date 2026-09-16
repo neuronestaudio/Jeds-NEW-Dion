@@ -890,12 +890,24 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    ========================================================================= */
 .hero-lockup {
   position: relative; display: block;
-  /* The clip is cropped flush to the settled mark (842x326, ink 2px from the
-     edge), so the box edge IS the logo edge and it lines up with the eyebrow,
-     headline and buttons in the column. The earlier crop carried 4% of black
-     on the left and the mark sat visibly indented from the copy. */
-  width: min(92vw, 460px); aspect-ratio: 842 / 326;
-  margin-bottom: 0.75rem;
+  /* The clip's frame (1102x360) is the settled mark's box grown until it
+     holds every frame of the ANIMATION — the letters swing 133px left of
+     where they settle on the way in. Cropped flush to the settled mark, as
+     it was, the intro played cut off at both edges. See
+     scripts/build-hero-sting.mjs.
+
+     So the frame is 1/0.75 wider than the mark inside it, and these widths
+     are scaled by that same factor: the mark still renders 460/640/860px
+     wide, exactly as before, with the extra width being the transparent
+     margin the animation needs. Because of that the box is wider than the
+     viewport on phones — deliberate, and the reason for the explicit
+     centring below: `margin-inline: auto` does nothing for a child wider
+     than its parent, and a transform would isolate the blend and bring the
+     clip's black plate back as a box. */
+  --lockup-w: min(122.6vw, 613px);
+  width: var(--lockup-w); aspect-ratio: 1102 / 360;
+  margin-inline: calc((100% - var(--lockup-w)) / 2);
+  margin-bottom: 0.4rem;
   pointer-events: none;
   filter: invert(1) contrast(1.06);
   mix-blend-mode: multiply;
@@ -911,18 +923,21 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   transition: opacity 0.3s ease;
 }
 /* Variant B's column goes left-aligned from lg, so its mark sits flush left
-   to line up with the copy. Variant A is centred at every width, so its mark
-   stays centred in its box. */
+   to line up with the copy. The mark is centred inside the clip's frame with
+   12.4% of transparent margin on its left, so the box is pulled left by that
+   much rather than sitting indented. Variant A stays centred at every width. */
 @media (min-width: 1024px) {
-  [data-hero="b"] .hero-lockup > * { object-position: left center; }
+  [data-hero="b"] .hero-lockup {
+    margin-inline: calc(var(--lockup-w) * -0.124) 0;
+  }
 }
 /* Sized in vw, not against the copy column's own max-width, so the mark can
    grow well past the column and read as the hero's dominant element rather
    than a small mark above the headline — the "make the logo the forefront"
    request, once the crossfade card that used to occupy this space was
    dropped. Still capped in px so it doesn't run away on ultrawide screens. */
-@media (min-width: 640px) { .hero-lockup { width: min(80vw, 640px); margin-bottom: 1rem; } }
-@media (min-width: 1024px) { .hero-lockup { width: min(58vw, 860px); } }
+@media (min-width: 640px) { .hero-lockup { --lockup-w: min(106.6vw, 853px); margin-bottom: 0.6rem; } }
+@media (min-width: 1024px) { .hero-lockup { --lockup-w: min(77.3vw, 1146px); } }
 
 /* Two-line eyebrow above the lockup. The text is white in both themes by
    request, and the room photo behind it is near-white wall and a white indoor
@@ -952,42 +967,41 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    before picking the font sizes in HeroSection.tsx. */
 .hero-headline {
   min-height: 1.9em;
-  width: min(94vw, 1400px);
+  --hl-w: min(94vw, 1400px);
+  width: var(--hl-w);
+  /* One viewport-tracking size rather than four breakpoint steps, because the
+     constraint is the same at every width: the longest phrase ("Better Air.
+     Better Comfort.", 27 characters) has to stay on ONE line. Measured, that
+     phrase renders about 9.5x the font size wide, so 9.2vw keeps roughly 4%
+     of slack against a 94vw box at every width from 320px up, and the 7.5rem
+     cap is exactly 1.5x the old 5rem desktop size — the requested increase.
+     Below ~1024px 1.5x simply does not fit on the screen; this takes the
+     largest size that still holds two lines there. */
+  font-size: min(9.2vw, 7.5rem);
 }
-@media (min-width: 640px) { .hero-headline { width: min(90vw, 1400px); } }
-@media (min-width: 1024px) { .hero-headline { width: min(70vw, 1400px); } }
 /* Centred variant: the block itself has to be centred, not just its text,
-   and it must never exceed its column — auto margins do nothing for a child
-   wider than its parent. Measured against the longest phrase at xl, 100% of
-   the widest container still fits every line on one row. */
-[data-hero="a"] .hero-headline { margin-inline: auto; max-width: 100%; }
+   and auto margins do nothing for a child wider than its parent — which this
+   is, since the box is 94vw and the container is narrower at most widths.
+   Clamping it to the column instead (max-width: 100%) is what it used to do,
+   and that silently wrapped the longest phrase at 900px and 1180px: the
+   container's max-width steps down there while the vw-sized font keeps
+   growing. Explicit centring keeps the box at 94vw at every width. */
+[data-hero="a"] .hero-headline {
+  margin-inline: calc((100% - var(--hl-w)) / 2);
+}
 
-/* The two lines read as a flat, heavy block at this size — a soft
-   colour-matched glow plus a gradient fill give it depth instead. Local to
-   the hero headline, not the shared .text-gradient class other headings
-   still use plain.
-
-   `background-image`, not the `background` shorthand: the shorthand resets
-   every sub-property it doesn't mention — including background-clip — back
-   to its initial value. The .dark override below has higher specificity
-   than this rule's own `background-clip: text`, so writing `background:` a
-   second time there silently won the cascade on background-clip too,
-   snapping it back to border-box and turning the whole line into a solid
-   filled rectangle in dark mode instead of clipping to the glyphs. */
-.hero-headline-primary {
-  background-image: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.75) 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 26px hsl(var(--primary) / 0.3)) drop-shadow(0 6px 18px hsl(220 20% 8% / 0.2));
-}
-.dark .hero-headline-primary {
-  background-image: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100% / 0.7) 100%);
-  filter: drop-shadow(0 0 30px hsl(197 85% 65% / 0.45)) drop-shadow(0 6px 20px hsl(0 0% 0% / 0.55));
-}
-.hero-headline-accent {
-  background-image: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.65) 55%, hsl(197 75% 55%) 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 28px hsl(var(--primary) / 0.4)) drop-shadow(0 6px 18px hsl(220 20% 8% / 0.18));
-}
+/* Flat fill, no glow — the same treatment as the AIRCONDITIONING wordmark in
+   the lockup directly above, which these lines sit under and now match.
+   An earlier pass gave them a gradient that faded the glyphs towards their
+   baseline plus two drop-shadows (a teal bloom and a dark cast); at this size
+   the bloom haloed every letter and read as an artefact against the photo
+   rather than as depth. Flat foreground / flat primary, nothing behind them.
+   Do NOT reintroduce background-clip: text here without re-reading the note
+   in git history: the `background` shorthand resets background-clip, so a
+   higher-specificity .dark override silently turned the whole line into a
+   solid rectangle. */
+.hero-headline-primary { color: hsl(var(--foreground)); }
+.hero-headline-accent { color: hsl(var(--primary)); }
 
 /* =========================================================================
    Service area map (src/components/ServiceAreaMap.astro)
@@ -1426,8 +1440,11 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    clip's black plate comes back as a box. */
 .why-logo-video {
   position: relative; display: block;
-  width: min(64%, 22rem); aspect-ratio: 842 / 326;
-  margin: 0 auto 0.9rem;
+  /* Same clip as the hero, so the same frame: the mark is 75% of the frame's
+     width, and this box is widened by the reciprocal so the watermark still
+     reads at the size it did against the card. */
+  width: min(85%, 29.3rem); aspect-ratio: 1102 / 360;
+  margin: 0 auto 0.6rem;
   pointer-events: none;
   filter: contrast(1.06);
   mix-blend-mode: screen;

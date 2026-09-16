@@ -5,7 +5,8 @@ import { Button } from './ui/button';
 // The held final frame of /hero-sting.mp4, keyed the same way. It is what
 // shows before the clip starts and instead of it whenever the clip cannot
 // play — autoplay refused, reduced motion, JS off — so the lockup is never
-// missing. Regenerate both together: see the ffmpeg recipe in the repo notes.
+// missing. Both are built together by scripts/build-hero-sting.mjs; never
+// regenerate one without the other, they share the clip's frame.
 import lockupStill from '@/assets/hero/lockup.png?url';
 // Transparent, trimmed marks — the supplied PNGs ship on a near-black plate
 // with different built-in padding, which renders as dark boxes at mismatched
@@ -90,7 +91,7 @@ export function HeroSection({ variant = 'a' }: Props) {
   // opacity-70, not 100: "70% solid, 30% transparent" by request. See the note on
   // .hero-lockup in index.css for why it is on these and not the wrapper.
   const lockup = (
-    <span className={`hero-lockup mx-auto block${isB ? ' lg:mx-0' : ''}`} aria-hidden="true">
+    <span className="hero-lockup block" aria-hidden="true">
       <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-70'} decoding="async" />
       <video
         ref={stingRef}
@@ -257,7 +258,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               visitor whose JS never arrives gets an invisible headline.
               font-normal is load-bearing: the face has one weight, and the
               base h1 rule would otherwise ask the browser to fake a bold. */}
-          <h1 className="hero-headline font-condensed mb-5 text-[1.9rem] font-normal uppercase leading-[0.95] tracking-[0.01em] sm:text-[3rem] lg:text-[4rem] xl:text-[5rem]">
+          <h1 className="hero-headline font-condensed mb-5 font-normal uppercase leading-[0.95] tracking-[0.01em]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={headline}
