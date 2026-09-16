@@ -31,9 +31,13 @@ import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
   <ServicesCoverflow client:visible />
   <SocialReels client:visible />
   <ReviewsSection client:visible />
-  <TrustBar client:visible />
+  <div class="brick"><TrustBar client:visible /></div>
   <ProjectsGallery client:visible />
-  <WhyChooseUs client:visible />
-  <ProcessSection client:visible />
-  <ServiceAreasTeaser />
+  {/* One wrapper, not three: the brick is background-attachment: fixed, so a
+      single wall behind all three reads as continuous with no seams. */}
+  <div class="brick">
+    <WhyChooseUs client:visible />
+    <ProcessSection client:visible />
+    <ServiceAreasTeaser />
+  </div>
 </Base>

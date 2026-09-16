@@ -636,10 +636,12 @@
 }
 
 /* =========================================================================
-   Brick texture (src/pages/b.astro) — wraps every alternate section on the
-   test homepage. White painted brick under a page-colour veil on light; an
-   inverted, darkened copy of the same photo on dark. The wrapped section's
-   own flat background is removed so the texture actually shows through.
+   Brick texture — the homepage's Trust bar, and Why JED / Process / Service
+   areas as one continuous wall (src/pages/index.astro); also every alternate
+   section on the /b test page. White painted brick (the client-supplied
+   brickwall.jpg, upscaled) showing at 50% under a page-colour veil; an
+   inverted, darkened copy on dark. The wrapped section's own flat background
+   is removed so the texture actually shows through.
    ========================================================================= */
 .brick {
   position: relative;
@@ -649,17 +651,30 @@
 .brick::before {
   content: "";
   position: absolute; inset: 0; z-index: -1;
-  background: hsl(var(--background) / 0.78);
+  background: hsl(var(--background) / 0.5);
 }
 .dark .brick { background-image: url('/textures/brick-dark.jpg'); }
-.dark .brick::before { background: hsl(var(--background) / 0.72); }
+.dark .brick::before { background: hsl(var(--background) / 0.5); }
 .brick > section,
 .brick > astro-island > section {
   background-color: transparent;
   background-image: none;
 }
-/* background-attachment: fixed is janky on iOS; scroll it there instead */
-@media (max-width: 1023px) { .brick { background-attachment: scroll; } }
+/* background-attachment: fixed is janky on iOS, so below lg the wall scrolls.
+   A scrolling `cover` would stretch one photo over the whole (very tall)
+   wrapper and blow the bricks up ~5x, so it tiles instead: the *-tile.jpg
+   files are the same photo mirrored into a 2x2 grid, which repeats with no
+   visible seam in either direction. */
+@media (max-width: 1023px) {
+  .brick {
+    background-image: url('/textures/brick-white-tile.jpg');
+    background-attachment: scroll;
+    background-size: 1400px auto;
+    background-repeat: repeat;
+    background-position: center top;
+  }
+  .dark .brick { background-image: url('/textures/brick-dark-tile.jpg'); }
+}
 
 /* =========================================================================
    Quote panel (src/components/QuotePanel.astro) — the "luxe" quote scene.
