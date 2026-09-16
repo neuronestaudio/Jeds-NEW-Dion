@@ -59,8 +59,16 @@ const why = [
       page-colour veil — deliberately different from the hero's own render. */}
   <div class="absolute inset-0 -z-10" aria-hidden="true">
     <img src={quoteRoom} alt="" class="h-full w-full scale-105 object-cover object-[50%_45%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
-    <div class="absolute inset-0 bg-background/60 dark:bg-background/75"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-background/70 via-transparent to-background/80"></div>
+    {/* Two stacked veils — a flat wash plus a top/bottom-heavy gradient —
+        were compounding to whiteout the room's own plants. Both cut ~20
+        points so more of the actual photo (the green) shows through. */}
+    <div class="absolute inset-0 bg-background/40 dark:bg-background/55"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background/60"></div>
+    {/* Feathers the seam with the hero photo above: without this the hero's
+        flat veil ends abruptly and this section's own veil starts already
+        70% white, reading as a hard cut rather than one scene continuing
+        into the next. */}
+    <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent sm:h-32 lg:h-40"></div>
   </div>
 
   {/* Decorative vertical words, right edge, large screens only. */}

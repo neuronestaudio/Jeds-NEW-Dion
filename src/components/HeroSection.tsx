@@ -129,6 +129,10 @@ export function HeroSection({ variant = 'a' }: Props) {
               Dark theme wants more than a colour-matched whisper: a flat 30%
               black shadow, independent of the page background token. */}
           <div className="absolute inset-0 bg-background/15 dark:bg-black/35" />
+          {/* Feathers the seam into whatever section follows: the flat veil
+              above ends abruptly otherwise, and the next section's own top
+              fade starts from a hard photo edge instead of blending into it. */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent sm:h-32 lg:h-40" />
         </div>
       ) : (
         /* A: full-bleed. The veil runs left→right so the copy sits on page
@@ -148,6 +152,10 @@ export function HeroSection({ variant = 'a' }: Props) {
               as "way too bright". Dark theme asks for something else: a
               flat 30% black shadow rather than a colour-matched whisper. */}
           <div className="absolute inset-0 bg-background/15 dark:bg-black/35" />
+          {/* Feathers the seam into the section below (see the matching top
+              fade on QuotePanel's own backdrop) instead of a hard cut where
+              the photo simply ends. */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent sm:h-32 lg:h-40" />
         </div>
       )}
 
@@ -239,7 +247,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               visitor whose JS never arrives gets an invisible headline.
               font-normal is load-bearing: the face has one weight, and the
               base h1 rule would otherwise ask the browser to fake a bold. */}
-          <h1 className="hero-headline font-condensed mb-5 text-[4.75rem] font-normal uppercase leading-[0.95] tracking-[0.005em] sm:text-[6rem] lg:text-[7.25rem] xl:text-[8.25rem]">
+          <h1 className="hero-headline font-condensed mb-5 text-[1.9rem] font-normal uppercase leading-[0.95] tracking-[0.01em] sm:text-[3rem] lg:text-[4rem] xl:text-[5rem]">
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={headline}
@@ -249,8 +257,8 @@ export function HeroSection({ variant = 'a' }: Props) {
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                 className="block"
               >
-                <span className="block">{HEADLINES[headline][0]}</span>
-                <span className="block text-gradient">{HEADLINES[headline][1]}</span>
+                <span className="hero-headline-primary block">{HEADLINES[headline][0]}</span>
+                <span className="hero-headline-accent block">{HEADLINES[headline][1]}</span>
               </motion.span>
             </AnimatePresence>
           </h1>

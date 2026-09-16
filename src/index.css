@@ -909,8 +909,50 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 
 /* Rotating headline under the lockup. Every phrase is written as exactly two
    lines, so two line-boxes are reserved and a swap never moves the paragraph
-   and buttons beneath it. */
-.hero-headline { min-height: 1.9em; }
+   and buttons beneath it — which only holds if each line actually renders as
+   ONE physical line. The longest phrase ("Better Air. Better Comfort.") is
+   27 characters; sized against the old 672px copy-column width, anything
+   past roughly 1.3x the original font-size wrapped it onto a second line,
+   which at large sizes read as a blurred block rather than text (worse in
+   dark mode, where the glow below merges the two cramped lines). Sized in
+   vw here, same trick as .hero-lockup, so the block can break out of the
+   column — as wide as the logo above it, by request — and the larger sizes
+   above actually have room to fit each phrase on one line. Every combination
+   of phrase x breakpoint was measured against this exact width formula
+   before picking the font sizes in HeroSection.tsx. */
+.hero-headline {
+  min-height: 1.9em;
+  width: min(94vw, 1400px);
+}
+@media (min-width: 640px) { .hero-headline { width: min(90vw, 1400px); } }
+@media (min-width: 1024px) { .hero-headline { width: min(70vw, 1400px); } }
+
+/* The two lines read as a flat, heavy block at this size — a soft
+   colour-matched glow plus a gradient fill give it depth instead. Local to
+   the hero headline, not the shared .text-gradient class other headings
+   still use plain.
+
+   `background-image`, not the `background` shorthand: the shorthand resets
+   every sub-property it doesn't mention — including background-clip — back
+   to its initial value. The .dark override below has higher specificity
+   than this rule's own `background-clip: text`, so writing `background:` a
+   second time there silently won the cascade on background-clip too,
+   snapping it back to border-box and turning the whole line into a solid
+   filled rectangle in dark mode instead of clipping to the glyphs. */
+.hero-headline-primary {
+  background-image: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.75) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 26px hsl(var(--primary) / 0.3)) drop-shadow(0 6px 18px hsl(220 20% 8% / 0.2));
+}
+.dark .hero-headline-primary {
+  background-image: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(0 0% 100% / 0.7) 100%);
+  filter: drop-shadow(0 0 30px hsl(197 85% 65% / 0.45)) drop-shadow(0 6px 20px hsl(0 0% 0% / 0.55));
+}
+.hero-headline-accent {
+  background-image: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.65) 55%, hsl(197 75% 55%) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 28px hsl(var(--primary) / 0.4)) drop-shadow(0 6px 18px hsl(220 20% 8% / 0.18));
+}
 
 /* =========================================================================
    Service area map (src/components/ServiceAreaMap.astro)
