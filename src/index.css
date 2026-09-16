@@ -1247,6 +1247,32 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
+   WhyChooseUs logo build (src/components/WhyChooseUs.tsx) — the same sting
+   clip and held-frame fallback as the hero's own .hero-lockup, watermarked
+   into the accent photo's corner instead of sitting there as a static PNG.
+   Always the "screen" key (white ink), not swapped by site theme the way
+   the hero mark is: this card is its own fixed photo world regardless of
+   theme (the previous static asset was literally named "on-dark" and never
+   changed with the theme either).
+
+   Same blend caveat as .hero-lockup: a blend only reaches as far as its
+   stacking context, so this span carries no z-index and must stay a plain
+   sibling of the photo <img>, not wrapped in anything that would isolate it. */
+.why-logo-video {
+  position: absolute; left: 1rem; top: 1rem; display: block;
+  height: 10.5rem; aspect-ratio: 842 / 326;
+  pointer-events: none;
+  filter: contrast(1.06);
+  mix-blend-mode: screen;
+}
+.why-logo-video > * {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: left center;
+  transition: opacity 0.3s ease;
+}
+@media (min-width: 640px) { .why-logo-video { height: 12rem; } }
+
+/* =========================================================================
    WhyChooseUs reason pills (src/components/WhyChooseUs.tsx) — the eight
    reasons embedded directly on the accent photo as a chip cloud over a
    bottom scrim, replacing a grid of eight separate bordered cards. Fixed

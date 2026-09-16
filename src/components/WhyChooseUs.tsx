@@ -1,11 +1,12 @@
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Shield, Clock, Award, Sparkles, BadgeCheck } from 'lucide-react';
 // Client-supplied render (936x1681, portrait).
 import airconGlow from '@/assets/why-aircon.jpg?url';
-// The header's own mark, watermarked small into the corner — the render is a
-// generic stock-style photo otherwise, and the client wants it read as JED's
-// own, not borrowed.
-import jedLogo from '@/assets/brand/jed-logo-on-dark.png?url';
+// The mark builds itself into the corner instead of sitting there as a
+// static watermark — the same clip and held-frame fallback as the hero's own
+// lockup (src/components/HeroSection.tsx), so the two brand moments match.
+import lockupStill from '@/assets/hero/lockup.png?url';
 // Same marks as the marquee strip, reused here as a small static badge row —
 // the empty space below the Residential/Commercial/All Brands chips needed
 // something, and "every brand we install" is exactly what BrandsSection
@@ -64,6 +65,9 @@ const reasons = [
 ];
 
 export function WhyChooseUs() {
+  const stingRef = useRef<HTMLVideoElement>(null);
+  const [logoPlaying, setLogoPlaying] = useState(false);
+
   return (
     <section id="about" className="py-12 sm:py-16 md:py-24 bg-card/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
@@ -150,6 +154,11 @@ export function WhyChooseUs() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
+            onViewportEnter={() => {
+              if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+              const v = stingRef.current;
+              if (v) { v.muted = true; v.play().catch(() => {}); }
+            }}
             className="relative overflow-hidden rounded-2xl border border-border shadow-[0_24px_54px_-24px_hsl(240_8%_10%/0.45)]"
           >
             <img
@@ -159,12 +168,24 @@ export function WhyChooseUs() {
               decoding="async"
               className="aspect-[4/5] w-full object-cover sm:aspect-[3/4] lg:aspect-[4/5]"
             />
-            <img
-              src={jedLogo}
-              alt="JED Air Conditioning"
-              aria-hidden="true"
-              className="absolute left-4 top-4 h-[10.5rem] w-auto opacity-90 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] sm:h-48"
-            />
+            {/* Builds itself in once the card scrolls into view, then holds
+                on the settled mark — see .why-logo-video for why this stays
+                z-index-free (same mix-blend-mode trap as the hero's own
+                lockup: an ancestor stacking context would isolate the blend
+                and bring the clip's black plate back). */}
+            <span className="why-logo-video" aria-hidden="true">
+              <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
+              <video
+                ref={stingRef}
+                src="/hero-sting.mp4"
+                className={logoPlaying ? 'opacity-90' : 'opacity-0'}
+                onPlaying={() => setLogoPlaying(true)}
+                muted
+                playsInline
+                preload="auto"
+                tabIndex={-1}
+              />
+            </span>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 pt-10 sm:p-5 sm:pt-12">
               {/* A grid, not flex-wrap: content-driven widths made
                   "Manufacturer-Trained" and "Upfront Pricing" wildly
