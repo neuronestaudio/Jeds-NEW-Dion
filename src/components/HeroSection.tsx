@@ -90,7 +90,7 @@ export function HeroSection({ variant = 'a' }: Props) {
   // opacity-70, not 100: "70% solid, 30% transparent" by request. See the note on
   // .hero-lockup in index.css for why it is on these and not the wrapper.
   const lockup = (
-    <span className="hero-lockup mx-auto block lg:mx-0" aria-hidden="true">
+    <span className={`hero-lockup mx-auto block${isB ? ' lg:mx-0' : ''}`} aria-hidden="true">
       <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-70'} decoding="async" />
       <video
         ref={stingRef}
@@ -191,11 +191,12 @@ export function HeroSection({ variant = 'a' }: Props) {
           box. Both this and the backdrop are positioned, so DOM order already
           paints the copy on top. */}
       <div className="container relative mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
-        {/* Centred on mobile ("centre align all the hero elements"), back
-            to the original left alignment from lg. mx-auto only matters
-            once the column is narrower than its container, i.e. below lg
-            for variant A; at lg it is naturally flush left already. */}
-        <div className={`text-center lg:text-left ${isB ? 'mx-auto max-w-xl lg:mx-0 lg:max-w-[50%]' : 'mx-auto max-w-2xl lg:mx-0'}`}>
+        {/* Variant A is centred at every width. The column spans the whole
+            container rather than a max-w, because the lockup and headline are
+            sized in vw and wider than any narrow column — auto margins only
+            centre a child that fits inside its parent. Variant B keeps its
+            left-aligned column from lg, beside the portrait panel. */}
+        <div className={isB ? 'mx-auto max-w-xl text-center lg:mx-0 lg:max-w-[50%] lg:text-left' : 'mx-auto text-center'}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -282,7 +283,7 @@ export function HeroSection({ variant = 'a' }: Props) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col gap-3 sm:flex-row sm:gap-4"
+            className={`flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4${isB ? ' lg:justify-start' : ''}`}
           >
             <Button variant="hero" size="xl" asChild>
               <a
@@ -329,7 +330,7 @@ export function HeroSection({ variant = 'a' }: Props) {
               // foreground text the others use.
               const isEnergy = t.label === 'Energy Efficient Solutions';
               return (
-                <li key={t.label} className="flex items-center justify-center gap-4 px-5 py-4 sm:px-6 sm:py-5 lg:justify-start">
+                <li key={t.label} className={`flex items-center justify-center gap-4 px-5 py-4 sm:px-6 sm:py-5${isB ? ' lg:justify-start' : ''}`}>
                   {/* The icon is the node — drawn at the full 44px with a light
                       stroke, rather than a small glyph floating inside a ring. */}
                   <t.icon

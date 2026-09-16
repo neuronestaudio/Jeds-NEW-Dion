@@ -161,6 +161,30 @@ describe('QuoteWizard', () => {
     expect(screen.queryByRole('button', { name: /Get My Free Quote/i })).toBeNull();
   });
 
+  it('hands the thank-you page a summary without the phone number or email', async () => {
+    const user = userEvent.setup();
+    render(<QuoteWizard source="test" />);
+
+    await user.click(screen.getByText('Repair / Breakdown'));
+    await user.click(await screen.findByText('ASAP / Today if possible'));
+    await user.type(await screen.findByLabelText(/Your Name/), 'Jeff Nguyen');
+    await user.type(screen.getByLabelText(/Phone Number/), '0451995112');
+    await user.type(screen.getByLabelText(/Email Address/), 'jeff@example.com');
+    await user.type(screen.getByLabelText(/Site Address/), '40 Leith Street, Croydon Park');
+    await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
+
+    await waitFor(() => expect(window.sessionStorage.getItem('jed-last-quote')).not.toBeNull());
+    const raw = window.sessionStorage.getItem('jed-last-quote')!;
+    expect(JSON.parse(raw)).toMatchObject({
+      firstName: 'Jeff',
+      service: 'Repair / Breakdown',
+      urgency: 'asap',
+      urgencyLabel: 'ASAP / Today if possible',
+    });
+    expect(raw).not.toContain('0451995112');
+    expect(raw).not.toContain('jeff@example.com');
+  });
+
   it('stays put and keeps the data when GHL rejects the lead', async () => {
     const user = userEvent.setup();
     fetchMock.mockImplementation(() => jsonResponse({ error: 'nope' }, 500));

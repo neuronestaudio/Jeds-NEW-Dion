@@ -892,12 +892,11 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   object-fit: contain; object-position: center;
   transition: opacity 0.3s ease;
 }
-/* Flush-left only once the column itself is left-aligned again (lg) — the
-   mark's left edge is meant to line up with the eyebrow/headline/buttons
-   there. Centred below lg, where the whole column is centred and a
-   flush-left mark inside a centred box would look off-centre itself. */
+/* Variant B's column goes left-aligned from lg, so its mark sits flush left
+   to line up with the copy. Variant A is centred at every width, so its mark
+   stays centred in its box. */
 @media (min-width: 1024px) {
-  .hero-lockup > * { object-position: left center; }
+  [data-hero="b"] .hero-lockup > * { object-position: left center; }
 }
 /* Sized in vw, not against the copy column's own max-width, so the mark can
    grow well past the column and read as the hero's dominant element rather
@@ -926,6 +925,11 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 @media (min-width: 640px) { .hero-headline { width: min(90vw, 1400px); } }
 @media (min-width: 1024px) { .hero-headline { width: min(70vw, 1400px); } }
+/* Centred variant: the block itself has to be centred, not just its text,
+   and it must never exceed its column — auto margins do nothing for a child
+   wider than its parent. Measured against the longest phrase at xl, 100% of
+   the widest container still fits every line on one row. */
+[data-hero="a"] .hero-headline { margin-inline: auto; max-width: 100%; }
 
 /* The two lines read as a flat, heavy block at this size — a soft
    colour-matched glow plus a gradient fill give it depth instead. Local to
@@ -1244,6 +1248,24 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 @media (prefers-reduced-motion: reduce) {
   .wgallery__img, .wgallery__cap { transition: none; }
+}
+
+/* =========================================================================
+   Thank-you page (src/pages/thank-you.astro) — the animated confirmation
+   tick. The ring draws, then the tick; reduced motion shows both finished.
+   ========================================================================= */
+.ty-check {
+  width: 5.5rem; height: 5.5rem; border-radius: 9999px;
+  display: grid; place-items: center;
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: 0 0 0 10px hsl(var(--primary) / 0.05), 0 18px 40px -18px hsl(var(--primary) / 0.55);
+}
+.ty-check svg { width: 3.4rem; height: 3.4rem; fill: none; stroke: hsl(var(--primary)); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ty-check__ring { stroke-dasharray: 151; stroke-dashoffset: 151; animation: ty-draw 0.7s ease-out 0.1s forwards; }
+.ty-check__tick { stroke-dasharray: 36; stroke-dashoffset: 36; animation: ty-draw 0.4s ease-out 0.7s forwards; }
+@keyframes ty-draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ty-check__ring, .ty-check__tick { animation: none; stroke-dashoffset: 0; }
 }
 
 /* =========================================================================

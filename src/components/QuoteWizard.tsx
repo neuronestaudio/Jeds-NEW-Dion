@@ -17,6 +17,7 @@ import {
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { pushDataLayerEvent, trackEvent } from '@/lib/analytics';
+import { LAST_QUOTE_KEY, type LastQuote } from '@/lib/lastQuote';
 import AddressAutocomplete from './AddressAutocomplete';
 import {
   GhlNotConfiguredError,
@@ -260,8 +261,23 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         description:
           formData.urgency === 'asap'
             ? "We'll be in touch as a priority."
-            : "We'll get back to you within 24 hours.",
+            : "We'll get back to you within the business day.",
       });
+
+      // Summary for /thank-you to greet and recap from. No phone or email.
+      const summary: LastQuote = {
+        firstName: formData.name.trim().split(/\s+/)[0]?.slice(0, 40) ?? '',
+        service: SERVICES.find((s) => s.value === formData.serviceType)?.title ?? '',
+        urgency: formData.urgency,
+        urgencyLabel: URGENCIES.find((u) => u.value === formData.urgency)?.title ?? '',
+        suburb: addressDetails?.suburb ?? '',
+        at: Date.now(),
+      };
+      try {
+        window.sessionStorage.setItem(LAST_QUOTE_KEY, JSON.stringify(summary));
+      } catch {
+        // Storage blocked: the thank-you page simply shows its generic copy.
+      }
       trackEvent('quote_submit', {
         source,
         service_type: formData.serviceType || 'unknown',

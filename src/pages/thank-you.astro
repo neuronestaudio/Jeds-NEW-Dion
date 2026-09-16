@@ -1,23 +1,170 @@
 ---
+/**
+ * Where every successful quote submission lands (QuoteWizard redirects here).
+ * The page is complete without JavaScript; when the wizard has just handed
+ * over a summary in sessionStorage it also greets the visitor by first name,
+ * recaps what they asked for and, for urgent jobs, surfaces the phone number.
+ * Only the first name, the service and timing labels and the suburb are
+ * handed over — never the phone number or email.
+ */
 import Base from '@/layouts/Base.astro';
 import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import { SITE } from '@/data/site';
+import { ClipboardCheck, FileText, Phone, PhoneCall, Zap } from 'lucide-react';
+
+const steps = [
+  {
+    icon: ClipboardCheck,
+    when: 'Right now',
+    title: 'We review your request',
+    body: 'Your details are with the JED team. There is nothing else you need to do.',
+  },
+  {
+    icon: PhoneCall,
+    when: 'Within the business day',
+    title: 'We get back to you',
+    body: 'A quick chat about the job, your space and the timing that suits you.',
+  },
+  {
+    icon: FileText,
+    when: 'Before any work starts',
+    title: 'Upfront, written pricing',
+    body: 'A free assessment and a clear written quote, so there are no surprises.',
+  },
+];
+
+const recapFields = [
+  { key: 'service', label: 'Service' },
+  { key: 'urgency', label: 'Timing' },
+  { key: 'suburb', label: 'Suburb' },
+];
 ---
 
 <Base
   title="Thank You | JED Air Conditioning"
-  description="Thanks for your quote request. A member of our team will contact you within 1 business day."
+  description="Thanks for your enquiry. The JED Air Conditioning team will get back to you within the business day."
   path="/thank-you"
   noindex
 >
-  <section class="py-20 md:py-28">
-    <div class="container mx-auto px-4">
-      <div class="mx-auto max-w-3xl rounded-2xl border border-border bg-card/40 p-8 md:p-12 text-center">
-        <h1 class="text-3xl md:text-5xl font-bold mb-4">Thank You</h1>
-        <p class="text-lg text-muted-foreground mb-8">
-          Your quote request has been received. We will contact you within 1 business day.
-        </p>
+  <section class="relative section-glow py-20 md:py-28">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <div class="mx-auto max-w-3xl text-center">
+        <div class="ty-check mx-auto mb-8" aria-hidden="true">
+          <svg viewBox="0 0 52 52">
+            <circle class="ty-check__ring" cx="26" cy="26" r="24" />
+            <path class="ty-check__tick" d="M15 27.5l7 7 15-16" />
+          </svg>
+        </div>
+
+        <p class="eyebrow mb-3">Request received</p>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+          Your A/C Solution <span class="text-gradient block">Only Minutes Away</span>
+        </h1>
+
+        <p class="text-lg md:text-xl text-foreground/80 mb-2" data-ty-greeting>Thanks, we’ve got your request.</p>
+        <p class="text-lg md:text-xl font-semibold mb-8">We’ll get back to you within the business day.</p>
+
+        {/* Filled in from the wizard's handover; hidden if there is none. */}
+        <div data-ty-recap hidden class="mb-8">
+          <ul class="flex flex-wrap justify-center gap-2.5">
+            {recapFields.map((f) => (
+              <li data-ty-field={f.key} hidden>
+                <span class="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-sm shadow-sm">
+                  <span class="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary">{f.label}</span>
+                  <span class="font-medium text-foreground" data-ty-value></span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div data-ty-urgent hidden class="mb-8">
+          <div class="mx-auto max-w-xl rounded-2xl border border-primary/30 bg-primary/10 p-5 text-left sm:p-6">
+            <div class="flex gap-4">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15">
+                <Zap className="h-5 w-5 text-primary" aria-hidden="true" />
+              </span>
+              <div>
+                <p class="font-semibold">You marked this as urgent</p>
+                <p class="mt-1 text-sm text-muted-foreground">
+                  We’re prioritising your request. If it can’t wait, call us now.
+                </p>
+                <a
+                  href={SITE.phoneTel}
+                  class="mt-3 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  <Phone className="h-4 w-4" aria-hidden="true" />
+                  Call {SITE.phoneDisplay}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <CtaRow quoteHref="/" quoteLabel="Back to Home" location="thank-you" align="center" />
+      </div>
+
+      <div class="mx-auto mt-16 max-w-5xl md:mt-20">
+        <h2 class="mb-6 text-center text-2xl font-bold sm:text-3xl">What happens next</h2>
+        <ol class="grid gap-4 md:grid-cols-3">
+          {steps.map((s, i) => (
+            <li class="rounded-2xl border border-border bg-card/90 p-6 text-center">
+              <span class="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                <s.icon className="h-5 w-5 text-primary" aria-hidden="true" />
+              </span>
+              <p class="text-[0.68rem] font-bold uppercase tracking-[0.16em] text-primary">
+                {i + 1} · {s.when}
+              </p>
+              <h3 class="mt-2 font-semibold">{s.title}</h3>
+              <p class="mt-1 text-sm text-muted-foreground">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="mx-auto mt-10 max-w-5xl">
+        <TrustBadges layout="row" />
       </div>
     </div>
   </section>
 </Base>
+
+<script>
+  import { LAST_QUOTE_KEY, LAST_QUOTE_MAX_AGE_MS, type LastQuote } from '@/lib/lastQuote';
+
+  let quote: LastQuote | null = null;
+  try {
+    quote = JSON.parse(window.sessionStorage.getItem(LAST_QUOTE_KEY) || 'null');
+  } catch {
+    quote = null;
+  }
+
+  if (quote && typeof quote.at === 'number' && Date.now() - quote.at < LAST_QUOTE_MAX_AGE_MS) {
+    const greeting = document.querySelector<HTMLElement>('[data-ty-greeting]');
+    if (greeting && quote.firstName) {
+      greeting.textContent = `Thanks, ${quote.firstName}, we’ve got your request.`;
+    }
+
+    const values: Record<string, string | undefined> = {
+      service: quote.service,
+      urgency: quote.urgencyLabel,
+      suburb: quote.suburb,
+    };
+    let shown = false;
+    for (const [key, value] of Object.entries(values)) {
+      const item = document.querySelector<HTMLElement>(`[data-ty-field="${key}"]`);
+      const slot = item?.querySelector<HTMLElement>('[data-ty-value]');
+      if (item && slot && value) {
+        slot.textContent = value;
+        item.hidden = false;
+        shown = true;
+      }
+    }
+    const recap = document.querySelector<HTMLElement>('[data-ty-recap]');
+    if (recap && shown) recap.hidden = false;
+
+    const urgent = document.querySelector<HTMLElement>('[data-ty-urgent]');
+    if (urgent && quote.urgency === 'asap') urgent.hidden = false;
+  }
+</script>
