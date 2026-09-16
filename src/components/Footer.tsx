@@ -30,8 +30,11 @@ const footerLinks = {
 };
 
 export function Footer() {
+  // No plate under the weave: the footer keeps the theme's own card colour
+  // and .footer-carbon lays the carbon texture over it at half strength, so
+  // light stays light and dark stays dark.
   return (
-    <footer className="bg-card border-t border-border pt-12 sm:pt-16 pb-8">
+    <footer className="footer-carbon bg-card border-t border-border pt-12 sm:pt-16 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           {/* Brand Column */}

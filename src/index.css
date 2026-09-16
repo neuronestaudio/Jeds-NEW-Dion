@@ -1325,6 +1325,27 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 .reviews-carbon h2,
 .reviews-carbon h2 + p { text-shadow: 0 0 3px hsl(240 10% 3%), 0 2px 14px hsl(240 10% 3% / 0.9); }
 
+/* Footer weave (src/components/Footer.tsx) — the same carbon texture as the
+   reviews section, but with no plate under it: the footer keeps its own
+   theme colour and only the weave sits on top, so light stays light and dark
+   stays dark. carbon-mesh.png can't do that — it is a near-black plate with
+   lighter hexagon lines on it, and at any opacity the plate darkens the
+   footer. carbon-mesh-lines.png is that tile with the plate knocked out
+   (white lines on transparent), so the colour comes entirely from below.
+   White lines read on the dark theme; light theme inverts them to black,
+   which affects the RGB channels only and leaves the alpha shape intact.
+   Half opacity on top of the lines' own alpha, so it stays a suggestion. */
+.footer-carbon { position: relative; isolation: isolate; }
+.footer-carbon::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: url('/textures/carbon-mesh-lines.png') repeat;
+  background-size: 18px 32px;
+  opacity: 0.5;
+  filter: invert(1);
+}
+.dark .footer-carbon::before { filter: none; opacity: 0.5; }
+
 /* =========================================================================
    Thank-you page (src/pages/thank-you.astro) — the animated confirmation
    tick. The ring draws, then the tick; reduced motion shows both finished.
