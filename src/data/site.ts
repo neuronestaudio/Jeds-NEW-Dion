@@ -24,6 +24,7 @@ const offerCatalog = {
   '@type': 'OfferCatalog',
   name: 'Air Conditioning Services',
   itemListElement: [
+    'Daikin Air Conditioning — Certified Dealer & Warranty Service Agent',
     'Split System Installation',
     'Ducted Air Conditioning',
     'Multi-Head Split Systems',

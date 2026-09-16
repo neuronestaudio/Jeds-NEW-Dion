@@ -1,0 +1,443 @@
+---
+/**
+ * Layout for the Daikin topical cluster (src/data/daikin.ts) — the pillar and
+ * its nine supporting pages share this one template so the cluster reads as
+ * one guide, while each page's block list gives it a genuinely different
+ * structure (tables on the cost guide, a zone directory on the local page,
+ * comparison grids on split/ducted, and so on).
+ *
+ * Interlinking, by design:
+ *  - the cluster nav under the hero links every page to every other page;
+ *  - "Keep reading" surfaces each page's two or three closest intents;
+ *  - a rotating set of eight real suburb pages per cluster page pushes link
+ *    equity into the 116-page service-area network, and the local-intent
+ *    page links to all of them;
+ *  - the generic /service pages are linked from every page via ServiceLinks.
+ */
+import Base from '@/layouts/Base.astro';
+import QuoteForm from '@/components/QuoteForm';
+import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import ServiceLinks from '@/components/ServiceLinks';
+import DaikinClusterNav from '@/components/DaikinClusterNav.astro';
+import { CheckCircle2, ArrowRight, BadgeCheck, ShieldCheck, Wrench } from 'lucide-react';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+import { DAIKIN_PAGES, DAIKIN_SUPPORTING, daikinBySlug, daikinPath, type DaikinPage } from '@/data/daikin';
+import { SUBURBS, ZONES, suburbsInZone, type Zone } from '@/data/suburbs';
+import daikinLogo from '@/assets/daikin-clean.png?url';
+
+interface Props {
+  page: DaikinPage;
+}
+const { page } = Astro.props;
+
+const path = daikinPath(page.slug);
+const isPillar = page.slug === '';
+const pageIndex = DAIKIN_PAGES.findIndex((p) => p.slug === page.slug);
+
+const related = page.related.map((s) => daikinBySlug.get(s)).filter((p): p is DaikinPage => Boolean(p));
+
+/* Eight suburbs per page, two from each zone, rotated by page index so the
+   ten cluster pages between them link into eighty distinct suburb pages
+   rather than the same handful. */
+const ZONE_ORDER: Zone[] = ['north', 'upper', 'beaches', 'east'];
+const suburbLinks = ZONE_ORDER.flatMap((zone) => {
+  const list = suburbsInZone(zone).sort((a, b) => a.name.localeCompare(b.name));
+  const start = (pageIndex * 2) % list.length;
+  return [list[start], list[(start + 1) % list.length]];
+});
+
+const ZONE_NOTES: Record<Zone, string> = {
+  north:
+    'Harbourside heritage streets and steep bush blocks — Daikin outdoor units placed off the street frontage, slim-line ducted where the roof space is tight, coated coils close to the water.',
+  upper:
+    'Deep blocks, big roof spaces and heavy tree cover — the natural territory of Daikin Premium Inverter ducted, with plant positioned clear of leaf litter and serviceable year-round.',
+  beaches:
+    'Salt air on almost every job. Daikin splits and ducted specified with corrosion protection, mounted clear of sea spray, and serviced twice a year in the most exposed positions.',
+  east:
+    'Apartment density, strata approvals and terrace roofs — Daikin multi-head systems where there is room for one condenser, bulkhead and slim-line ducted where there is no roof at all.',
+};
+
+const breadcrumbs = [
+  { name: 'Services', path: '/services' },
+  { name: 'Daikin', path: '/daikin' },
+  ...(isPillar ? [] : [{ name: page.navLabel, path }]),
+];
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: `${page.h1} ${page.h1Accent}`.replace(/\s+/g, ' ').trim(),
+  serviceType: page.serviceType,
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  brand: { '@type': 'Brand', name: 'Daikin' },
+  areaServed: { '@type': 'City', name: 'Sydney' },
+};
+
+const clusterLd = isPillar
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Daikin air conditioning guide — JED Air Conditioning',
+      itemListElement: DAIKIN_SUPPORTING.map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: p.navLabel,
+        url: `${SITE.url}${daikinPath(p.slug)}`,
+      })),
+    }
+  : null;
+
+const jsonLd = [serviceLd, breadcrumbJsonLd(breadcrumbs), faqJsonLd(page.faqs), ...(clusterLd ? [clusterLd] : [])];
+const quoteSource = `daikin-${page.slug || 'pillar'}`;
+---
+
+<Base title={page.title} description={page.description} path={path} jsonLd={jsonLd}>
+  {/* Hero */}
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          {breadcrumbs.map((b, i) => (
+            <>
+              <li aria-hidden="true">/</li>
+              {i === breadcrumbs.length - 1 ? (
+                <li class="text-foreground" aria-current="page">{b.name}</li>
+              ) : (
+                <li><a href={b.path} class="hover:text-foreground transition-colors">{b.name}</a></li>
+              )}
+            </>
+          ))}
+        </ol>
+      </nav>
+
+      <div class="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12 items-start">
+        <div>
+          {/* Block wrapper: .eyebrow is inline-block, and an inline-flex chip
+              directly before it would share its line. */}
+          <div class="mb-5">
+            <span class="daikin-chip">
+              <img src={daikinLogo} alt="Daikin" />
+              <span>Certified dealer · Warranty service agent</span>
+            </span>
+          </div>
+          <p class="eyebrow mb-3">{page.eyebrow}</p>
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+            {page.h1} <span class="text-gradient">{page.h1Accent}</span>
+          </h1>
+          <p class="text-lg md:text-xl text-foreground/85 mb-8 max-w-2xl">{page.tagline}</p>
+          <CtaRow client:idle quoteHref="#quote" location={`daikin-${page.slug || 'pillar'}-hero`} />
+        </div>
+        <TrustBadges layout="stack" />
+      </div>
+
+      <div class="mt-10">
+        <DaikinClusterNav current={page.slug} />
+      </div>
+    </div>
+  </section>
+
+  {/* Lead */}
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:gap-12 items-start">
+        <div class="space-y-5 text-muted-foreground text-base md:text-lg max-w-3xl">
+          {page.intro.map((p) => <p>{p}</p>)}
+        </div>
+        <aside class="daikin-glance glass-card p-6">
+          <p class="eyebrow mb-3">At a glance</p>
+          <ul class="space-y-4">
+            <li class="flex gap-3">
+              <BadgeCheck className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <span><strong class="text-foreground">Certified Daikin dealer</strong><span class="block text-sm text-muted-foreground">Full residential range, manufacturer-trained technicians.</span></span>
+            </li>
+            <li class="flex gap-3">
+              <Wrench className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <span><strong class="text-foreground">Daikin warranty service agent</strong><span class="block text-sm text-muted-foreground">Warranty repairs in our area are dispatched to JED — book us directly.</span></span>
+            </li>
+            <li class="flex gap-3">
+              <ShieldCheck className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+              <span><strong class="text-foreground">10-year workmanship warranty</strong><span class="block text-sm text-muted-foreground">On every installation, alongside Daikin’s own.</span></span>
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  {/* Content blocks */}
+  {page.blocks.map((block, i) => (
+    <section class={`py-12 md:py-16 border-t border-border ${i % 2 === 0 ? 'bg-card/30' : ''}`}>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+        {block.type === 'prose' && (
+          <div class="max-w-3xl">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-5">{block.heading}</h2>
+            <div class="space-y-4 text-muted-foreground text-base md:text-lg">
+              {block.paragraphs.map((p) => <p>{p}</p>)}
+            </div>
+          </div>
+        )}
+
+        {block.type === 'features' && (
+          <>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-8 max-w-3xl">{block.intro}</p>}
+            <div class={`grid gap-4 sm:grid-cols-2 ${block.items.length % 3 === 0 ? 'lg:grid-cols-3' : 'lg:grid-cols-3'} ${!block.intro ? 'mt-6' : ''}`}>
+              {block.items.map((item) => (
+                <div class="rounded-2xl border border-border bg-card/90 p-5 sm:p-6">
+                  <h3 class="font-semibold mb-2">{item.title}</h3>
+                  <p class="text-sm text-muted-foreground">{item.body}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {block.type === 'steps' && (
+          <>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-8 max-w-3xl">{block.intro}</p>}
+            <ol class={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ${!block.intro ? 'mt-6' : ''}`}>
+              {block.steps.map((step, n) => (
+                <li class="relative rounded-2xl border border-border bg-card/90 p-5 sm:p-6">
+                  <span class="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-bold text-primary">
+                    {n + 1}
+                  </span>
+                  <h3 class="font-semibold mb-2">{step.title}</h3>
+                  <p class="text-sm text-muted-foreground">{step.body}</p>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+
+        {block.type === 'table' && (
+          <>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-6 max-w-3xl">{block.intro}</p>}
+            <div class={`daikin-table-wrap ${!block.intro ? 'mt-6' : ''}`}>
+              <table class="daikin-table">
+                <thead>
+                  <tr>{block.columns.map((c) => <th scope="col">{c}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr>
+                      {row.map((cell, ci) =>
+                        ci === 0 ? <td>{cell}</td> : <td data-label={block.columns[ci]}>{cell}</td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {block.note && <p class="mt-3 text-sm text-muted-foreground max-w-3xl">{block.note}</p>}
+          </>
+        )}
+
+        {block.type === 'compare' && (
+          <>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-6 max-w-3xl">{block.intro}</p>}
+            <div class={`daikin-table-wrap ${!block.intro ? 'mt-6' : ''}`}>
+              <table class="daikin-table daikin-table--compare">
+                <thead>
+                  <tr>
+                    <th scope="col"><span class="sr-only">Factor</span></th>
+                    <th scope="col">{block.columns[0]}</th>
+                    <th scope="col">{block.columns[1]}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row) => (
+                    <tr>
+                      <td>{row.label}</td>
+                      <td data-label={block.columns[0]}>{row.a}</td>
+                      <td data-label={block.columns[1]}>{row.b}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+
+        {block.type === 'checklist' && (
+          <div class="max-w-3xl">
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-6">{block.intro}</p>}
+            <ul class={`glass-card p-6 sm:p-8 space-y-3 ${!block.intro ? 'mt-6' : ''}`}>
+              {block.items.map((item) => (
+                <li class="flex gap-3 text-sm sm:text-base text-foreground/85">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {block.type === 'callout' && (
+          <div class="q-slate q-slate--glow daikin-callout p-6 sm:p-8 lg:p-10">
+            <div class="grid gap-6 lg:grid-cols-[1.6fr_auto] lg:items-center">
+              <div>
+                <h2 class="text-2xl sm:text-3xl font-semibold text-white mb-3">{block.heading}</h2>
+                <p class="text-white/85 text-base sm:text-lg max-w-2xl">{block.body}</p>
+              </div>
+              {block.cta && (
+                <a href={block.cta.href} class="daikin-callout__btn">
+                  {block.cta.label} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {block.type === 'zones' && (
+          <>
+            <h2 class="text-2xl sm:text-3xl font-bold mb-2">{block.heading}</h2>
+            {block.intro && <p class="text-muted-foreground mb-8 max-w-3xl">{block.intro}</p>}
+            <div class="grid gap-5 lg:grid-cols-2">
+              {ZONE_ORDER.map((zone) => {
+                const list = suburbsInZone(zone).sort((a, b) => a.name.localeCompare(b.name));
+                const shown = list.slice(0, 14);
+                return (
+                  <div class="rounded-2xl border border-border bg-card/90 p-5 sm:p-6">
+                    <div class="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+                      <h3 class="text-lg font-semibold">{ZONES[zone].label}</h3>
+                      <span class="text-xs font-medium uppercase tracking-wider text-muted-foreground">{list.length} suburbs</span>
+                    </div>
+                    <p class="text-sm text-muted-foreground mb-4">{ZONE_NOTES[zone]}</p>
+                    <ul class="flex flex-wrap gap-1.5">
+                      {shown.map((s) => (
+                        <li>
+                          <a
+                            href={`/service-area/${s.slug}`}
+                            class="inline-block rounded-full border border-border bg-background/60 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                          >
+                            {s.name}
+                          </a>
+                        </li>
+                      ))}
+                      {list.length > shown.length && (
+                        <li>
+                          <a
+                            href={`/service-areas#${ZONES[zone].id}`}
+                            class="inline-block rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
+                          >
+                            All {list.length} {ZONES[zone].short} suburbs →
+                          </a>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  ))}
+
+  {/* Keep reading — the closest intents */}
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+        <h2 class="text-2xl sm:text-3xl font-bold">Keep reading</h2>
+        {!isPillar && (
+          <a href="/daikin" class="text-sm font-medium text-primary hover:underline underline-offset-4">
+            Back to the Daikin overview →
+          </a>
+        )}
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {related.map((r) => (
+          <a
+            href={daikinPath(r.slug)}
+            class="group flex flex-col justify-between rounded-2xl border border-border bg-card/90 p-5 transition-all hover:border-primary/40 hover:bg-card"
+          >
+            <div>
+              <span class="eyebrow mb-2">{r.eyebrow}</span>
+              <h3 class="text-lg font-semibold transition-colors group-hover:text-primary">
+                {r.h1} {r.h1Accent}
+              </h3>
+              <p class="mt-1 text-sm text-muted-foreground">{r.tagline}</p>
+            </div>
+            <span class="mt-4 inline-flex items-center gap-1 text-xs font-medium uppercase tracking-wider text-primary">
+              Read <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Suburb links into the service-area network */}
+  {page.slug !== 'service-areas' && (
+    <section class="py-12 md:py-16 border-t border-border bg-card/30">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+        <h2 class="text-xl sm:text-2xl font-bold mb-2">Daikin work near you</h2>
+        <p class="text-sm text-muted-foreground mb-4 max-w-2xl">
+          The same certified dealer and warranty agent across {SUBURBS.length} Sydney suburbs. A few we are in most weeks:
+        </p>
+        <ul class="flex flex-wrap gap-2">
+          {suburbLinks.map((s) => (
+            <li>
+              <a
+                href={`/service-area/${s.slug}`}
+                class="inline-block rounded-full border border-border bg-card/60 px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+              >
+                {s.name}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/daikin/service-areas" class="inline-block rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
+              All Daikin service areas →
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Other services */}
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">All JED air conditioning services</h2>
+      <ServiceLinks />
+    </div>
+  </section>
+
+  {/* FAQ */}
+  <section class="py-12 md:py-16 border-t border-border bg-card/30">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">{isPillar ? 'Daikin questions, answered' : `${page.navLabel} — common questions`}</h2>
+      <div class="max-w-3xl space-y-3">
+        {page.faqs.map((f) => (
+          <details class="group rounded-2xl border border-border bg-card/90 open:border-primary/30">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-semibold">
+              <span>{f.q}</span>
+              <span aria-hidden="true" class="text-primary transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <p class="px-5 pb-5 text-sm text-muted-foreground">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* Quote */}
+  <section class="py-16 md:py-24 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-2">{page.quoteHeading}</h2>
+        <p class="text-muted-foreground mb-6">{page.quoteSub}</p>
+        <QuoteForm client:visible source={quoteSource} />
+      </div>
+    </div>
+  </section>
+</Base>

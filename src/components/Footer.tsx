@@ -4,11 +4,12 @@ import logoOnDark from '@/assets/brand/jed-logo-on-dark.png?url';
 
 const footerLinks = {
   services: [
+    { label: 'Daikin Specialists', href: '/daikin' },
+    { label: 'Daikin Warranty Repairs', href: '/daikin/warranty' },
     { label: 'Split Systems', href: '/service/split-system-installation' },
     { label: 'Ducted AC', href: '/service/ducted-air-conditioning' },
-    { label: 'Commercial', href: '/services' },
     { label: 'Repairs', href: '/service/aircon-repair' },
-    { label: 'Maintenance', href: '/services' },
+    { label: 'Commercial', href: '/services' },
   ],
   company: [
     { label: 'About Us', href: '/#about' },

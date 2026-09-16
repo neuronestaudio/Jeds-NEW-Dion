@@ -1,0 +1,12 @@
+---
+import DaikinPage from '@/layouts/DaikinPage.astro';
+import { DAIKIN_SUPPORTING, type DaikinPage as DaikinPageData } from '@/data/daikin';
+
+export function getStaticPaths() {
+  return DAIKIN_SUPPORTING.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props as { page: DaikinPageData };
+---
+
+<DaikinPage page={page} />

@@ -2,6 +2,7 @@
 import Base from '@/layouts/Base.astro';
 import { SUBURBS, ZONES, suburbsInZone } from '@/data/suburbs';
 import type { Zone } from '@/data/suburbs';
+import { DAIKIN_PAGES, daikinPath } from '@/data/daikin';
 
 /**
  * Human-readable sitemap: every page the site builds, grouped. The suburb
@@ -27,6 +28,14 @@ const groups: { title: string; links: Link[] }[] = [
       { href: '/service/ducted-air-conditioning', label: 'Ducted Air Conditioning' },
       { href: '/service/aircon-repair', label: 'Air Conditioning Repairs & Diagnostics' },
     ],
+  },
+  {
+    title: 'Daikin guide',
+    links: DAIKIN_PAGES.map((p) => ({
+      href: daikinPath(p.slug),
+      label: p.slug ? `Daikin ${p.navLabel.toLowerCase()}` : 'Daikin air conditioning Sydney',
+      note: p.slug ? undefined : 'pillar page for the cluster',
+    })),
   },
   {
     title: 'Legal & utility',

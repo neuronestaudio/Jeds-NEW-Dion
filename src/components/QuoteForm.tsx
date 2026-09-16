@@ -2,7 +2,12 @@ import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react';
 import QuoteWizard from './QuoteWizard';
 
-export function QuoteForm() {
+type Props = {
+  /** Sent to GHL as the lead's `source`, so a page can be told apart in the CRM. */
+  source?: string;
+};
+
+export function QuoteForm({ source = 'bottom-quote' }: Props) {
   return (
     <section id="quote" className="py-16 md:py-24 bg-card/30">
       <div className="container mx-auto px-4">
@@ -15,7 +20,7 @@ export function QuoteForm() {
             transition={{ duration: 0.6 }}
           >
             <QuoteWizard
-              source="bottom-quote"
+              source={source}
               heading="Get a Free Quote"
               subheading="Two quick taps, then your details — we’ll come back to you within 24 hours with a detailed quote."
             />

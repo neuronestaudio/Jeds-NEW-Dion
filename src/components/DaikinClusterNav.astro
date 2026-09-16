@@ -1,0 +1,27 @@
+---
+/**
+ * The cluster's own navigation — every one of the ten Daikin pages, with the
+ * current one marked. Rendered on every page in the cluster so each page is
+ * one click from every other (the "heavily interlink" brief), and so a
+ * visitor who landed on the cost guide can see the warranty and repairs
+ * pages exist without scrolling to a footer.
+ */
+import { DAIKIN_PAGES, daikinPath } from '@/data/daikin';
+
+interface Props {
+  current: string;
+  label?: string;
+}
+const { current, label = 'In this Daikin guide' } = Astro.props;
+---
+
+<nav class="daikin-nav-wrap" aria-label="Daikin guide">
+  <span class="daikin-nav__label">{label}</span>
+  <div class="daikin-nav">
+    {DAIKIN_PAGES.map((p) => (
+      <a href={daikinPath(p.slug)} class="daikin-nav__pill" aria-current={p.slug === current ? 'page' : undefined}>
+        {p.navLabel}
+      </a>
+    ))}
+  </div>
+</nav>

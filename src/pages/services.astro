@@ -20,6 +20,12 @@ const faqs = [
 
 const services = [
   {
+    href: '/daikin',
+    code: 'DK',
+    title: 'Daikin Specialists',
+    blurb: 'Certified Daikin dealer and warranty service agent — sales, installation, service and warranty repairs.',
+  },
+  {
     href: '/service/split-system-installation',
     code: 'SS',
     title: 'Split System Installation',
@@ -53,7 +59,7 @@ const services = [
       <p class="text-muted-foreground text-lg max-w-2xl mb-10">
         Installation, repairs, and maintenance for residential and commercial properties.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {
           services.map((s) => (
             <a

@@ -19,6 +19,7 @@ const navLinks = [
 
 const serviceLinks = [
   { label: 'All Services', href: '/services' },
+  { label: 'Daikin Specialists', href: '/daikin' },
   { label: 'Split System Installation', href: '/service/split-system-installation' },
   { label: 'Ducted Air Conditioning', href: '/service/ducted-air-conditioning' },
   { label: 'Repairs & Diagnostics', href: '/service/aircon-repair' },

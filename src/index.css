@@ -1247,6 +1247,84 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
+   Daikin cluster (src/layouts/DaikinPage.astro, src/data/daikin.ts) — the
+   pillar and nine supporting pages. Cluster nav pills, the dealer chip in
+   the hero, the comparison / pricing tables and the dark callout card.
+   Everything is token-based so both themes hold without a .dark block,
+   except the chip, which stays a white badge in both because the Daikin
+   mark is brand-blue ink (same reasoning as .brand-tile).
+   ========================================================================= */
+.daikin-nav-wrap { display: flex; flex-direction: column; gap: 0.5rem; }
+.daikin-nav__label {
+  font-size: 0.66rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  color: hsl(var(--primary));
+}
+.daikin-nav { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: none; }
+.daikin-nav::-webkit-scrollbar { display: none; }
+.daikin-nav__pill {
+  flex: none; display: inline-flex; align-items: center;
+  padding: 0.45rem 0.9rem; border-radius: 9999px;
+  font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+  border: 1px solid hsl(var(--border)); background: hsl(var(--card) / 0.85);
+  color: hsl(var(--foreground) / 0.8);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.daikin-nav__pill:hover { border-color: hsl(var(--primary) / 0.5); color: hsl(var(--primary)); }
+.daikin-nav__pill[aria-current="page"] {
+  background: hsl(var(--primary)); border-color: hsl(var(--primary)); color: #fff;
+}
+.daikin-chip {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.4rem 0.85rem 0.4rem 0.6rem; border-radius: 9999px;
+  background: #fff; border: 1px solid hsl(0 0% 0% / 0.1);
+  box-shadow: 0 6px 18px -10px hsl(240 8% 10% / 0.35);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: hsl(206 45% 20%);
+}
+.daikin-chip img { height: 0.95rem; width: auto; }
+.daikin-table-wrap {
+  overflow-x: auto; border-radius: 1rem;
+  border: 1px solid hsl(var(--border)); background: hsl(var(--card) / 0.9);
+}
+.daikin-table { width: 100%; min-width: 560px; border-collapse: separate; border-spacing: 0; font-size: 0.9rem; }
+.daikin-table th {
+  text-align: left; padding: 0.8rem 1rem;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: hsl(var(--primary)); background: hsl(var(--primary) / 0.08);
+}
+.daikin-table td {
+  padding: 0.85rem 1rem; vertical-align: top;
+  border-top: 1px solid hsl(var(--border)); color: hsl(var(--foreground) / 0.85);
+}
+.daikin-table tbody tr td:first-child { font-weight: 600; color: hsl(var(--foreground)); }
+.daikin-table--compare th:nth-child(2), .daikin-table--compare th:nth-child(3) { width: 40%; }
+/* Phones: each row becomes a card with the column heading above each value
+   (from data-label), instead of a table whose price column — the reason the
+   cost guide exists — is hidden behind a horizontal scroll. */
+@media (max-width: 639px) {
+  .daikin-table { min-width: 0; }
+  .daikin-table thead { display: none; }
+  .daikin-table tbody tr { display: block; padding: 0.9rem 1rem 1rem; border-top: 1px solid hsl(var(--border)); }
+  .daikin-table tbody tr:first-child { border-top: 0; }
+  .daikin-table tbody td { display: block; padding: 0.2rem 0; border-top: 0; }
+  .daikin-table tbody td:first-child { padding-bottom: 0.4rem; font-size: 0.98rem; }
+  .daikin-table tbody td[data-label]::before {
+    content: attr(data-label); display: block; margin-bottom: 0.1rem;
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: hsl(var(--primary));
+  }
+}
+.daikin-callout { border-radius: 1.25rem; }
+.daikin-callout__btn {
+  display: inline-flex; align-items: center; gap: 0.5rem; justify-self: start;
+  padding: 0.8rem 1.3rem; border-radius: 9999px;
+  background: #fff; color: hsl(206 45% 16%); font-weight: 600; font-size: 0.95rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.daikin-callout__btn:hover { background: hsl(191 70% 85%); transform: translateY(-1px); }
+@media (min-width: 1024px) { .daikin-callout__btn { justify-self: end; } }
+
+/* =========================================================================
    WhyChooseUs logo build (src/components/WhyChooseUs.tsx) — the same sting
    clip and held-frame fallback as the hero's own .hero-lockup, watermarked
    into the accent photo's corner instead of sitting there as a static PNG.

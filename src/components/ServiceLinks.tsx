@@ -1,6 +1,12 @@
-import { Building, Settings, Thermometer, Wind, Wrench } from 'lucide-react';
+import { BadgeCheck, Building, Settings, Thermometer, Wind, Wrench } from 'lucide-react';
 
 const SERVICES = [
+  {
+    icon: BadgeCheck,
+    title: 'Daikin Specialists',
+    href: '/daikin',
+    blurb: 'Certified Daikin dealer and warranty service agent — sales, install, service and warranty repairs.',
+  },
   {
     icon: Thermometer,
     title: 'Split System Installation',
