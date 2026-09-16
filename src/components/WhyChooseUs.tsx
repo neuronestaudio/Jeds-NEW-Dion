@@ -159,7 +159,7 @@ export function WhyChooseUs() {
               const v = stingRef.current;
               if (v) { v.muted = true; v.play().catch(() => {}); }
             }}
-            className="relative overflow-hidden rounded-2xl border border-border shadow-[0_24px_54px_-24px_hsl(240_8%_10%/0.45)]"
+            className="why-card relative overflow-hidden rounded-2xl border border-border shadow-[0_24px_54px_-24px_hsl(240_8%_10%/0.45)]"
           >
             <img
               src={airconGlow}
@@ -168,20 +168,20 @@ export function WhyChooseUs() {
               decoding="async"
               className="aspect-[4/5] w-full object-cover sm:aspect-[3/4] lg:aspect-[4/5]"
             />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/60 to-transparent p-4 pt-14 sm:p-5 sm:pt-20">
-              {/* The mark builds itself in once the card scrolls into view,
-                  centred directly above the pills so the air conditioner at
-                  the top of the photo stays clear. Inside the scrim rather
-                  than pinned by `bottom`, so it tracks the pill grid's height
-                  at every breakpoint, and the scrim darkens the sunlit wall
-                  behind it. See .why-logo-video for why nothing between it
-                  and the photo may create a stacking context. */}
+            {/* The mark builds itself in once the card scrolls into view,
+                near the top of the photo but clear of it — a watermark at a
+                tenth strength, so the room reads through it. No z-index,
+                opacity, transform or filter on this wrapper: see
+                .why-logo-video for why any of those would trap the blend and
+                bring the clip's black plate back as a box. The opacity that
+                is there lives on the img/video themselves. */}
+            <div className="pointer-events-none absolute inset-x-0 top-[5%] flex justify-center px-4">
               <span className="why-logo-video" aria-hidden="true">
-                <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
+                <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-10'} decoding="async" />
                 <video
                   ref={stingRef}
                   src="/hero-sting.mp4"
-                  className={logoPlaying ? 'opacity-90' : 'opacity-0'}
+                  className={logoPlaying ? 'opacity-10' : 'opacity-0'}
                   onPlaying={() => setLogoPlaying(true)}
                   muted
                   playsInline
@@ -189,15 +189,18 @@ export function WhyChooseUs() {
                   tabIndex={-1}
                 />
               </span>
+            </div>
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/92 via-black/80 to-transparent p-3 pt-[16%] sm:p-4 sm:pt-[18%]">
               {/* A grid, not flex-wrap: content-driven widths made
                   "Manufacturer-Trained" and "Upfront Pricing" wildly
                   different sizes. Fixed columns give all eight the same
                   footprint, with the label wrapping inside its own cell
-                  instead of forcing the pill wider. */}
-              <ul className="grid grid-cols-2 gap-1.5 sm:gap-2">
+                  instead of forcing the pill wider. Sized to fill about half
+                  the card's height — see .why-pill. */}
+              <ul className="grid grid-cols-2 gap-2 sm:gap-2.5">
                 {reasons.map((reason) => (
                   <li key={reason.title} className="why-pill" title={reason.description}>
-                    <reason.icon className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" aria-hidden="true" />
+                    <reason.icon className="why-pill__icon shrink-0" aria-hidden="true" />
                     {reason.pill}
                   </li>
                 ))}

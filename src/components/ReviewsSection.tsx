@@ -85,9 +85,10 @@ export function ReviewsSection() {
   );
 
   return (
-    // `dark` scopes the dark-theme tokens to this section only, so on the
-    // carbon mesh the heading and cards use light-on-dark in both site themes.
-    <section id="reviews" className="dark reviews-carbon py-12 sm:py-16 md:py-24">
+    // The weave carries no plate of its own, so this section takes the site's
+    // own theme: light in light, dark in dark. It used to force `dark` here
+    // because the old texture was a near-black tile.
+    <section id="reviews" className="carbon-weave py-12 sm:py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -990,18 +990,62 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   margin-inline: calc((100% - var(--hl-w)) / 2);
 }
 
-/* Flat fill, no glow — the same treatment as the AIRCONDITIONING wordmark in
-   the lockup directly above, which these lines sit under and now match.
-   An earlier pass gave them a gradient that faded the glyphs towards their
-   baseline plus two drop-shadows (a teal bloom and a dark cast); at this size
-   the bloom haloed every letter and read as an artefact against the photo
-   rather than as depth. Flat foreground / flat primary, nothing behind them.
-   Do NOT reintroduce background-clip: text here without re-reading the note
-   in git history: the `background` shorthand resets background-clip, so a
-   higher-specificity .dark override silently turned the whole line into a
-   solid rectangle. */
-.hero-headline-primary { color: hsl(var(--foreground)); }
-.hero-headline-accent { color: hsl(var(--primary)); }
+/* Living fill: a gradient that is part see-through, clipped to the glyphs and
+   drifting sideways, so the room photo reads through the letters and the
+   light moves across them. No glow behind the type — an earlier pass put a
+   teal bloom and a dark cast behind these lines and at this size it haloed
+   every letter.
+
+   `background-image`, never the `background` shorthand: the shorthand resets
+   every sub-property it doesn't mention, background-clip included, and a
+   higher-specificity override written that way once turned the whole line
+   into a solid filled rectangle instead of clipping to the glyphs.
+
+   The band never drops below 0.62 alpha; thinner than that and the letters
+   lose the photo behind them in the bright parts of the room. 220% wide so
+   there is somewhere to travel, and the keyframe moves a whole tile so the
+   loop has no seam. */
+.hero-headline-primary,
+.hero-headline-accent {
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  background-size: 220% 100%;
+  background-repeat: repeat-x;
+  animation: hero-fill-drift 9s linear infinite;
+}
+.hero-headline-primary {
+  background-image: linear-gradient(100deg,
+    hsl(var(--foreground) / 0.95) 0%,
+    hsl(var(--foreground) / 0.55) 14%,
+    hsl(var(--primary) / 0.92) 26%,
+    hsl(var(--foreground) / 0.58) 38%,
+    hsl(var(--foreground) / 0.95) 52%,
+    hsl(var(--primary) / 0.8) 68%,
+    hsl(var(--foreground) / 0.56) 84%,
+    hsl(var(--foreground) / 0.95) 100%);
+}
+.hero-headline-accent {
+  background-image: linear-gradient(100deg,
+    hsl(var(--primary) / 0.95) 0%,
+    hsl(var(--primary) / 0.55) 14%,
+    hsl(197 78% 64% / 0.95) 26%,
+    hsl(var(--primary) / 0.6) 38%,
+    hsl(var(--primary) / 0.95) 52%,
+    hsl(197 78% 64% / 0.85) 68%,
+    hsl(var(--primary) / 0.56) 84%,
+    hsl(var(--primary) / 0.95) 100%);
+  /* Half a cycle behind the line above, so the two never sweep in lockstep. */
+  animation-delay: -4.5s;
+}
+@keyframes hero-fill-drift {
+  from { background-position: 0% 50%; }
+  to { background-position: -220% 50%; }
+}
+/* Reduced motion keeps the gradient, drops the travel. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-headline-primary,
+  .hero-headline-accent { animation: none; background-position: 0% 50%; }
+}
 
 /* =========================================================================
    Service area map (src/components/ServiceAreaMap.astro)
@@ -1296,55 +1340,44 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
-   Reviews section (src/components/ReviewsSection.tsx) — a carbon-mesh band.
-   The section carries the `dark` class, so its tokens are the dark theme's
-   in both site themes. `color` is re-declared because text without its own
-   colour class inherits body's already-computed (light-theme) colour, not
-   the variable. A soft arctic glow at the top and a deeper shade at the
-   bottom give the flat tile some depth.
-   ========================================================================= */
-.reviews-carbon {
-  position: relative; isolation: isolate;
-  /* The dark theme's 52% grey was legible on flat black, not on the mesh. */
-  --muted-foreground: 240 4% 72%;
-  color: hsl(var(--foreground));
-  background-color: hsl(240 6% 7%);
-  background-image:
-    radial-gradient(90% 60% at 50% 0%, hsl(197 70% 45% / 0.16), transparent 65%),
-    radial-gradient(120% 80% at 50% 100%, hsl(240 10% 3% / 0.75), transparent 70%),
-    /* Mesh at half strength, by request: a flat 50% wash of the base colour
-       sits directly on top of the weave, under the two glows. */
-    linear-gradient(hsl(240 6% 7% / 0.5), hsl(240 6% 7% / 0.5)),
-    url('/textures/carbon-mesh.png');
-  background-size: auto, auto, auto, 18px 32px;
-}
-/* Solid cards: at 90% the hexagon lines ran through the review text. */
-.reviews-carbon figure { background-color: hsl(240 5% 10%); }
-/* The heading and subtitle sit straight on the mesh; a tight dark halo
-   lifts the letters off the hexagon lines. */
-.reviews-carbon h2,
-.reviews-carbon h2 + p { text-shadow: 0 0 3px hsl(240 10% 3%), 0 2px 14px hsl(240 10% 3% / 0.9); }
+   Carbon weave (src/components/ReviewsSection.tsx, src/components/Footer.tsx)
+   The texture with no plate under it: the section keeps its own theme colour
+   and only the weave sits on top, so light stays light and dark stays dark.
 
-/* Footer weave (src/components/Footer.tsx) — the same carbon texture as the
-   reviews section, but with no plate under it: the footer keeps its own
-   theme colour and only the weave sits on top, so light stays light and dark
-   stays dark. carbon-mesh.png can't do that — it is a near-black plate with
-   lighter hexagon lines on it, and at any opacity the plate darkens the
-   footer. carbon-mesh-lines.png is that tile with the plate knocked out
-   (white lines on transparent), so the colour comes entirely from below.
-   White lines read on the dark theme; light theme inverts them to black,
-   which affects the RGB channels only and leaves the alpha shape intact.
-   Half opacity on top of the lines' own alpha, so it stays a suggestion. */
-.footer-carbon { position: relative; isolation: isolate; }
-.footer-carbon::before {
+   carbon-mesh.png cannot do that — it is a near-black plate carrying lighter
+   hexagon lines, so at any opacity the plate darkens whatever is beneath it,
+   which is why the reviews section used to be a dark slab in both themes.
+   carbon-mesh-lines.png is that same tile with the plate knocked out (white
+   lines on transparent), so all of the colour comes from below. White lines
+   read on the dark theme; the light theme inverts them to black, which
+   touches the RGB channels only and leaves the alpha shape intact. Half
+   opacity on top of the lines' own alpha keeps it a suggestion.
+
+   The overlay is behind the section's own content (z-index -1 inside the
+   stacking context `isolation: isolate` creates here) and takes no pointer
+   events, so nothing in the section can be covered or intercepted by it.
+   ========================================================================= */
+.carbon-weave { position: relative; isolation: isolate; }
+.carbon-weave::before {
   content: "";
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: url('/textures/carbon-mesh-lines.png') repeat;
-  background-size: 18px 32px;
+  /* The tile is a mask, not an image: that way the weave is painted in a
+     colour this rule chooses rather than whatever the file happens to hold.
+     Light gets a mid grey — "50% white" — because pure black lines on a pale
+     section read far heavier than white lines do on a dark one at the same
+     opacity. Dark gets white. Both at half opacity on top of the lines' own
+     alpha, so it stays a suggestion of a weave. */
+  background-color: hsl(220 12% 52%);
+  -webkit-mask: url('/textures/carbon-mesh-lines.png') repeat;
+  mask: url('/textures/carbon-mesh-lines.png') repeat;
+  -webkit-mask-size: 18px 32px;
+  mask-size: 18px 32px;
   opacity: 0.5;
-  filter: invert(1);
 }
-.dark .footer-carbon::before { filter: none; opacity: 0.5; }
+.dark .carbon-weave::before { background-color: hsl(0 0% 100%); }
+/* Cards sit on their own solid colour rather than letting the weave run
+   under the review text. */
+.carbon-weave figure { background-color: hsl(var(--card)); }
 
 /* =========================================================================
    Thank-you page (src/pages/thank-you.astro) — the animated confirmation
@@ -1464,8 +1497,8 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   /* Same clip as the hero, so the same frame: the mark is 75% of the frame's
      width, and this box is widened by the reciprocal so the watermark still
      reads at the size it did against the card. */
-  width: min(85%, 29.3rem); aspect-ratio: 1102 / 360;
-  margin: 0 auto 0.6rem;
+  width: min(96%, 35.2rem); aspect-ratio: 1102 / 360;
+  margin: 0 auto;
   pointer-events: none;
   filter: contrast(1.06);
   mix-blend-mode: screen;
@@ -1475,7 +1508,6 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   object-fit: contain; object-position: center;
   transition: opacity 0.3s ease;
 }
-@media (min-width: 640px) { .why-logo-video { margin-bottom: 1.15rem; } }
 
 /* =========================================================================
    WhyChooseUs reason pills (src/components/WhyChooseUs.tsx) — the eight
@@ -1488,17 +1520,41 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    content and lets a longer label wrap onto a second line in that shared
    width, rather than forcing the pill wider than its neighbours.
    ========================================================================= */
+/* Eight reasons as real buttons rather than chips: glass slabs with a lit
+   top edge, an oversized pale-blue icon on the left and the label beside it,
+   sized so the grid fills about half the card's height instead of the third
+   it used to. Everything scales with the viewport because the card itself
+   does — measured against the card's own height at each breakpoint, not
+   guessed. */
 .why-pill {
-  display: flex; align-items: center; justify-content: center; gap: 0.35rem;
-  width: 100%; text-align: center;
-  padding: 0.35rem 0.65rem; border-radius: 9999px;
-  font-size: 0.68rem; font-weight: 600; white-space: normal; color: #fff;
-  background: hsl(0 0% 100% / 0.14);
-  border: 1px solid hsl(0 0% 100% / 0.25);
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  display: flex; align-items: center; gap: clamp(0.4rem, 2.2cqw, 0.85rem);
+  width: 100%; text-align: left;
+  /* Height is the point: four rows at 14.2cqw plus the gaps come to roughly
+     half the card, which is what "make them take up about a half" asks for.
+     cqw, not vw, because the card is full width on a phone and a little
+     under half the viewport from lg — one vw figure cannot serve both. */
+  min-height: 14.2cqw;
+  padding: clamp(0.4rem, 1.6cqw, 0.95rem) clamp(0.5rem, 2.1cqw, 1.15rem);
+  border-radius: clamp(0.7rem, 2.4cqw, 1.2rem);
+  font-size: clamp(0.72rem, 2.37cqw, 1.06rem); font-weight: 700;
+  line-height: 1.15; white-space: normal; color: #fff;
+  /* Dark glass, not white: a white tint picked up whatever was behind it, and
+     the top row sits over the photo's sunlit wall where that left the label
+     barely readable. A dark fill holds the same contrast anywhere on the
+     photo, and matches the reference the client sent. */
+  background: hsl(220 22% 7% / 0.55);
+  border: 1px solid hsl(0 0% 100% / 0.22);
+  box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.16), 0 12px 26px -16px hsl(0 0% 0% / 0.85);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
 }
-.why-pill svg { color: hsl(197 85% 78%); flex-shrink: 0; }
-@media (min-width: 640px) { .why-pill { font-size: 0.74rem; padding: 0.4rem 0.75rem; } }
+.why-pill__icon {
+  width: clamp(1.15rem, 4.5cqw, 2.1rem); height: clamp(1.15rem, 4.5cqw, 2.1rem);
+  color: hsl(197 85% 78%); flex-shrink: 0;
+}
+/* The measuring box for every cqw above. Containment makes the card its own
+   stacking context, which is fine: the watermark and the photo it blends
+   with are both INSIDE the card, so the blend still finds the photo. */
+.why-card { container-type: inline-size; }
 
 /* =========================================================================
    Hero decorative texture (src/components/HeroSection.tsx) — corner stripe
