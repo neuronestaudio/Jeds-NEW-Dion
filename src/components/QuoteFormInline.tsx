@@ -2,7 +2,12 @@ import { motion } from 'framer-motion';
 import QuoteWizard from './QuoteWizard';
 import BorderBeam from './BorderBeam';
 
-export function QuoteFormInline() {
+type Props = {
+  /** Sent to GHL as the lead's `source`, so the page is identifiable in the CRM. */
+  source?: string;
+};
+
+export function QuoteFormInline({ source = 'hero-inline' }: Props) {
   return (
     <motion.div
       initial={{ opacity: 0, x: 30 }}
@@ -27,7 +32,7 @@ export function QuoteFormInline() {
       <BorderBeam duration={26}>
       <div className="rounded-[calc(1rem-1.5px)] bg-[hsl(var(--q-teal-deeper))] p-5 sm:p-6 md:p-8">
       <QuoteWizard
-        source="hero-inline"
+        source={source}
         compact
         heading="Get a Free Quote"
         subheading="Two quick taps, then your details — we’ll respond within 24 hours."

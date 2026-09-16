@@ -85,7 +85,9 @@ export function ReviewsSection() {
   );
 
   return (
-    <section id="reviews" className="py-12 sm:py-16 md:py-24 section-glow">
+    // `dark` scopes the dark-theme tokens to this section only, so on the
+    // carbon mesh the heading and cards use light-on-dark in both site themes.
+    <section id="reviews" className="dark reviews-carbon py-12 sm:py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

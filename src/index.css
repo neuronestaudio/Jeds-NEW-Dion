@@ -1251,6 +1251,33 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 
 /* =========================================================================
+   Reviews section (src/components/ReviewsSection.tsx) — a carbon-mesh band.
+   The section carries the `dark` class, so its tokens are the dark theme's
+   in both site themes. `color` is re-declared because text without its own
+   colour class inherits body's already-computed (light-theme) colour, not
+   the variable. A soft arctic glow at the top and a deeper shade at the
+   bottom give the flat tile some depth.
+   ========================================================================= */
+.reviews-carbon {
+  position: relative; isolation: isolate;
+  /* The dark theme's 52% grey was legible on flat black, not on the mesh. */
+  --muted-foreground: 240 4% 72%;
+  color: hsl(var(--foreground));
+  background-color: hsl(240 6% 7%);
+  background-image:
+    radial-gradient(90% 60% at 50% 0%, hsl(197 70% 45% / 0.16), transparent 65%),
+    radial-gradient(120% 80% at 50% 100%, hsl(240 10% 3% / 0.75), transparent 70%),
+    url('/textures/carbon-mesh.png');
+  background-size: auto, auto, 18px 32px;
+}
+/* Solid cards: at 90% the hexagon lines ran through the review text. */
+.reviews-carbon figure { background-color: hsl(240 5% 10%); }
+/* The heading and subtitle sit straight on the mesh; a tight dark halo
+   lifts the letters off the hexagon lines. */
+.reviews-carbon h2,
+.reviews-carbon h2 + p { text-shadow: 0 0 3px hsl(240 10% 3%), 0 2px 14px hsl(240 10% 3% / 0.9); }
+
+/* =========================================================================
    Thank-you page (src/pages/thank-you.astro) — the animated confirmation
    tick. The ring draws, then the tick; reduced motion shows both finished.
    ========================================================================= */

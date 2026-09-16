@@ -1,6 +1,7 @@
 ---
 import Base from '@/layouts/Base.astro';
-import QuoteForm from '@/components/QuoteForm';
+import QuotePanel from '@/components/QuotePanel.astro';
+import QuoteFormInline from '@/components/QuoteFormInline';
 import CtaRow from '@/components/CtaRow';
 import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
 import TrustBadges from '@/components/TrustBadges';
@@ -81,16 +82,14 @@ const sydneyCount = SUBURBS.length;
     </section>
   ))}
 
-  <section class="py-16 md:py-24 border-t border-border">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
-      <div class="glass-card p-6 md:p-8">
-        <h2 class="text-2xl font-semibold mb-2">Not sure your suburb’s listed?</h2>
-        <p class="text-muted-foreground mb-6">
-          Tell us where you are and what you need — we service greater Sydney and will confirm availability for your
-          job.
-        </p>
-        <QuoteForm client:visible />
-      </div>
-    </div>
-  </section>
+  <QuotePanel
+    id="quote"
+    eyebrow="Free quote"
+    heading="Not sure your suburb’s listed?"
+    subheading="Tell us where you are and what you need — we service greater Sydney and will confirm availability for your job."
+    backdrop="hero"
+    faqs={false}
+  >
+    <QuoteFormInline client:visible source="bottom-quote" />
+  </QuotePanel>
 </Base>

@@ -1,12 +1,15 @@
 ---
 /**
- * The quote experience, to the "luxe" mock: a bright room behind a frosted
- * white panel; the wizard on the left; a deep-teal "Contact Us Directly" card
- * and a "Why Get a Quote?" checklist on the right; FAQs in a bar underneath.
+ * The quote experience, to the "luxe" mock: a room photo behind a frosted
+ * white panel; the wizard in a solid navy card on the left; the glowing
+ * "Contact Us Directly" card and a "Why Get a Quote?" checklist on the right;
+ * FAQs in a bar underneath.
  *
- * Shared by the homepage section (compact wizard) and /contact (full form) —
- * the form itself comes in through the slot. Every claim on the panel is one
- * the site already makes: 24-hour response, upfront pricing, the 10-year
+ * The one quote section on the site — homepage, /contact, the Daikin guide,
+ * the service pages, every suburb page and /service-areas all use it, so a
+ * quote form looks the same (and stands out the same way) wherever it is.
+ * The form comes in through the slot. Every claim on the panel is one the
+ * site already makes: 24-hour response, upfront pricing, the 10-year
  * workmanship warranty, Daikin & Haier certification, Mon–Sat 7–6.
  */
 import {
@@ -14,23 +17,34 @@ import {
 } from 'lucide-react';
 import { SITE } from '@/data/site';
 import { QUOTE_FAQS } from '@/data/faqs';
-// Its own room, not the hero's — the panel previously reused the hero's
-// lounge render, which meant the same photo appeared twice on the homepage.
+// The homepage keeps its own plant-filled room so the hero's photo is not
+// shown twice in a row; every other page uses the hero's room, so the quote
+// section is recognisably the same one visitors saw on the homepage.
 import quoteRoom from '@/assets/hero/quote-room.jpg?url';
+import heroRoom from '@/assets/hero/lounge.jpg?url';
 
 interface Props {
-  /** h1 on /contact, h2 when embedded on the homepage. */
+  /** h1 on /contact, h2 everywhere else. */
   as?: 'h1' | 'h2';
-  /** Section id — the homepage uses "quote"; /contact's form carries its own. */
+  /** Section id — "quote", the anchor every "Get a Free Quote" button targets. */
   id?: string;
+  eyebrow?: string;
   heading?: string;
   subheading?: string;
+  /** 'room' = the homepage's plant-filled room; 'hero' = the hero's lounge. */
+  backdrop?: 'room' | 'hero';
+  /** Off on pages that already carry their own FAQ section. */
+  faqs?: boolean;
 }
+const DEFAULT_HEADING = 'Your Comfort Starts Here';
 const {
   as = 'h2',
   id,
-  heading = 'Your Comfort Starts Here',
+  eyebrow = 'Comfort for a brighter tomorrow',
+  heading = DEFAULT_HEADING,
   subheading = 'Let’s find the right AC solution for you.',
+  backdrop = 'room',
+  faqs = true,
 } = Astro.props;
 const Heading = as;
 
@@ -55,21 +69,33 @@ const why = [
 ---
 
 <section id={id} class="q-scene relative isolate overflow-hidden py-14 sm:py-20 lg:py-24 scroll-mt-24">
-  {/* Backdrop: a bright, plant-filled living room, softened under a
-      page-colour veil — deliberately different from the hero's own render. */}
-  <div class="absolute inset-0 -z-10" aria-hidden="true">
-    <img src={quoteRoom} alt="" class="h-full w-full scale-105 object-cover object-[50%_45%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
-    {/* Two stacked veils — a flat wash plus a top/bottom-heavy gradient —
-        were compounding to whiteout the room's own plants. Both cut ~20
-        points so more of the actual photo (the green) shows through. */}
-    <div class="absolute inset-0 bg-background/40 dark:bg-background/55"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background/60"></div>
-    {/* Feathers the seam with the hero photo above: without this the hero's
-        flat veil ends abruptly and this section's own veil starts already
-        70% white, reading as a hard cut rather than one scene continuing
-        into the next. */}
-    <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent sm:h-32 lg:h-40"></div>
-  </div>
+  {backdrop === 'room' ? (
+    /* Backdrop: a bright, plant-filled living room, softened under a
+       page-colour veil — deliberately different from the hero's own render. */
+    <div class="absolute inset-0 -z-10" aria-hidden="true">
+      <img src={quoteRoom} alt="" class="h-full w-full scale-105 object-cover object-[50%_45%] blur-[2px] dark:brightness-[0.7]" loading="lazy" decoding="async" />
+      {/* Two stacked veils — a flat wash plus a top/bottom-heavy gradient —
+          were compounding to whiteout the room's own plants. Both cut ~20
+          points so more of the actual photo (the green) shows through. */}
+      <div class="absolute inset-0 bg-background/40 dark:bg-background/55"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background/60"></div>
+      {/* Feathers the seam with the hero photo above: without this the hero's
+          flat veil ends abruptly and this section's own veil starts already
+          70% white, reading as a hard cut rather than one scene continuing
+          into the next. */}
+      <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent sm:h-32 lg:h-40"></div>
+    </div>
+  ) : (
+    /* Backdrop: the hero's own lounge, under the hero's own veil, so the
+       quote section reads as the one from the homepage. Feathered top and
+       bottom into page colour, since it sits mid-page between sections. */
+    <div class="absolute inset-0 -z-10" aria-hidden="true">
+      <img src={heroRoom} alt="" class="h-full w-full object-cover object-[62%_40%]" loading="lazy" decoding="async" />
+      <div class="absolute inset-0 bg-background/15 dark:bg-black/35"></div>
+      <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-background to-transparent sm:h-32 lg:h-40"></div>
+      <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent sm:h-32 lg:h-40"></div>
+    </div>
+  )}
 
   {/* Decorative vertical words, right edge, large screens only. */}
   <div class="q-vertical pointer-events-none absolute right-6 top-1/2 hidden -translate-y-1/2 xl:block" aria-hidden="true">
@@ -78,17 +104,18 @@ const why = [
 
   <div class="container mx-auto px-4 sm:px-6 lg:px-10">
     <div class="mb-8 max-w-3xl sm:mb-10">
-      <span class="q-eyebrow">Comfort for a brighter tomorrow</span>
-      {/* Bigger and forced to two lines on mobile ("Your Comfort" /
-          "Starts Here") — at the old text-4xl it read as one small line
-          the width of the phone, which undersold the section opener. sm:
-          and up keep the original single-line sizing; heading is never
-          overridden with different text (see the two call sites), so a
-          hand-placed break is safe. */}
-      <Heading class="mb-3 text-5xl leading-[1.05] sm:text-5xl sm:leading-tight lg:text-6xl">
-        <span class="block sm:inline">Your Comfort</span>{' '}
-        <span class="block sm:inline">Starts Here</span>
-      </Heading>
+      <span class="q-eyebrow">{eyebrow}</span>
+      {/* The default heading is forced to two lines on mobile ("Your Comfort"
+          / "Starts Here") — at text-4xl it read as one small line the width
+          of the phone. Page-specific headings wrap naturally. */}
+      {heading === DEFAULT_HEADING ? (
+        <Heading class="mb-3 text-5xl leading-[1.05] sm:text-5xl sm:leading-tight lg:text-6xl">
+          <span class="block sm:inline">Your Comfort</span>{' '}
+          <span class="block sm:inline">Starts Here</span>
+        </Heading>
+      ) : (
+        <Heading class="mb-3 text-4xl leading-[1.08] sm:text-5xl sm:leading-tight lg:text-6xl">{heading}</Heading>
+      )}
       <p class="mb-5 text-base text-foreground/80 sm:text-lg">{subheading}</p>
       <ul class="flex flex-wrap gap-x-6 gap-y-2">
         {chips.map((c) => (
@@ -164,6 +191,7 @@ const why = [
       </div>
 
       {/* FAQs */}
+      {faqs && (
       <div class="q-faq mt-5 lg:mt-6">
         <div class="mb-3 flex flex-wrap items-center gap-x-5 gap-y-3">
           <h3 class="text-2xl font-semibold">FAQs</h3>
@@ -186,6 +214,7 @@ const why = [
           ))}
         </div>
       </div>
+      )}
     </div>
 
     <p class="q-tagline">Cooler spaces · Brighter lives</p>
