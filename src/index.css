@@ -651,10 +651,13 @@
 .brick::before {
   content: "";
   position: absolute; inset: 0; z-index: -1;
-  background: hsl(var(--background) / 0.5);
+  /* 0.75, not 0.5: at half strength the wall read as the subject of the
+     section rather than its backdrop, so the photo is knocked back by
+     another 50% on top of that. */
+  background: hsl(var(--background) / 0.75);
 }
 .dark .brick { background-image: url('/textures/brick-dark.jpg'); }
-.dark .brick::before { background: hsl(var(--background) / 0.5); }
+.dark .brick::before { background: hsl(var(--background) / 0.75); }
 .brick > section,
 .brick > astro-island > section {
   background-color: transparent;
@@ -920,6 +923,19 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    dropped. Still capped in px so it doesn't run away on ultrawide screens. */
 @media (min-width: 640px) { .hero-lockup { width: min(80vw, 640px); margin-bottom: 1rem; } }
 @media (min-width: 1024px) { .hero-lockup { width: min(58vw, 860px); } }
+
+/* Two-line eyebrow above the lockup. The text is white in both themes by
+   request, and the room photo behind it is near-white wall and a white indoor
+   unit — white on white. Text shadows alone only outlined it, so the words
+   carry their own shading: a soft dark cloud that fades out well before any
+   edge, so it reads as shadow on the photo rather than a chip or a box. */
+.hero-eyebrow { position: relative; isolation: isolate; }
+.hero-eyebrow::before {
+  content: "";
+  position: absolute; inset: -0.5rem -1.5rem; z-index: -1;
+  background: radial-gradient(62% 120% at 50% 50%, hsl(220 30% 6% / 0.55), hsl(220 30% 6% / 0.24) 58%, transparent 78%);
+  pointer-events: none;
+}
 
 /* Rotating headline under the lockup. Every phrase is written as exactly two
    lines, so two line-boxes are reserved and a swap never moves the paragraph
@@ -1282,8 +1298,11 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   background-image:
     radial-gradient(90% 60% at 50% 0%, hsl(197 70% 45% / 0.16), transparent 65%),
     radial-gradient(120% 80% at 50% 100%, hsl(240 10% 3% / 0.75), transparent 70%),
+    /* Mesh at half strength, by request: a flat 50% wash of the base colour
+       sits directly on top of the weave, under the two glows. */
+    linear-gradient(hsl(240 6% 7% / 0.5), hsl(240 6% 7% / 0.5)),
     url('/textures/carbon-mesh.png');
-  background-size: auto, auto, 18px 32px;
+  background-size: auto, auto, auto, 18px 32px;
 }
 /* Solid cards: at 90% the hexagon lines ran through the review text. */
 .reviews-carbon figure { background-color: hsl(240 5% 10%); }

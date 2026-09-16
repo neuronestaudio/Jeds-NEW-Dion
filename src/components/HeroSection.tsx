@@ -190,7 +190,7 @@ export function HeroSection({ variant = 'a' }: Props) {
           context, trapping the blend and turning the mark's plate into a grey
           box. Both this and the backdrop are positioned, so DOM order already
           paints the copy on top. */}
-      <div className="container relative mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-44 lg:pt-32">
+      <div className="container relative mx-auto px-4 pb-8 pt-24 sm:px-6 sm:pt-28 lg:px-10 lg:pb-12 lg:pt-32">
         {/* Variant A is centred at every width. The column spans the whole
             container rather than a max-w, because the lockup and headline are
             sized in vw and wider than any narrow column — auto margins only
@@ -223,15 +223,24 @@ export function HeroSection({ variant = 'a' }: Props) {
             />
           </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="mb-4 text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-[hsl(197_44%_40%)] [text-shadow:0_1px_2px_hsl(0_0%_100%/0.35)] dark:[text-shadow:0_1px_3px_hsl(220_30%_6%/0.6)]"
-          >
-            <span className="block">Certified installer &amp; dealer</span>
-            <span className="block">Sydney air conditioning specialists</span>
-          </motion.p>
+          {/* The wrapper is load-bearing: the badge above is inline-flex and
+              the eyebrow is inline-block (so its shading hugs the words rather
+              than the whole column), and without a block between them the two
+              share a line. */}
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+              // White in both themes, by request. Over a light room photo white
+              // has almost no contrast of its own, so it carries a dark halo:
+              // the text shadows below plus the soft cloud in .hero-eyebrow.
+              className="hero-eyebrow mb-4 inline-block text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-white [text-shadow:0_1px_2px_hsl(220_30%_6%/0.95),0_0_10px_hsl(220_30%_6%/0.85),0_2px_24px_hsl(220_30%_6%/0.7)]"
+            >
+              <span className="block">Certified installer &amp; dealer</span>
+              <span className="block">Sydney air conditioning specialists</span>
+            </motion.p>
+          </div>
 
           {/* The mark carries the top of the hero; deliberately NOT inside a
               motion element, whose animated opacity/transform would isolate
@@ -268,12 +277,15 @@ export function HeroSection({ variant = 'a' }: Props) {
               this text sat directly over whatever part of the room happened
               to be there — the couch, the light wall — and lost contrast
               wherever that was bright, in both themes. A frosted panel gives
-              it a consistent, legible surface regardless of what's behind. */}
+              it a consistent, legible surface regardless of what's behind.
+              Fill is 40% by request (was 80%), so the room reads through it;
+              the blur and full-strength text colour carry the legibility the
+              fill no longer does. */}
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/80 px-4 py-3 text-base text-foreground/85 shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
+            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/40 px-4 py-3 text-base text-foreground shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation,
             servicing and repairs for homes, apartments and commercial spaces across Sydney.
@@ -313,13 +325,19 @@ export function HeroSection({ variant = 'a' }: Props) {
         </div>
       </div>
 
-      {/* Trust bar: pinned along the bottom of the photo from lg, in flow
-          underneath the copy on smaller screens. */}
+      {/* Trust bar: in flow underneath the copy at every width. It used to be
+          absolutely positioned at the bottom edge from lg, with the copy
+          column reserving room for it via padding — but the copy is sized in
+          vw, so from 1024px up it outgrew that reservation and the CTA buttons
+          sat ON the bar (measured: 80px of overlap at 1024, 4px at 1280+).
+          In flow it cannot overlap at any width, and since the copy is taller
+          than the section's min-height here, the bar still lands on the
+          bottom edge of the photo. */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.45 }}
-        className="relative z-10 pb-8 lg:absolute lg:inset-x-0 lg:bottom-8 lg:pb-0"
+        className="relative z-10 pb-8 lg:pb-10"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-10">
           <ul className="hero-bar grid grid-cols-1 divide-y divide-foreground/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
