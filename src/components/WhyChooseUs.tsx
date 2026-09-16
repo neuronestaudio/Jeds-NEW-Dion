@@ -168,25 +168,27 @@ export function WhyChooseUs() {
               decoding="async"
               className="aspect-[4/5] w-full object-cover sm:aspect-[3/4] lg:aspect-[4/5]"
             />
-            {/* Builds itself in once the card scrolls into view, then holds
-                on the settled mark — see .why-logo-video for why this stays
-                z-index-free (same mix-blend-mode trap as the hero's own
-                lockup: an ancestor stacking context would isolate the blend
-                and bring the clip's black plate back). */}
-            <span className="why-logo-video" aria-hidden="true">
-              <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
-              <video
-                ref={stingRef}
-                src="/hero-sting.mp4"
-                className={logoPlaying ? 'opacity-90' : 'opacity-0'}
-                onPlaying={() => setLogoPlaying(true)}
-                muted
-                playsInline
-                preload="auto"
-                tabIndex={-1}
-              />
-            </span>
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 pt-10 sm:p-5 sm:pt-12">
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/60 to-transparent p-4 pt-14 sm:p-5 sm:pt-20">
+              {/* The mark builds itself in once the card scrolls into view,
+                  centred directly above the pills so the air conditioner at
+                  the top of the photo stays clear. Inside the scrim rather
+                  than pinned by `bottom`, so it tracks the pill grid's height
+                  at every breakpoint, and the scrim darkens the sunlit wall
+                  behind it. See .why-logo-video for why nothing between it
+                  and the photo may create a stacking context. */}
+              <span className="why-logo-video" aria-hidden="true">
+                <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-90'} decoding="async" />
+                <video
+                  ref={stingRef}
+                  src="/hero-sting.mp4"
+                  className={logoPlaying ? 'opacity-90' : 'opacity-0'}
+                  onPlaying={() => setLogoPlaying(true)}
+                  muted
+                  playsInline
+                  preload="auto"
+                  tabIndex={-1}
+                />
+              </span>
               {/* A grid, not flex-wrap: content-driven widths made
                   "Manufacturer-Trained" and "Upfront Pricing" wildly
                   different sizes. Fixed columns give all eight the same
