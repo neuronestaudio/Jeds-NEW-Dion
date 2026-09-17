@@ -45,8 +45,14 @@ export function Footer() {
           <div className="col-span-2 lg:col-span-2">
             <img src={logoOnDark} alt="JED Air Conditioning" className="hidden h-10 w-auto opacity-90 dark:block sm:h-12 mb-4" />
             <img src={logoOnLight} alt="JED Air Conditioning" className="h-10 w-auto opacity-90 dark:hidden sm:h-12 mb-4" />
+            {/* Founded 2013. Stated as its own line as well as in the copy
+                below, because "how long have they been going" is the first
+                thing a new enquiry looks for in a footer. */}
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary sm:text-sm">
+              Serving Sydney since 2013
+            </p>
             <p className="text-muted-foreground text-sm sm:text-base mb-4 sm:mb-6 max-w-sm">
-              Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
+              Sydney's trusted air conditioning specialists since 2013. <strong>Daikin & Haier certified dealer</strong> and
               <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs
               for residential and commercial properties.
             </p>
@@ -165,7 +171,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} JED Air Conditioning. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} JED Air Conditioning. Established 2013. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a>
             <a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a>

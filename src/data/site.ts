@@ -44,6 +44,8 @@ export const businessJsonLd = {
   image: `${SITE.url}${SITE.ogImage}`,
   description:
     'Sydney air conditioning specialists. Daikin & Haier certified dealer providing professional installation, servicing and repairs across the North Shore, Eastern Suburbs and greater Sydney.',
+  // Trading since 2013; the footer states the same thing in words.
+  foundingDate: '2013',
   telephone: SITE.phoneE164,
   email: SITE.email,
   address: {
