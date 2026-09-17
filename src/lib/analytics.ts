@@ -10,10 +10,10 @@ declare global {
 let initialized = false;
 
 /**
- * Legacy loader. GA4 is now the inline Google tag in src/layouts/Base.astro,
- * which defines window.gtag before this module ever runs — so this returns
+ * Legacy loader. GA4 is loaded by the GTM container, and Base.astro defines a
+ * window.gtag that feeds it before this module ever runs — so this returns
  * early rather than loading a second GA4 tag. Kept only so a VITE_GA_ID set on
- * a future project without the inline tag still works.
+ * a future project without GTM still works.
  */
 export function initAnalytics() {
   const measurementId = import.meta.env.VITE_GA_ID as string | undefined;
@@ -37,7 +37,7 @@ export function initAnalytics() {
 
 /**
  * Every interaction event goes two ways:
- *   - gtag('event') for GA4, which is the Google tag in Base.astro;
+ *   - gtag('event') for GA4, whose Google tag GTM loads;
  *   - a plain { event } object on the dataLayer for Google Tag Manager, where
  *     the Google Ads and Meta tags are triggered.
  * These do not double count: gtag.js only acts on gtag() calls, and GTM only
