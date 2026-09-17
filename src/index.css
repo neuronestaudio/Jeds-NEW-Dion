@@ -768,7 +768,10 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 .q-faq-plus { display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 9999px; border: 1px solid hsl(var(--border)); transition: transform 0.25s ease; }
 .q-faq-item[open] .q-faq-plus { transform: rotate(45deg); }
 @media (min-width: 1024px) {
-  .q-faq-item summary { grid-template-columns: 17rem 1fr auto; }
+  /* 19rem, not 17: the questions now name the thing they are about
+     ("certified Daikin dealer and installer", "Daikin warranty dealer"), so
+     the column needs the extra line-length or every one wraps to three. */
+  .q-faq-item summary { grid-template-columns: 19rem 1fr auto; }
   .q-faq-a { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
   .q-faq-item[open] .q-faq-a { visibility: hidden; }
 }
