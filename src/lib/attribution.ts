@@ -132,7 +132,18 @@ function fromCurrentVisit(): Attribution {
 export function captureAttribution(): void {
   if (typeof window === 'undefined') return;
   const visit = fromCurrentVisit();
-  write(LAST_TOUCH_KEY, window.sessionStorage, visit);
+
+  // A click from one page of this site to the next is not a new touch. Without
+  // this test every ad visitor who reads a second page before enquiring would
+  // be recorded as "Google Ads -> Direct", because the second URL carries no
+  // campaign parameters and its referrer is our own domain.
+  const sameSite = visit.referrer.startsWith(window.location.origin);
+  const carriesSignal = Boolean(
+    visit.source || visit.medium || visit.gclid || visit.fbclid || visit.msclkid,
+  );
+  if (carriesSignal || (!sameSite && !read(LAST_TOUCH_KEY, window.sessionStorage))) {
+    write(LAST_TOUCH_KEY, window.sessionStorage, visit);
+  }
 
   const existing = read(FIRST_TOUCH_KEY, window.localStorage);
   if (existing && (existing.channel || existing.source || existing.landingPage)) return;
