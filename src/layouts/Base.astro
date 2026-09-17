@@ -29,13 +29,13 @@ const { title, description, path, ogTitle, ogDescription, jsonLd = [], noindex =
 const canonical = `${SITE.url}${path === '/' ? '/' : path}`;
 const ogImage = `${SITE.url}${SITE.ogImage}`;
 const blocks = [businessJsonLd, ...jsonLd];
-// All measurement lives INSIDE this GTM container: GA4 (G-LGYXE9YMM0, as the
-// container's Google tag), Google Ads (AW-18437096759) and the Meta pixel.
-// The site only reports events. Do not add a gtag.js <script> or set
-// VITE_GA_ID — GA4 was briefly installed both here and in GTM on 17 Sep 2026
-// and loaded twice; the Google tag happened to ignore the duplicate config,
-// but that is not something to rely on.
+// Measurement split, decided 17 Sep 2026:
+//   - GA4 is the Google tag below, in code, on every page.
+//   - Google Ads and the Meta pixel live INSIDE the GTM container.
+// So GA4 must never ALSO be added as a tag in GTM, and VITE_GA_ID must stay
+// unset — either would load a second GA4 tag and count every page twice.
 const GTM_ID = 'GTM-TT3Z4DNB';
+const GA4_ID = 'G-LGYXE9YMM0';
 ---
 
 <!doctype html>
@@ -69,16 +69,16 @@ const GTM_ID = 'GTM-TT3Z4DNB';
       })(window, document, 'script', 'dataLayer', GTM_ID);
     </script>
     <!-- End Google Tag Manager -->
-    <!-- gtag() for the site's own events. No library load and no config here:
-         GTM loads the GA4 Google tag, which reads these calls off the
-         dataLayer (measured: cta_click and generate_lead arrive in GA4). -->
-    <script is:inline>
+    <!-- Google tag (gtag.js) — GA4 -->
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
+    <script is:inline define:vars={{ GA4_ID }}>
       window.dataLayer = window.dataLayer || [];
-      window.gtag =
-        window.gtag ||
-        function () {
-          window.dataLayer.push(arguments);
-        };
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', GA4_ID);
     </script>
     <title>{title}</title>
     <meta name="description" content={description} />
