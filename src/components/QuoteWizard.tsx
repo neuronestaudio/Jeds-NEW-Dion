@@ -674,11 +674,13 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                       onBlur={() => {
                         if (formData.phone.trim() && !normaliseAuPhone(formData.phone)) setPhoneError(PHONE_ERROR);
                       }}
-                      className={`${inputClass}${phoneError ? ' border-red-500 focus-visible:ring-red-500/40' : ''}`}
+                      className={`${inputClass}${phoneError ? ' !border-red-400 ring-2 ring-red-400/60' : ''}`}
                       placeholder="0400 000 000"
                     />
                     {phoneError && (
-                      <p id={`${source}-phone-error`} role="alert" className="mt-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+                      // Light red: the form always sits on the navy quote card,
+                      // where the usual red-600 all but disappears.
+                      <p id={`${source}-phone-error`} role="alert" className="mt-1.5 text-sm font-semibold text-red-300">
                         {phoneError}
                       </p>
                     )}
