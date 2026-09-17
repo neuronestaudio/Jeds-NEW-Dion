@@ -25,6 +25,10 @@
  *   4. In the background, names the opportunity the workflow just created and
  *      assigns it, since it is created unnamed with a $1 value.
  *
+ * It also refuses to process the same phone number twice inside 30 seconds, so
+ * a double tap, a refresh or a network retry cannot produce a second contact,
+ * a second opportunity or a second alert text.
+ *
  * It never throws a 5xx at the browser for a GHL failure: the client falls back
  * to posting the webhook itself (see src/lib/ghl.ts), so a bad token or a GHL
  * outage degrades to exactly the behaviour the site had before this existed.
@@ -53,6 +57,9 @@ const WEBHOOK_URL =
   'https://services.leadconnectorhq.com/hooks/9xaMmBgvB2Brx7l670cB/webhook-trigger/469c88fa-a552-41f9-be5e-398e6cb92045';
 
 type Json = Record<string, unknown>;
+
+/** Repeat submissions from the same number inside this window are ignored. */
+const DUPLICATE_WINDOW_MS = 30_000;
 
 function ghl(path: string, method: string, body?: Json) {
   return fetch(API + path, {
@@ -113,12 +120,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const serviceType = str(lead.serviceType);
   const urgencyLabel = str(lead.urgencyLabel) || str(lead.urgency);
   const source = str(lead.source) || 'website';
+  // "Google Ads" on its own, or "Google Ads -> Direct" when they first arrived
+  // on an ad and came back another way to enquire.
+  const firstChannel = str(lead.attr_channel);
+  const lastChannel = str(lead.attr_last_channel);
+  const channel =
+    firstChannel && lastChannel && firstChannel !== lastChannel
+      ? `${firstChannel} -> ${lastChannel}`
+      : firstChannel || lastChannel;
   // The workflow reads this key for the contact's name; the browser sends it
   // too, so the fallback path names the contact even when this handler is not
   // reached. Keeping it here means the forward below carries it either way.
   const forwarded: Json = { ...lead, full_name: name || `${firstName} ${lastName}`.trim() };
 
   const result: Json = { ok: true, contactId: null, mapped: false, forwarded: false, alerted: false };
+
+  // ---- 0. the 30-second guard ------------------------------------------
+  // A double tap, a refresh, a flaky-network retry or a second device would
+  // otherwise each produce a contact update, an opportunity and an alert text.
+  // If this person already came through within the window, acknowledge and
+  // stop. `forwarded: true` is deliberate: it tells the browser not to fall
+  // back to posting the webhook itself, which would undo the guard.
+  if (TOKEN && phone) {
+    try {
+      const look = await ghl(
+        `/contacts/?locationId=${LOCATION_ID}&query=${encodeURIComponent(phone)}`,
+        'GET',
+      );
+      const existing = (((await look.json().catch(() => ({}))) as Json).contacts as Json[] | undefined) || [];
+      const recent = existing.find((c) => {
+        const seen = Date.parse(str(c.dateUpdated) || str(c.dateAdded));
+        return Number.isFinite(seen) && Date.now() - seen < DUPLICATE_WINDOW_MS;
+      });
+      if (recent) {
+        res.status(200).json({ ...result, contactId: str(recent.id), duplicate: true, forwarded: true });
+        return;
+      }
+    } catch {
+      // A failed lookup must never block a real lead; fall through and write.
+    }
+  }
 
   // ---- 1. the contact, fully mapped -------------------------------------
   let contactId = '';
@@ -133,6 +174,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         ['submitted_at', str(lead.submittedAt) || new Date().toISOString()],
         ['likely_bot', lead.likelyBot ? 'Yes' : 'No'],
         ['address_verified', lead.addressVerified ? 'Yes' : 'No'],
+        // Attribution, captured on the visitor's first page (src/lib/
+        // attribution.ts). The channel carries the current visit's channel too
+        // when it differs, so "Google Ads -> Direct" is visible on one line
+        // rather than needing two fields to compare.
+        ['attr_channel', channel],
+        ['attr_source', str(lead.attr_source)],
+        ['attr_medium', str(lead.attr_medium)],
+        ['attr_campaign', str(lead.attr_campaign)],
+        ['attr_term', str(lead.attr_term)],
+        ['attr_content', str(lead.attr_content)],
+        ['attr_gclid', str(lead.attr_gclid)],
+        ['attr_fbclid', str(lead.attr_fbclid)],
+        ['attr_msclkid', str(lead.attr_msclkid)],
+        ['attr_referrer', str(lead.attr_referrer)],
+        ['attr_landing_page', str(lead.attr_landing_page)],
+        ['attr_first_seen', str(lead.attr_first_seen)],
       ]
         .filter(([, value]) => value !== '')
         .map(([key, field_value]) => ({ key, field_value }));
@@ -150,7 +207,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         postalCode: str(lead.postal_code) || str(lead.postalCode),
         country: str(lead.country) || 'AU',
         source,
-        tags: ['website-lead', source].filter(Boolean),
+        tags: ['website-lead', source, channel ? `src:${channel}` : ''].filter(Boolean),
         ...(OWNER_USER_ID ? { assignedTo: OWNER_USER_ID } : {}),
         customFields,
       });
@@ -185,6 +242,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       phone,
       [serviceType, urgencyLabel].filter(Boolean).join(' • '),
       suburb ? `Suburb: ${suburb}` : '',
+      channel ? `Source: ${channel}` : '',
       str(lead.message) ? `"${str(lead.message).slice(0, 140)}"` : '',
       'Open LeadConnector to reply.',
     ].filter(Boolean);

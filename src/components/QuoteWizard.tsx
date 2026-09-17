@@ -97,7 +97,12 @@ const URGENCIES = [
 
 const STEP_LABELS = ['Service', 'Timing', 'Details'];
 const TOTAL_STEPS = 3;
-const SUBMIT_LOCK_MS = 10_000;
+// 30s, matching the server-side guard in api/lead.ts. Two layers on
+// purpose: this one stops the button being pressed again, and the handler
+// stops a retry that never touched this tab — a refresh, a flaky network
+// retry, a second device — from producing a second contact, a second
+// opportunity and a second alert text.
+const SUBMIT_LOCK_MS = 30_000;
 const REDIRECT_DELAY_MS = 250;
 
 type Props = {

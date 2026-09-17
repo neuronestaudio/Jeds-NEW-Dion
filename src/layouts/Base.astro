@@ -157,7 +157,12 @@ const blocks = [businessJsonLd, ...jsonLd];
 
     <script>
       import { initAnalytics } from '@/lib/analytics';
+      import { captureAttribution } from '@/lib/attribution';
       initAnalytics();
+      // Runs on every page so the FIRST page a visitor lands on is the one
+      // recorded against them, campaign and click id included, however many
+      // pages later they enquire.
+      captureAttribution();
     </script>
     <!-- The GHL chat widget (LeadConnector, widget 699c4853247354e9d8535b39) was
          removed 13 Sep 2026 — it sat over the hero trust bar and the phone CTA

@@ -63,6 +63,8 @@ export function normaliseAuPhone(input: string): string | null {
   return /^\+61[23478]\d{8}$/.test(candidate) ? candidate : null;
 }
 
+import { attributionPayload } from './attribution';
+
 export type LeadInput = {
   name: string;
   phone: string;
@@ -136,6 +138,9 @@ export function buildGhlPayload(lead: LeadInput): Record<string, unknown> {
     // the browser, so a fast real visitor is never silently discarded.
     likelyBot: typeof lead.formFillMs === 'number' && lead.formFillMs < MIN_HUMAN_FILL_MS,
     submittedAt: new Date().toISOString(),
+    // Where this person came from: campaign, keyword, click ids, referrer and
+    // landing page, captured on their FIRST visit. See src/lib/attribution.ts.
+    ...attributionPayload(),
   };
 }
 
