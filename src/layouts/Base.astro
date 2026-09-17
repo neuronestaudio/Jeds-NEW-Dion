@@ -34,6 +34,12 @@ const blocks = [businessJsonLd, ...jsonLd];
 //   - Google Ads and the Meta pixel live INSIDE the GTM container.
 // So GA4 must never ALSO be added as a tag in GTM, and VITE_GA_ID must stay
 // unset — either would load a second GA4 tag and count every page twice.
+//
+// Do not mistake a second request for a second install: gtag.js fetches its
+// own configuration as `gtag/js?id=G-LGYXE9YMM0&cx=c&gtm=...`, so the network
+// panel and the DOM always show two gtag/js entries for ONE tag. That was read
+// as GTM double-loading GA4 once, the tag was removed, and GA4 stopped
+// receiving anything at all until it was put back.
 const GTM_ID = 'GTM-TT3Z4DNB';
 const GA4_ID = 'G-LGYXE9YMM0';
 ---
