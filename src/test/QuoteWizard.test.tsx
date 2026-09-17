@@ -43,8 +43,19 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-/** Bodies POSTed to the GHL webhook. */
+/**
+ * Bodies the wizard sent, wherever they went. The lead goes to our own handler
+ * (/api/lead) first, which maps every field and forwards to GHL itself; the
+ * webhook is the fallback when that handler is unreachable. A test that only
+ * watched the webhook would see nothing on the normal path.
+ */
 const quotePayloads = () =>
+  fetchMock.mock.calls
+    .filter((c) => String(c[0]) === GHL_HOOK || String(c[0]) === '/api/lead')
+    .map((c) => JSON.parse(String(c[1].body)));
+
+/** Bodies that reached the GHL webhook directly, i.e. the fallback path. */
+const webhookPayloads = () =>
   fetchMock.mock.calls
     .filter((c) => String(c[0]) === GHL_HOOK)
     .map((c) => JSON.parse(String(c[1].body)));
@@ -123,8 +134,34 @@ describe('QuoteWizard', () => {
     expect(payload.email).toBe('dion@example.com');
     expect(payload.address).toBe('1 Martin Place, Sydney');
     expect(payload.source).toBe('hero-inline');
-    // Normalised in the browser now that no server sits in front of GHL.
+    // Normalised in the browser, so GHL cannot split one person into two
+    // contacts on formatting alone.
     expect(payload.phone).toBe('+61434308070');
+    // The GHL workflow reads the contact's name from this key, not `name`.
+    expect(payload.full_name).toBe('Dion Test');
+  });
+
+  it('falls back to the GHL webhook when the lead handler is unreachable', async () => {
+    const user = userEvent.setup();
+    fetchMock.mockImplementation((url: unknown) =>
+      String(url) === '/api/lead'
+        ? Promise.reject(new Error('not deployed'))
+        : jsonResponse({ status: 'Success' }),
+    );
+
+    render(<QuoteWizard source="test" />);
+    await user.click(screen.getByText('Repair / Breakdown'));
+    await user.click(await screen.findByText('ASAP / Today if possible'));
+    await user.type(await screen.findByLabelText(/Your Name/), 'Dion Test');
+    await user.type(screen.getByLabelText(/Phone Number/), '0434308070');
+    await user.type(screen.getByLabelText(/Email Address/), 'dion@example.com');
+    await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
+    await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
+
+    // The lead still reaches GHL, by the route the site used before the
+    // handler existed.
+    await waitFor(() => expect(webhookPayloads().length).toBe(1));
+    expect(webhookPayloads()[0].name).toBe('Dion Test');
   });
 
   it('blocks an invalid phone number before it can reach GHL', async () => {
@@ -198,8 +235,10 @@ describe('QuoteWizard', () => {
     await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
     await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
 
-    // The details step must remain so the entered data is not lost on failure.
-    await waitFor(() => expect(quotePayloads().length).toBe(1));
+    // Both routes are tried — the handler first, then the webhook — and both
+    // refuse it here. The details step must remain so the entered data is not
+    // lost on failure.
+    await waitFor(() => expect(webhookPayloads().length).toBe(1));
     expect(screen.getByLabelText(/Your Name/)).toHaveValue('Dion Test');
   });
 });

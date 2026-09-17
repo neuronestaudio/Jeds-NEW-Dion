@@ -114,6 +114,11 @@ export function buildGhlPayload(lead: LeadInput): Record<string, unknown> {
 
   return {
     name: lead.name.trim(),
+    // The GHL workflow's Update Contact action reads the contact's name from
+    // `full_name` — measured, 17 Sep 2026. Without this key the contact is
+    // created with no name at all and the auto-reply to the customer opens
+    // with "Hey !". Sending both costs nothing and covers either mapping.
+    full_name: lead.name.trim(),
     // Fall back to the raw input rather than dropping the number entirely; the
     // form validates before calling this, so a failure here is worth seeing.
     phone: normaliseAuPhone(lead.phone) || lead.phone.trim(),
@@ -175,6 +180,33 @@ export async function submitLeadToGhl(lead: LeadInput): Promise<Record<string, u
   if (!webhookUrl) throw new GhlNotConfiguredError();
 
   const payload = buildGhlPayload(lead);
+
+  // Preferred path: our own handler (api/lead.ts) writes the contact with every
+  // field mapped, the owner assigned and the custom fields filled, then hands
+  // the same payload to this webhook itself. The workflow alone maps only four
+  // fields, so this is what makes a lead arrive complete.
+  //
+  // Anything other than a clean 200 falls through to posting the webhook
+  // directly below — the behaviour the site had before the handler existed —
+  // so a missing token or a GHL outage can never cost a lead. The local capture
+  // server used in dev is not that handler, so it keeps the direct path.
+  if (!configured || !/localhost|127\.0\.0\.1/.test(configured)) {
+    try {
+      const viaServer = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (viaServer.ok) {
+        const body = (await viaServer.json().catch(() => ({}))) as { forwarded?: boolean };
+        // The handler forwards to the webhook itself; only fall through if it
+        // could not.
+        if (body.forwarded !== false) return payload;
+      }
+    } catch {
+      // network error, or the handler is not deployed yet — use the webhook.
+    }
+  }
 
   const resp = await fetch(webhookUrl, {
     method: 'POST',
