@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { pushDataLayerEvent, trackEvent } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 import { LAST_QUOTE_KEY, type LastQuote } from '@/lib/lastQuote';
 import AddressAutocomplete from './AddressAutocomplete';
 import {
@@ -295,7 +295,10 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
         address_verified: Boolean(addressDetails),
         suburb: addressDetails?.suburb || 'unknown',
       });
-      pushDataLayerEvent('generate_lead', {
+      // GA4's recommended lead event, so it can be marked as a key event in GA4
+      // and used as the Google Ads / Meta conversion trigger in GTM. trackEvent
+      // sends it to both; the old dataLayer-only push never reached GA4.
+      trackEvent('generate_lead', {
         source,
         service_type: formData.serviceType || 'unknown',
         urgency: formData.urgency || 'unknown',

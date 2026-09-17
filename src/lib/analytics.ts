@@ -9,9 +9,16 @@ declare global {
 
 let initialized = false;
 
+/**
+ * Legacy loader. GA4 is now the inline Google tag in src/layouts/Base.astro,
+ * which defines window.gtag before this module ever runs — so this returns
+ * early rather than loading a second GA4 tag. Kept only so a VITE_GA_ID set on
+ * a future project without the inline tag still works.
+ */
 export function initAnalytics() {
   const measurementId = import.meta.env.VITE_GA_ID as string | undefined;
-  if (!measurementId || typeof window === 'undefined' || initialized) return;
+  if (typeof window === 'undefined' || window.gtag) return;
+  if (!measurementId || initialized) return;
   initialized = true;
 
   window.dataLayer = window.dataLayer || [];
@@ -29,16 +36,21 @@ export function initAnalytics() {
 }
 
 /**
- * Every interaction event goes to the dataLayer, where Google Tag Manager
- * picks it up. Until GTM was installed this only called gtag, which only exists
- * when VITE_GA_ID is set — it never was, so every CTA click, quote step and
- * submit was silently dropped. The direct gtag call stays for that setup.
+ * Every interaction event goes two ways:
+ *   - gtag('event') for GA4, which is the Google tag in Base.astro;
+ *   - a plain { event } object on the dataLayer for Google Tag Manager, where
+ *     the Google Ads and Meta tags are triggered.
+ * These do not double count: gtag.js only acts on gtag() calls, and GTM only
+ * fires tags someone has configured for that event name.
+ *
+ * Until GTM went in this only called gtag, which never existed on this site,
+ * so every CTA click, quote step and submit had been silently dropped.
  */
 export function trackEvent(action: string, params: AnalyticsParams = {}) {
   if (typeof window === 'undefined') return;
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ event: action, ...params });
-  if (window.gtag && import.meta.env.VITE_GA_ID) window.gtag('event', action, params);
+  if (window.gtag) window.gtag('event', action, params);
 }
 
 export function pushDataLayerEvent(event: string, params: AnalyticsParams = {}) {
