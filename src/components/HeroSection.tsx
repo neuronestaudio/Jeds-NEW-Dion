@@ -74,6 +74,11 @@ export function HeroSection({ variant = 'a' }: Props) {
    */
   const stingRef = useRef<HTMLVideoElement>(null);
   const [lockupPlaying, setLockupPlaying] = useState(false);
+  // True once the clip has finished building the mark, which is when the
+  // sheen below can line up with it. A refused autoplay never fires
+  // `ended`, so the still simply holds with no sheen — same as reduced
+  // motion, where the clip never starts.
+  const [lockupSettled, setLockupSettled] = useState(false);
   const [headline, setHeadline] = useState(0);
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
@@ -88,21 +93,32 @@ export function HeroSection({ variant = 'a' }: Props) {
     return () => window.clearInterval(id);
   }, []);
 
-  // opacity-70, not 100: "70% solid, 30% transparent" by request. See the note on
-  // .hero-lockup in index.css for why it is on these and not the wrapper.
+  // opacity-50, not 100: "50% shadow" by request. See the note on .hero-lockup
+  // in index.css for why it is on these and not the wrapper.
+  //
+  // The sheen is a separate layer OUTSIDE .hero-lockup, not a child of it: the
+  // lockup carries a filter and a blend mode that key the clip's black plate
+  // away, and anything inside would be keyed with it. It is masked to the
+  // settled mark's own shape, so it only appears once the clip has finished
+  // building that shape — during the build the mark is still moving and the
+  // mask would not line up with it.
   const lockup = (
-    <span className="hero-lockup block" aria-hidden="true">
-      <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-70'} decoding="async" />
-      <video
-        ref={stingRef}
-        src="/hero-sting.mp4"
-        className={lockupPlaying ? 'opacity-70' : 'opacity-0'}
-        onPlaying={() => setLockupPlaying(true)}
-        muted
-        playsInline
-        preload="auto"
-        tabIndex={-1}
-      />
+    <span className="hero-lockup-wrap block" aria-hidden="true">
+      <span className="hero-lockup">
+        <img src={lockupStill} alt="" className={lockupPlaying ? 'opacity-0' : 'opacity-50'} decoding="async" />
+        <video
+          ref={stingRef}
+          src="/hero-sting.mp4"
+          className={lockupPlaying ? 'opacity-50' : 'opacity-0'}
+          onPlaying={() => setLockupPlaying(true)}
+          onEnded={() => setLockupSettled(true)}
+          muted
+          playsInline
+          preload="auto"
+          tabIndex={-1}
+        />
+      </span>
+      <span className="hero-lockup-sheen" data-on={lockupSettled || undefined} />
     </span>
   );
 
@@ -279,14 +295,15 @@ export function HeroSection({ variant = 'a' }: Props) {
               to be there — the couch, the light wall — and lost contrast
               wherever that was bright, in both themes. A frosted panel gives
               it a consistent, legible surface regardless of what's behind.
-              Fill is 40% by request (was 80%), so the room reads through it;
-              the blur and full-strength text colour carry the legibility the
-              fill no longer does. */}
+              Fill is 55%: 40% read as bare, so another 15% of page colour
+              went back in. The flat hairline border is gone in favour of the
+              gradient outline in .hero-copy-panel, and the blur plus
+              full-strength text colour carry the legibility. */}
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mb-8 inline-block max-w-xl rounded-xl border border-foreground/10 bg-background/40 px-4 py-3 text-base text-foreground shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
+            className="hero-copy-panel mb-8 inline-block max-w-xl rounded-xl bg-background/55 px-4 py-3 text-base text-foreground shadow-[0_6px_24px_hsl(var(--foreground)/0.1)] backdrop-blur-md sm:px-5 sm:py-4 sm:text-lg md:text-xl"
           >
             Authorised Daikin & Haier ducted and split system air conditioning installation,
             servicing and repairs for homes, apartments and commercial spaces across Sydney.

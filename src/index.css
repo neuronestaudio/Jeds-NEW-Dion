@@ -904,13 +904,58 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
      centring below: `margin-inline: auto` does nothing for a child wider
      than its parent, and a transform would isolate the blend and bring the
      clip's black plate back as a box. */
-  --lockup-w: min(122.6vw, 613px);
-  width: var(--lockup-w); aspect-ratio: 1102 / 360;
-  margin-inline: calc((100% - var(--lockup-w)) / 2);
-  margin-bottom: 0.4rem;
+  width: 100%; aspect-ratio: 1102 / 360;
   pointer-events: none;
   filter: invert(1) contrast(1.06);
   mix-blend-mode: multiply;
+}
+/* The box the clip and the sheen share. Sizing and centring live here rather
+   than on .hero-lockup so the sheen can sit OUTSIDE the blended, filtered
+   element and still line up with it exactly. Plain position: relative with no
+   z-index, opacity, transform or filter — any of those would make this a
+   stacking context and trap the blend below. */
+.hero-lockup-wrap {
+  position: relative;
+  --lockup-w: min(122.6vw, 613px);
+  width: var(--lockup-w);
+  margin-inline: calc((100% - var(--lockup-w)) / 2);
+  margin-bottom: 0.4rem;
+  pointer-events: none;
+}
+/* A light moving through the mark: a band that travels across the letters,
+   masked to the settled logo's own shape (public/textures/lockup-mask.png,
+   built from the clip's final frame) so it fills the glyphs and nothing else.
+   It fades in only once the clip has finished, since the mask is the FINAL
+   shape and the mark is still moving before that. */
+.hero-lockup-sheen {
+  position: absolute; inset: 0; pointer-events: none;
+  opacity: 0; transition: opacity 0.8s ease;
+  -webkit-mask: url('/textures/lockup-mask.png') center / 100% 100% no-repeat;
+  mask: url('/textures/lockup-mask.png') center / 100% 100% no-repeat;
+  background-image: linear-gradient(100deg,
+    transparent 18%,
+    hsl(0 0% 100% / 0.5) 33%,
+    hsl(197 85% 72% / 0.62) 42%,
+    hsl(0 0% 100% / 0.42) 51%,
+    transparent 68%);
+  background-size: 240% 100%;
+  background-repeat: repeat-x;
+  animation: lockup-sheen 7s linear infinite;
+}
+.hero-lockup-sheen[data-on] { opacity: 1; }
+/* On dark the mark is already white, so a white band does nothing — the
+   travelling light is the accent instead. */
+.dark .hero-lockup-sheen {
+  background-image: linear-gradient(100deg,
+    transparent 18%,
+    hsl(197 85% 60% / 0.55) 33%,
+    hsl(197 90% 70% / 0.7) 42%,
+    hsl(220 40% 20% / 0.45) 51%,
+    transparent 68%);
+}
+@keyframes lockup-sheen {
+  from { background-position: 120% 50%; }
+  to { background-position: -120% 50%; }
 }
 .dark .hero-lockup { filter: contrast(1.06); mix-blend-mode: screen; }
 /* 90% solid by request. That opacity lives on the CHILDREN (see the
@@ -927,7 +972,7 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    12.4% of transparent margin on its left, so the box is pulled left by that
    much rather than sitting indented. Variant A stays centred at every width. */
 @media (min-width: 1024px) {
-  [data-hero="b"] .hero-lockup {
+  [data-hero="b"] .hero-lockup-wrap {
     margin-inline: calc(var(--lockup-w) * -0.124) 0;
   }
 }
@@ -936,8 +981,8 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    than a small mark above the headline — the "make the logo the forefront"
    request, once the crossfade card that used to occupy this space was
    dropped. Still capped in px so it doesn't run away on ultrawide screens. */
-@media (min-width: 640px) { .hero-lockup { --lockup-w: min(106.6vw, 853px); margin-bottom: 0.6rem; } }
-@media (min-width: 1024px) { .hero-lockup { --lockup-w: min(77.3vw, 1146px); } }
+@media (min-width: 640px) { .hero-lockup-wrap { --lockup-w: min(106.6vw, 853px); margin-bottom: 0.6rem; } }
+@media (min-width: 1024px) { .hero-lockup-wrap { --lockup-w: min(77.3vw, 1146px); } }
 
 /* Two-line eyebrow above the lockup. The text is white in both themes by
    request, and the room photo behind it is near-white wall and a white indoor
@@ -948,8 +993,48 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 .hero-eyebrow::before {
   content: "";
   position: absolute; inset: -0.5rem -1.5rem; z-index: -1;
-  background: radial-gradient(62% 120% at 50% 50%, hsl(220 30% 6% / 0.55), hsl(220 30% 6% / 0.24) 58%, transparent 78%);
   pointer-events: none;
+  /* Two layers: the cloud that makes white type readable on a white wall, and
+     a darker gust travelling across it left to right, so the shading reads as
+     moving air behind the words rather than a static smudge. Only the gust's
+     position animates; the cloud is pinned. */
+  background-image:
+    linear-gradient(100deg,
+      transparent 0%,
+      hsl(220 35% 4% / 0.42) 26%,
+      hsl(197 60% 30% / 0.32) 38%,
+      hsl(220 35% 4% / 0.45) 50%,
+      transparent 76%),
+    radial-gradient(62% 120% at 50% 50%, hsl(220 30% 6% / 0.55), hsl(220 30% 6% / 0.24) 58%, transparent 78%);
+  background-size: 210% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: 130% 50%, 50% 50%;
+  animation: hero-eyebrow-gust 8s linear infinite;
+}
+@keyframes hero-eyebrow-gust {
+  from { background-position: 130% 50%, 50% 50%; }
+  to { background-position: -130% 50%, 50% 50%; }
+}
+
+/* The paragraph panel's outline. A flat 10% hairline read as bare once the
+   fill came down, so the ring is a gradient — accent at the top-left corner,
+   page ink through the middle, accent again at the bottom-right. Drawn as a
+   masked pseudo-element rather than a border-image: only the 1px ring shows,
+   and the panel's own translucent fill stays untouched underneath. */
+.hero-copy-panel { position: relative; }
+.hero-copy-panel::after {
+  content: "";
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+  pointer-events: none;
+  background: linear-gradient(135deg,
+    hsl(var(--primary) / 0.75) 0%,
+    hsl(var(--foreground) / 0.22) 42%,
+    hsl(var(--foreground) / 0.12) 58%,
+    hsl(var(--primary) / 0.6) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 /* Rotating headline under the lockup. Every phrase is written as exactly two
@@ -1045,6 +1130,8 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (prefers-reduced-motion: reduce) {
   .hero-headline-primary,
   .hero-headline-accent { animation: none; background-position: 0% 50%; }
+  .hero-eyebrow::before { animation: none; background-position: 50% 50%, 50% 50%; }
+  .hero-lockup-sheen { animation: none; opacity: 0; }
 }
 
 /* =========================================================================
