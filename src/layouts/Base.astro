@@ -29,6 +29,10 @@ const { title, description, path, ogTitle, ogDescription, jsonLd = [], noindex =
 const canonical = `${SITE.url}${path === '/' ? '/' : path}`;
 const ogImage = `${SITE.url}${SITE.ogImage}`;
 const blocks = [businessJsonLd, ...jsonLd];
+// Google Tag Manager container. GA4, Google Ads and the Meta pixel are all
+// configured INSIDE this container, not in code — so VITE_GA_ID must stay
+// unset, or GA4 would count every page twice.
+const GTM_ID = 'GTM-TT3Z4DNB';
 ---
 
 <!doctype html>
@@ -48,6 +52,20 @@ const blocks = [businessJsonLd, ...jsonLd];
         } catch (e) {}
       })();
     </script>
+    <!-- Google Tag Manager -->
+    <script is:inline define:vars={{ GTM_ID }}>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', GTM_ID);
+    </script>
+    <!-- End Google Tag Manager -->
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -77,11 +95,15 @@ const blocks = [businessJsonLd, ...jsonLd];
     <slot name="head" />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`} height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!--
       Entrance splash: carbon-mesh + brushed-metal backdrop, the header's own
       logo fading and scaling up to rest at 50% opacity over it. Shows once
-      per browser session (not once per page — sessionStorage, not per-route)
-      and only when motion is not reduced. Plain HTML/CSS/JS rather than a
+      per browser session (not once per page — sessionStorage, not per-route),
+      only when motion is not reduced, and only for a plain homepage arrival —
+      never on the way to the quote form (see the script below). Plain HTML/CSS/JS rather than a
       hydrated island: it has to exist and be dismissable before React ever
       hydrates, the same reason the theme switch above is an inline script.
     -->
@@ -108,8 +130,27 @@ const blocks = [businessJsonLd, ...jsonLd];
         } catch (e) {
           shown = null; // private mode etc. — fail open, just don't persist
         }
-        if (shown || reduce) {
+        // Never between a visitor and the quote form. The splash is a welcome
+        // for someone arriving on the homepage with no particular intent; it
+        // is friction for everyone else, so it is skipped — and marked as
+        // already shown, so it cannot ambush them later in the visit — when
+        // they arrive:
+        //   - on any page other than the homepage (e.g. /contact from "Get a
+        //     Quote", or an ad pointing at a service page),
+        //   - headed for the form (#quote),
+        //   - from an ad or tracked link (click id or utm_* parameter), or
+        //   - from another page of this site, e.g. "Get a Quote" opened in a
+        //     new tab, which starts a fresh session.
+        var path = location.pathname.replace(/\/$/, '') || '/';
+        var onHome = path === '/' || path === '/b';
+        var toForm = /quote/i.test(location.hash);
+        var fromCampaign = /[?&](gclid|gbraid|wbraid|fbclid|msclkid|utm_[a-z]+)=/i.test(location.search);
+        var internal = !!document.referrer && document.referrer.indexOf(location.origin) === 0;
+        if (shown || reduce || !onHome || toForm || fromCampaign || internal) {
           el.remove();
+          try {
+            sessionStorage.setItem(KEY, '1');
+          } catch (e) {}
           return;
         }
         try {

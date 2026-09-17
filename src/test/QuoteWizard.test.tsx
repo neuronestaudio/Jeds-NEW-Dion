@@ -178,6 +178,28 @@ describe('QuoteWizard', () => {
 
     // GHL would happily accept this and create a contact nobody can call.
     expect(quotePayloads()).toHaveLength(0);
+    // And the visitor is told, next to the field, not in a passing toast.
+    expect(await screen.findByRole('alert')).toHaveTextContent('Please ensure you enter the correct number.');
+    expect(screen.getByLabelText(/Phone Number/)).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('asks for the number when the phone field is left empty', async () => {
+    const user = userEvent.setup();
+    render(<QuoteWizard source="test" />);
+
+    await user.click(screen.getByText('Repair / Breakdown'));
+    await user.click(await screen.findByText('ASAP / Today if possible'));
+    await user.type(await screen.findByLabelText(/Your Name/), 'Dion Test');
+    await user.type(screen.getByLabelText(/Email Address/), 'dion@example.com');
+    await user.type(screen.getByLabelText(/Site Address/), '1 Martin Place, Sydney');
+    await user.click(screen.getByRole('button', { name: /Get My Free Quote/i }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Please ensure you enter the correct number.');
+    expect(quotePayloads()).toHaveLength(0);
+
+    // Fixing it clears the message straight away.
+    await user.type(screen.getByLabelText(/Phone Number/), '0434308070');
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('shows a thank-you confirmation and temporary lock after successful submission', async () => {

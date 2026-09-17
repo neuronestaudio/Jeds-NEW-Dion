@@ -28,9 +28,17 @@ export function initAnalytics() {
   window.gtag('config', measurementId, { anonymize_ip: true });
 }
 
+/**
+ * Every interaction event goes to the dataLayer, where Google Tag Manager
+ * picks it up. Until GTM was installed this only called gtag, which only exists
+ * when VITE_GA_ID is set — it never was, so every CTA click, quote step and
+ * submit was silently dropped. The direct gtag call stays for that setup.
+ */
 export function trackEvent(action: string, params: AnalyticsParams = {}) {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  window.gtag('event', action, params);
+  if (typeof window === 'undefined') return;
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: action, ...params });
+  if (window.gtag && import.meta.env.VITE_GA_ID) window.gtag('event', action, params);
 }
 
 export function pushDataLayerEvent(event: string, params: AnalyticsParams = {}) {

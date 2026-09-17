@@ -104,6 +104,7 @@ const TOTAL_STEPS = 3;
 // opportunity and a second alert text.
 const SUBMIT_LOCK_MS = 30_000;
 const REDIRECT_DELAY_MS = 250;
+const PHONE_ERROR = 'Please ensure you enter the correct number.';
 
 type Props = {
   /** Distinguishes hero vs page form in GA4 and in the GHL payload. */
@@ -139,6 +140,12 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** Used to spot bots. Nothing human taps two cards and types four fields in seconds. */
   const mountedAt = useRef(Date.now());
+  // Shown under the phone field itself. It used to be the browser's own
+  // "fill out this field" bubble when empty and a toast in the corner when
+  // malformed — both easy to miss, especially on a phone, where the form
+  // simply appeared not to work.
+  const [phoneError, setPhoneError] = useState('');
+  const phoneRef = useRef<HTMLInputElement>(null);
   const unlockTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lockTicker = useRef<ReturnType<typeof setInterval> | null>(null);
   const lockStorageKey = `quote-submit-lock-until:${source}`;
@@ -232,10 +239,8 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
     // accept a malformed number and create a contact nobody can call, so this
     // has to be caught here now that nothing sits in front of the webhook.
     if (!normaliseAuPhone(formData.phone)) {
-      toast({
-        title: 'Check your phone number',
-        description: 'Please enter a valid Australian mobile or landline.',
-      });
+      setPhoneError(PHONE_ERROR);
+      phoneRef.current?.focus();
       return;
     }
 
@@ -645,16 +650,38 @@ export function QuoteWizard({ source, compact = false, heading, subheading }: Pr
                     <label htmlFor={`${source}-phone`} className={labelClass}>
                       Phone Number *
                     </label>
+                    {/* No `required`: the browser's native bubble would fire
+                        before our handler and the message below would never
+                        show for an empty field. The check lives in
+                        handleSubmit instead, for empty and malformed alike. */}
                     <input
+                      ref={phoneRef}
                       type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
                       id={`${source}-phone`}
-                      required
+                      aria-required="true"
+                      aria-invalid={phoneError ? true : undefined}
+                      aria-describedby={phoneError ? `${source}-phone-error` : undefined}
                       maxLength={20}
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className={inputClass}
+                      onChange={(e) => {
+                        const phone = e.target.value;
+                        setFormData({ ...formData, phone });
+                        // Clear as soon as it is right, not on the next submit.
+                        if (phoneError && normaliseAuPhone(phone)) setPhoneError('');
+                      }}
+                      onBlur={() => {
+                        if (formData.phone.trim() && !normaliseAuPhone(formData.phone)) setPhoneError(PHONE_ERROR);
+                      }}
+                      className={`${inputClass}${phoneError ? ' border-red-500 focus-visible:ring-red-500/40' : ''}`}
                       placeholder="0400 000 000"
                     />
+                    {phoneError && (
+                      <p id={`${source}-phone-error`} role="alert" className="mt-1.5 text-sm font-medium text-red-600 dark:text-red-400">
+                        {phoneError}
+                      </p>
+                    )}
                   </div>
                 </div>
 
