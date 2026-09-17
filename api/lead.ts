@@ -26,8 +26,11 @@
  *      assigns it, since it is created unnamed with a $1 value.
  *
  * It also refuses to process the same phone number twice inside 30 seconds, so
- * a double tap, a refresh or a network retry cannot produce a second contact,
- * a second opportunity or a second alert text.
+ * a double tap, a refresh or a network retry cannot produce a second forward,
+ * a second opportunity or a second alert text. The test for that is the
+ * upsert's own answer, not a lookup: GHL's contact search lags its writes by
+ * tens of seconds, so a lookup-first guard finds nothing and lets every retry
+ * through (measured — three submissions, three alert texts).
  *
  * It never throws a 5xx at the browser for a GHL failure: the client falls back
  * to posting the webhook itself (see src/lib/ghl.ts), so a bad token or a GHL
@@ -60,6 +63,25 @@ type Json = Record<string, unknown>;
 
 /** Repeat submissions from the same number inside this window are ignored. */
 const DUPLICATE_WINDOW_MS = 30_000;
+
+/**
+ * Numbers this instance has already handled, and when.
+ *
+ * The obvious guard — look the number up before writing — does not work: GHL's
+ * contact search is an index that lags its own writes by tens of seconds, so a
+ * lead posted twice in five seconds finds nothing both times (measured). The
+ * upsert response is authoritative instead, and this map covers the one case it
+ * cannot: an existing customer, created weeks ago, submitting twice in a row.
+ * It is per-instance and that is fine — a double tap lands on a warm instance.
+ */
+const seen = new Map<string, number>();
+function seenRecently(key: string): boolean {
+  const now = Date.now();
+  for (const [k, at] of seen) if (now - at > DUPLICATE_WINDOW_MS) seen.delete(k);
+  const hit = seen.get(key);
+  seen.set(key, now);
+  return typeof hit === 'number' && now - hit < DUPLICATE_WINDOW_MS;
+}
 
 function ghl(path: string, method: string, body?: Json) {
   return fetch(API + path, {
@@ -135,31 +157,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const result: Json = { ok: true, contactId: null, mapped: false, forwarded: false, alerted: false };
 
-  // ---- 0. the 30-second guard ------------------------------------------
-  // A double tap, a refresh, a flaky-network retry or a second device would
-  // otherwise each produce a contact update, an opportunity and an alert text.
-  // If this person already came through within the window, acknowledge and
-  // stop. `forwarded: true` is deliberate: it tells the browser not to fall
-  // back to posting the webhook itself, which would undo the guard.
-  if (TOKEN && phone) {
-    try {
-      const look = await ghl(
-        `/contacts/?locationId=${LOCATION_ID}&query=${encodeURIComponent(phone)}`,
-        'GET',
-      );
-      const existing = (((await look.json().catch(() => ({}))) as Json).contacts as Json[] | undefined) || [];
-      const recent = existing.find((c) => {
-        const seen = Date.parse(str(c.dateUpdated) || str(c.dateAdded));
-        return Number.isFinite(seen) && Date.now() - seen < DUPLICATE_WINDOW_MS;
-      });
-      if (recent) {
-        res.status(200).json({ ...result, contactId: str(recent.id), duplicate: true, forwarded: true });
-        return;
-      }
-    } catch {
-      // A failed lookup must never block a real lead; fall through and write.
-    }
-  }
+  // Checked before the write so the timestamp is recorded either way; the
+  // verdict is used together with the upsert's own answer below.
+  const duplicateByMemory = seenRecently(phone || email);
 
   // ---- 1. the contact, fully mapped -------------------------------------
   let contactId = '';
@@ -212,10 +212,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         customFields,
       });
       const body = (await upsert.json().catch(() => ({}))) as Json;
-      contactId = str(((body.contact as Json) || {}).id);
+      const contact = (body.contact as Json) || {};
+      contactId = str(contact.id);
       result.mapped = upsert.ok;
       result.contactId = contactId || null;
       if (!upsert.ok) result.mapError = upsert.status;
+
+      // Was this the same enquiry arriving twice? `new` is false whenever the
+      // person already existed, so on its own it would mute a returning
+      // customer; pairing it with how long ago the record was created catches
+      // the retry without silencing anyone real.
+      const createdAt = Date.parse(str(contact.dateAdded));
+      const justCreated =
+        body.new === false && Number.isFinite(createdAt) && Date.now() - createdAt < DUPLICATE_WINDOW_MS;
+      if (justCreated || duplicateByMemory) {
+        res.status(200).json({ ...result, duplicate: true, forwarded: true });
+        return;
+      }
     } catch (err) {
       result.mapError = String(err);
     }
