@@ -169,19 +169,20 @@ export function WhyChooseUs() {
               className="aspect-[4/5] w-full object-cover sm:aspect-[3/4] lg:aspect-[4/5]"
             />
             {/* The mark builds itself in once the card scrolls into view,
-                near the top of the photo but clear of it — a watermark at a
-                tenth strength, so the room reads through it. No z-index,
-                opacity, transform or filter on this wrapper: see
-                .why-logo-video for why any of those would trap the blend and
-                bring the clip's black plate back as a box. The opacity that
-                is there lives on the img/video themselves. */}
-            <div className="pointer-events-none absolute inset-x-0 top-[5%] flex justify-center px-4">
+                centred in the half of the photo above the buttons — hence the
+                h-1/2 box and items-center rather than a translate, which would
+                make this a stacking context. See .why-logo-video: no z-index,
+                opacity, transform or filter may sit between the mark and the
+                photo or the blend is trapped and the clip's black plate comes
+                back as a box. The 30% that softens it lives on the img/video
+                themselves for the same reason. */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex h-1/2 flex-col items-center justify-center px-4">
               <span className="why-logo-video" aria-hidden="true">
-                <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-10'} decoding="async" />
+                <img src={lockupStill} alt="" className={logoPlaying ? 'opacity-0' : 'opacity-30'} decoding="async" />
                 <video
                   ref={stingRef}
                   src="/hero-sting.mp4"
-                  className={logoPlaying ? 'opacity-10' : 'opacity-0'}
+                  className={logoPlaying ? 'opacity-30' : 'opacity-0'}
                   onPlaying={() => setLogoPlaying(true)}
                   muted
                   playsInline
@@ -189,6 +190,10 @@ export function WhyChooseUs() {
                   tabIndex={-1}
                 />
               </span>
+              {/* Names the row of buttons underneath, in the same pale blue as
+                  their icons. A sibling of the mark, not a child: inside the
+                  blended span it would be keyed along with the clip. */}
+              <span className="why-card-label">Why JEDs?</span>
             </div>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/92 via-black/80 to-transparent p-3 pt-[16%] sm:p-4 sm:pt-[18%]">
               {/* A grid, not flex-wrap: content-driven widths made

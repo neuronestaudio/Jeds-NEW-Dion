@@ -30,18 +30,22 @@ const footerLinks = {
 };
 
 export function Footer() {
-  // No plate under the weave: the footer keeps the theme's own card colour
-  // and .carbon-weave lays the carbon texture over it at half strength, so
-  // light stays light and dark stays dark.
+  // Brick, the same wall as the homepage sections, rather than the carbon
+  // weave. .brick carries its own page-colour veil, so no bg-card here.
+  //
+  // Everything below also runs tighter on phones: the footer was 1706px there,
+  // two full screens of scrolling on its own.
   return (
-    <footer className="carbon-weave bg-card border-t border-border pt-12 sm:pt-16 pb-8">
+    <footer className="brick border-t border-border pt-8 pb-6 sm:pt-16 sm:pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        {/* Two columns on a phone instead of one long stack: the three link
+            lists are what made this section tall. */}
+        <div className="mb-8 grid grid-cols-2 gap-x-4 gap-y-7 sm:mb-12 sm:gap-8 lg:grid-cols-5">
           {/* Brand Column */}
-          <div className="lg:col-span-2">
+          <div className="col-span-2 lg:col-span-2">
             <img src={logoOnDark} alt="JED Air Conditioning" className="hidden h-10 w-auto opacity-90 dark:block sm:h-12 mb-4" />
             <img src={logoOnLight} alt="JED Air Conditioning" className="h-10 w-auto opacity-90 dark:hidden sm:h-12 mb-4" />
-            <p className="text-muted-foreground text-sm sm:text-base mb-6 max-w-sm">
+            <p className="text-muted-foreground text-sm sm:text-base mb-4 sm:mb-6 max-w-sm">
               Sydney's trusted air conditioning specialists. <strong>Daikin & Haier certified dealer</strong> and
               <strong> manufacturer‑trained service agents</strong> providing professional installation, servicing, and repairs
               for residential and commercial properties.
@@ -76,12 +80,12 @@ export function Footer() {
           {/* Services */}
           <div>
             <h4 className="font-semibold mb-4">Services</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {footerLinks.services.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
+                    className="inline-block py-1 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>
@@ -93,12 +97,12 @@ export function Footer() {
           {/* Company */}
           <div>
             <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
+                    className="inline-block py-1 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>
@@ -108,14 +112,14 @@ export function Footer() {
           </div>
 
           {/* Service Areas */}
-          <div>
+          <div className="col-span-2 lg:col-span-1">
             <h4 className="font-semibold mb-4">Service Areas</h4>
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-1.5 sm:block sm:space-y-2">
               {footerLinks.areas.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="inline-block py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
+                    className="inline-block py-1 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-0"
                   >
                     {link.label}
                   </a>
@@ -127,8 +131,8 @@ export function Footer() {
 
         {/* Contact strip — the quote panel's deep-teal card (.q-teal / .q-row
             in index.css), so the footer speaks the same language as the panel. */}
-        <div className="q-teal mb-8 p-4 sm:p-5">
-          <ul className="grid gap-3 sm:grid-cols-3">
+        <div className="q-teal mb-6 p-3 sm:mb-8 sm:p-5">
+          <ul className="grid gap-2 sm:grid-cols-3 sm:gap-3">
             <li>
               <a href="tel:0434308070" className="q-row">
                 <span className="q-row-icon"><Phone className="h-[18px] w-[18px]" aria-hidden="true" /></span>
@@ -169,7 +173,7 @@ export function Footer() {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-8 pt-8 border-t border-border">
+        <div className="mt-8 hidden border-t border-border pt-8 sm:block">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-[11px] sm:text-xs text-muted-foreground">
             <span>✓ Fully Licensed</span>
             <span>✓ Fully Insured</span>
