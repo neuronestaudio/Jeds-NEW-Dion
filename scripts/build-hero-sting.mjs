@@ -1,84 +1,126 @@
 /**
- * Rebuild the hero lockup sting (public/hero-sting.mp4) and its held final
- * frame (src/assets/hero/lockup.png) from the supplied render.
+ * Rebuild every animated-logo asset from the supplied render, in one go:
  *
- * `media/hero-source.mp4` is the raw 1280x720 logo animation. Two things in
- * it can never reach the page:
+ *   public/hero-sting.mp4                     the hero lockup (also the Why JED watermark)
+ *   src/assets/hero/lockup.png                its held final frame
+ *   public/textures/lockup-mask.png           the settled mark as an alpha shape (the sheen)
+ *   public/splash-lockup.mp4                  the entrance splash build
+ *   src/assets/hero/splash-lockup-still.png   its held final frame
  *
- * 1. It opens on a bright title card carrying the generator's watermark,
- *    which dissolves away over the first 13 frames.
- * 2. The settled logo has a third line under the wordmark reading
- *    "SERVICE - MAINTENAANCE - INSTALATION". Both of those words are
- *    misspelled in the render, so the crop stops above that line.
+ * They share one source on purpose. The still IS the clip's last frame and the
+ * mask IS the still, so the fallback, the first paint, the animation's end and
+ * the sheen can never drift apart. Never regenerate one without the others.
  *
- * The previous crop was flush to the SETTLED mark (842x326, ink 2px from the
- * edge). That is the tightest box that fits the end state — but not the
- * animation: measured against the raw render, the letters swing out to
- * x=96 on the way in (133px left of where they settle) and overshoot to
- * x=1085 on the right, and the wordmark drops to y=502. A flush crop
- * therefore cut the mark off for the whole intro, which is what "the
- * airconditioning's cut off" was.
+ * SOURCE
+ * `media/hero-source-emblem.mp4` is the client's corrected render (supplied
+ * 20 Sep 2026 as JED-hero-desktop-FINAL-HOLD.mp4). It replaces
+ * `media/hero-source.mp4`, which is kept only for history: that one built the
+ * mark around a generic GEAR, which is not JED's logo — theirs is the
+ * snowflake-compass emblem used in the header — and it carried a third line
+ * reading "SERVICE - MAINTENAANCE - INSTALATION", misspelled twice, which the
+ * old crop existed to hide. The new render has the real emblem from the first
+ * frame, no third line, and a true-black plate (mean luma 0.5), which is what
+ * the blend-mode keying in .hero-lockup needs.
  *
- * So the frame is the settled mark's box grown symmetrically until it holds
- * every frame of the animation with 5px to spare: 1102x360 at (88,150),
- * which still clears the misspelled tagline (its highest ink is y=516) by
- * 6px. The settled mark is 75% of that width, so the CSS box is scaled up by the
- * reciprocal to keep the logo the same size on screen — see index.css.
+ * A 854x480 mobile cut was supplied too. It is the same composition at lower
+ * resolution, so nothing is built from it.
  *
- * Timing is preserved exactly: the shipped clip ran 248 frames at 24fps with
- * motion ending at 152, i.e. the trimmed render compressed to 152 frames and
- * then holding its last frame for four seconds.
+ * THE HERO CROP
+ * Cropped flush to the SETTLED mark, the intro plays cut off: the emblem swings
+ * out to x=94 on the way in, 112px left of where it settles, and the letters
+ * overshoot to x=1084 on the right. So the frame is the settled mark's box
+ * grown symmetrically until it holds every frame of the animation: 1102x360 at
+ * (88,150) — measured against this render, the union of all ink is x 94..1084,
+ * y 161..501, and the settled mark is x 206..1071, y 166..499. That is the SAME
+ * box the gear render used, so the element keeps its exact geometry. The
+ * settled mark is 78.6% of the frame's width here (the gear one was 75%); the
+ * CSS box in .hero-lockup-wrap is scaled by the reciprocal so the logo prints
+ * at the same size as before — see index.css.
+ *
+ * TIMING
+ * The render's own, untouched. Ink first appears on frame 6 and the last
+ * motion is frame 97; the clip runs from there to 13 frames past the end of
+ * motion and stops. The element holds its last frame anyway, and the hero's
+ * sheen waits for `ended`, so a long tail only delays it.
+ *
+ * THE SPLASH
+ * Full width and 520 tall at y=106 — the geometry the splash CSS was laid out
+ * against — and the same build compressed to 2.5s, because the splash
+ * dismisses itself 400ms after `ended` with a 3.4s hard cap.
  *
  *   node scripts/build-hero-sting.mjs
  */
 import { execFileSync } from 'node:child_process';
 import { statSync } from 'node:fs';
 
-const SOURCE = 'media/hero-source.mp4';
-const VIDEO_OUT = 'public/hero-sting.mp4';
-const STILL_OUT = 'src/assets/hero/lockup.png';
-
-/** First frame after the title card (and its watermark) has dissolved. */
-const TRIM_START_FRAME = 14;
+const SOURCE = 'media/hero-source-emblem.mp4';
 const FPS = 24;
-/** Frames of animation in the source once the head is gone. */
-const SOURCE_FRAMES = 181;
-/** Frames the animation is re-timed onto, and the held tail after it. */
-const MOTION_FRAMES = 152;
-const HOLD_FRAMES = 96;
 
-/** Crop that holds every frame of the animation. See the note above. */
-const CROP = { w: 1102, h: 360, x: 88, y: 150 };
+/** 0-indexed. Frames 0-4 are black; 96 is the last frame with motion. */
+const FIRST_INK_FRAME = 5;
+const LAST_MOTION_FRAME = 96;
 
-const speed = (MOTION_FRAMES / SOURCE_FRAMES).toFixed(6);
-const crop = `crop=${CROP.w}:${CROP.h}:${CROP.x}:${CROP.y}`;
+const HERO = {
+  video: 'public/hero-sting.mp4',
+  still: 'src/assets/hero/lockup.png',
+  mask: 'public/textures/lockup-mask.png',
+  crop: { w: 1102, h: 360, x: 88, y: 150 },
+  /** Frames held after motion stops, so the clip ends on a settled mark. */
+  tailFrames: 13,
+};
 
-execFileSync('ffmpeg', [
-  '-y', '-v', 'error', '-i', SOURCE,
+const SPLASH = {
+  video: 'public/splash-lockup.mp4',
+  still: 'src/assets/hero/splash-lockup-still.png',
+  crop: { w: 1280, h: 520, x: 0, y: 106 },
+  seconds: 2.5,
+};
+
+const ffmpeg = (args) => execFileSync('ffmpeg', ['-y', '-v', 'error', ...args], { stdio: 'inherit' });
+const cropFilter = ({ w, h, x, y }) => `crop=${w}:${h}:${x}:${y}`;
+const ENCODE = ['-an', '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart'];
+const lastFrame = (video, png) => ffmpeg(['-sseof', '-0.2', '-i', video, '-frames:v', '1', '-update', '1', png]);
+
+// ---- hero lockup -----------------------------------------------------------
+ffmpeg([
+  '-i', SOURCE,
   '-vf', [
-    `trim=start_frame=${TRIM_START_FRAME}`,
+    `trim=start_frame=${FIRST_INK_FRAME}:end_frame=${LAST_MOTION_FRAME + HERO.tailFrames + 1}`,
     'setpts=PTS-STARTPTS',
-    crop,
-    `setpts=${speed}*PTS`,
-    // Hold the settled mark rather than ending on it: the element plays once
-    // and then shows its last frame anyway, but this keeps the file's own
-    // length (and therefore any timing measured against it) unchanged.
-    `tpad=stop_mode=clone:stop_duration=${(HOLD_FRAMES / FPS).toFixed(4)}`,
+    cropFilter(HERO.crop),
     `fps=${FPS}`,
   ].join(','),
-  '-an',
-  '-c:v', 'libx264', '-profile:v', 'high', '-crf', '23',
-  '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
-  VIDEO_OUT,
-], { stdio: 'inherit' });
+  ...ENCODE, '-crf', '22',
+  HERO.video,
+]);
+lastFrame(HERO.video, HERO.still);
 
-// The still is the clip's own final frame, so the fallback and the first
-// paint are the same image the animation resolves to.
-execFileSync('ffmpeg', [
-  '-y', '-v', 'error', '-sseof', '-0.5', '-i', VIDEO_OUT,
-  '-frames:v', '1', '-update', '1', STILL_OUT,
-], { stdio: 'inherit' });
+// The sheen's mask: the settled mark's white ink becomes alpha, so a moving
+// band of light can be clipped to the letters and the emblem and nothing else.
+ffmpeg([
+  '-i', HERO.still,
+  '-vf', "format=yuva444p,geq=lum=255:cb=128:cr=128:a='clip((lum(X\\,Y)-40)*255/175\\,0\\,255)'",
+  '-frames:v', '1', '-update', '1',
+  HERO.mask,
+]);
 
-for (const f of [VIDEO_OUT, STILL_OUT]) {
+// ---- entrance splash -------------------------------------------------------
+const buildFrames = LAST_MOTION_FRAME - FIRST_INK_FRAME + 1;
+const speed = ((SPLASH.seconds * FPS) / buildFrames).toFixed(6);
+ffmpeg([
+  '-i', SOURCE,
+  '-vf', [
+    `trim=start_frame=${FIRST_INK_FRAME}:end_frame=${LAST_MOTION_FRAME + 1}`,
+    'setpts=PTS-STARTPTS',
+    cropFilter(SPLASH.crop),
+    `setpts=${speed}*PTS`,
+    `fps=${FPS}`,
+  ].join(','),
+  ...ENCODE, '-crf', '23',
+  SPLASH.video,
+]);
+lastFrame(SPLASH.video, SPLASH.still);
+
+for (const f of [HERO.video, HERO.still, HERO.mask, SPLASH.video, SPLASH.still]) {
   console.log(`${f}  ${(statSync(f).size / 1024).toFixed(0)} KB`);
 }

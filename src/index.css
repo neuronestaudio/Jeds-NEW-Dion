@@ -894,15 +894,16 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 .hero-lockup {
   position: relative; display: block;
   /* The clip's frame (1102x360) is the settled mark's box grown until it
-     holds every frame of the ANIMATION — the letters swing 133px left of
-     where they settle on the way in. Cropped flush to the settled mark, as
-     it was, the intro played cut off at both edges. See
+     holds every frame of the ANIMATION — the emblem swings 112px left of
+     where it settles on the way in. Cropped flush to the settled mark, as
+     it once was, the intro played cut off at both edges. See
      scripts/build-hero-sting.mjs.
 
-     So the frame is 1/0.75 wider than the mark inside it, and these widths
-     are scaled by that same factor: the mark still renders 460/640/860px
-     wide, exactly as before, with the extra width being the transparent
-     margin the animation needs. Because of that the box is wider than the
+     The settled mark is 78.6% of that frame's width (it was 75% when the
+     render still used a gear instead of JED's own emblem), and the widths on
+     .hero-lockup-wrap are scaled by the reciprocal: the mark prints 460/640/
+     860px wide, exactly as it always has, with the extra width being the
+     transparent margin the animation needs. Because of that the box is wider than the
      viewport on phones — deliberate, and the reason for the explicit
      centring below: `margin-inline: auto` does nothing for a child wider
      than its parent, and a transform would isolate the blend and bring the
@@ -919,7 +920,7 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    stacking context and trap the blend below. */
 .hero-lockup-wrap {
   position: relative;
-  --lockup-w: min(122.6vw, 613px);
+  --lockup-w: min(117.1vw, 585px);
   width: var(--lockup-w);
   margin-inline: calc((100% - var(--lockup-w)) / 2);
   margin-bottom: 0.4rem;
@@ -972,11 +973,11 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 }
 /* Variant B's column goes left-aligned from lg, so its mark sits flush left
    to line up with the copy. The mark is centred inside the clip's frame with
-   12.4% of transparent margin on its left, so the box is pulled left by that
+   10.7% of transparent margin on its left, so the box is pulled left by that
    much rather than sitting indented. Variant A stays centred at every width. */
 @media (min-width: 1024px) {
   [data-hero="b"] .hero-lockup-wrap {
-    margin-inline: calc(var(--lockup-w) * -0.124) 0;
+    margin-inline: calc(var(--lockup-w) * -0.107) 0;
   }
 }
 /* Sized in vw, not against the copy column's own max-width, so the mark can
@@ -984,8 +985,8 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    than a small mark above the headline — the "make the logo the forefront"
    request, once the crossfade card that used to occupy this space was
    dropped. Still capped in px so it doesn't run away on ultrawide screens. */
-@media (min-width: 640px) { .hero-lockup-wrap { --lockup-w: min(106.6vw, 853px); margin-bottom: 0.6rem; } }
-@media (min-width: 1024px) { .hero-lockup-wrap { --lockup-w: min(77.3vw, 1146px); } }
+@media (min-width: 640px) { .hero-lockup-wrap { --lockup-w: min(101.8vw, 814px); margin-bottom: 0.6rem; } }
+@media (min-width: 1024px) { .hero-lockup-wrap { --lockup-w: min(73.8vw, 1094px); } }
 
 /* Two-line eyebrow above the lockup. The text is white in both themes by
    request, and the room photo behind it is near-white wall and a white indoor
@@ -1013,6 +1014,13 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
   background-repeat: no-repeat, no-repeat;
   background-position: 130% 50%, 50% 50%;
   animation: hero-eyebrow-gust 8s linear infinite;
+  /* The cloud fades out on its own, the gust does not: whenever its dark band
+     crossed the edge of this box it was cut off square, and the shading read
+     as a grey rectangle behind the words for part of every cycle. The mask
+     feathers all four edges, so whatever is inside dies away before the
+     boundary instead of being clipped by it. */
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
 }
 @keyframes hero-eyebrow-gust {
   from { background-position: 130% 50%, 50% 50%; }
@@ -1588,10 +1596,10 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
    clip's black plate comes back as a box. */
 .why-logo-video {
   position: relative; display: block;
-  /* Same clip as the hero, so the same frame: the mark is 75% of the frame's
-     width, and this box is widened by the reciprocal so the watermark still
-     reads at the size it did against the card. */
-  width: min(96%, 35.2rem); aspect-ratio: 1102 / 360;
+  /* Same clip as the hero, so the same frame: the mark is 78.6% of the
+     frame's width, and this box is widened by the reciprocal so the watermark
+     reads at the size it always has against the card. */
+  width: min(91.7%, 33.6rem); aspect-ratio: 1102 / 360;
   margin: 0 auto;
   pointer-events: none;
   filter: contrast(1.06);
