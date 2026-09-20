@@ -1455,14 +1455,18 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
      colour this rule chooses rather than whatever the file happens to hold.
      Light gets a mid grey — "50% white" — because pure black lines on a pale
      section read far heavier than white lines do on a dark one at the same
-     opacity. Dark gets white. Both at half opacity on top of the lines' own
-     alpha, so it stays a suggestion of a weave. */
+     opacity. Dark gets white.
+
+     0.2, not the 0.5 it started at: at half strength the hexagons were the
+     first thing the eye found on the reviews section, ahead of the heading.
+     "80% opaque, so you can barely see the hexagons" — the weave is texture
+     you notice second, on top of the lines' own alpha. */
   background-color: hsl(220 12% 52%);
   -webkit-mask: url('/textures/carbon-mesh-lines.png') repeat;
   mask: url('/textures/carbon-mesh-lines.png') repeat;
   -webkit-mask-size: 18px 32px;
   mask-size: 18px 32px;
-  opacity: 0.5;
+  opacity: 0.2;
 }
 .dark .carbon-weave::before { background-color: hsl(0 0% 100%); }
 /* Cards sit on their own solid colour rather than letting the weave run
