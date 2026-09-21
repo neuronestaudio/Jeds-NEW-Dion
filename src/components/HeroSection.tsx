@@ -241,18 +241,17 @@ export function HeroSection({ variant = 'a' }: Props) {
           </motion.div>
 
           {/* The wrapper is load-bearing: the badge above is inline-flex and
-              the eyebrow is inline-block (so its shading hugs the words rather
-              than the whole column), and without a block between them the two
-              share a line. */}
+              the eyebrow is inline-block, and without a block between them the
+              two share a line. */}
           <div>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
               // White in both themes, by request. Over a light room photo white
-              // has almost no contrast of its own, so it carries a dark halo:
-              // the text shadows below plus the soft cloud in .hero-eyebrow.
-              className="hero-eyebrow mb-4 inline-block text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-white [text-shadow:0_1px_2px_hsl(220_30%_6%/0.95),0_0_10px_hsl(220_30%_6%/0.85),0_2px_24px_hsl(220_30%_6%/0.7)]"
+              // has almost no contrast of its own, so .hero-eyebrow gives each
+              // letter a hairline dark outline — no shadow, nothing behind it.
+              className="hero-eyebrow mb-4 inline-block text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-white"
             >
               <span className="block">Certified installer &amp; dealer</span>
               <span className="block">Sydney air conditioning specialists</span>

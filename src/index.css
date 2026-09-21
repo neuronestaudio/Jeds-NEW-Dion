@@ -988,43 +988,22 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (min-width: 640px) { .hero-lockup-wrap { --lockup-w: min(101.8vw, 814px); margin-bottom: 0.6rem; } }
 @media (min-width: 1024px) { .hero-lockup-wrap { --lockup-w: min(73.8vw, 1094px); } }
 
-/* Two-line eyebrow above the lockup. The text is white in both themes by
-   request, and the room photo behind it is near-white wall and a white indoor
-   unit — white on white. Text shadows alone only outlined it, so the words
-   carry their own shading: a soft dark cloud that fades out well before any
-   edge, so it reads as shadow on the photo rather than a chip or a box. */
-.hero-eyebrow { position: relative; isolation: isolate; }
-.hero-eyebrow::before {
-  content: "";
-  position: absolute; inset: -0.5rem -1.5rem; z-index: -1;
-  pointer-events: none;
-  /* Two layers: the cloud that makes white type readable on a white wall, and
-     a darker gust travelling across it left to right, so the shading reads as
-     moving air behind the words rather than a static smudge. Only the gust's
-     position animates; the cloud is pinned. */
-  background-image:
-    linear-gradient(100deg,
-      transparent 0%,
-      hsl(220 35% 4% / 0.42) 26%,
-      hsl(197 60% 30% / 0.32) 38%,
-      hsl(220 35% 4% / 0.45) 50%,
-      transparent 76%),
-    radial-gradient(62% 120% at 50% 50%, hsl(220 30% 6% / 0.55), hsl(220 30% 6% / 0.24) 58%, transparent 78%);
-  background-size: 210% 100%, 100% 100%;
-  background-repeat: no-repeat, no-repeat;
-  background-position: 130% 50%, 50% 50%;
-  animation: hero-eyebrow-gust 8s linear infinite;
-  /* The cloud fades out on its own, the gust does not: whenever its dark band
-     crossed the edge of this box it was cut off square, and the shading read
-     as a grey rectangle behind the words for part of every cycle. The mask
-     feathers all four edges, so whatever is inside dies away before the
-     boundary instead of being clipped by it. */
-  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
-  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
-}
-@keyframes hero-eyebrow-gust {
-  from { background-position: 130% 50%, 50% 50%; }
-  to { background-position: -130% 50%, 50% 50%; }
+/* Two-line eyebrow above the lockup. White in both themes, by request, over a
+   room photo that is near-white wall and a white indoor unit — white on white.
+
+   It has been through a text shadow, a soft dark cloud behind the words and a
+   moving "gust" through that cloud; each read as a grey smudge on the photo.
+   What it carries now is a hairline outline and nothing behind it. The stroke
+   is what supplies the contrast: every letter gets a dark edge, so it reads
+   on the white wall and on the darker parts of the photo alike.
+
+   `paint-order: stroke fill` matters: a text stroke is centred on the glyph
+   edge, so on its own half of it would eat into letters this small. Painting
+   the fill over the stroke leaves only the outer half visible — a true
+   outline at half the declared width, with the letterforms untouched. */
+.hero-eyebrow {
+  -webkit-text-stroke: 1.1px hsl(220 30% 8% / 0.9);
+  paint-order: stroke fill;
 }
 
 /* The paragraph panel's outline. A flat 10% hairline read as bare once the
@@ -1141,7 +1120,6 @@ a.q-row:hover { background: hsl(0 0% 100% / 0.14); border-color: hsl(0 0% 100% /
 @media (prefers-reduced-motion: reduce) {
   .hero-headline-primary,
   .hero-headline-accent { animation: none; background-position: 0% 50%; }
-  .hero-eyebrow::before { animation: none; background-position: 50% 50%, 50% 50%; }
   .hero-lockup-sheen { animation: none; opacity: 0; }
 }
 
