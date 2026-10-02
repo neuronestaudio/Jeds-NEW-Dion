@@ -248,10 +248,12 @@ export function HeroSection({ variant = 'a' }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.05 }}
-              // White in both themes, by request. Over a light room photo white
-              // has almost no contrast of its own, so .hero-eyebrow gives each
-              // letter a hairline dark outline — no shadow, nothing behind it.
-              className="hero-eyebrow mb-4 inline-block text-xs font-semibold uppercase leading-relaxed tracking-[0.26em] text-white"
+              // Brushed metal with a glint, see .hero-eyebrow in index.css. The
+              // fill and its animation live on the two line spans below, so no
+              // text colour is set here. The size steps down with the viewport
+              // below ~393px so the longer line stays on one line on small
+              // phones instead of dropping its last word.
+              className="hero-eyebrow mb-4 inline-block text-[min(0.75rem,3.05vw)] font-bold uppercase leading-relaxed tracking-[0.24em]"
             >
               <span className="block">Certified installer &amp; dealer</span>
               <span className="block">Sydney air conditioning specialists</span>
