@@ -65,7 +65,7 @@ const SERVICES: Service[] = [
     desc: 'Regular servicing that protects efficiency, air quality and the life of your system.',
     img: maintenanceImg,
     alt: 'Outdoor unit on an apartment balcony overlooking the harbour',
-    href: '/services',
+    href: '/service/aircon-service',
   },
   {
     id: 'emergency',

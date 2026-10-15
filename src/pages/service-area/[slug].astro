@@ -4,6 +4,7 @@ import QuotePanel from '@/components/QuotePanel.astro';
 import QuoteFormInline from '@/components/QuoteFormInline';
 import CtaRow from '@/components/CtaRow';
 import { SUBURBS, ZONES, neighbourLink, type Suburb } from '@/data/suburbs';
+import { hubForZone, hubPath } from '@/data/hubs';
 import { SUBURB_GROUPS, fillSuburb } from '@/data/suburbGroups';
 import TrustBadges from '@/components/TrustBadges';
 import ServiceLinks from '@/components/ServiceLinks';
@@ -32,7 +33,7 @@ const faqs = [...(suburb.faq ?? []), ...group.faq].map((f) => ({
 const neighbours = suburb.neighbours.map(neighbourLink);
 
 const hasMap = Boolean(suburb.centre);
-const title = `Air Conditioning ${suburb.name} | Installation, Service & Repairs | JED`;
+const title = `Air Conditioning ${suburb.name} | Install, Service, Repairs | JED`;
 
 const serviceLd = {
   '@context': 'https://schema.org',
@@ -75,7 +76,7 @@ const serviceLd = {
           <li aria-hidden="true">/</li>
           <li><a href="/service-areas" class="hover:text-foreground transition-colors">Service Areas</a></li>
           <li aria-hidden="true">/</li>
-          <li><a href={`/service-areas#${zone.id}`} class="hover:text-foreground transition-colors">{zone.short}</a></li>
+          <li><a href={hubPath(hubForZone(suburb.zone))} class="hover:text-foreground transition-colors">{zone.short}</a></li>
           <li aria-hidden="true">/</li>
           <li class="text-foreground" aria-current="page">{suburb.name}</li>
         </ol>

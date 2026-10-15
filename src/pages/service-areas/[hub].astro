@@ -1,0 +1,166 @@
+---
+/**
+ * Region hub: /service-areas/north-shore, /service-areas/northern-beaches,
+ * /service-areas/eastern-suburbs. Copy and FAQs live in src/data/hubs.ts;
+ * the suburb lists come straight from src/data/suburbs.ts so a hub can never
+ * disagree with the suburb pages beneath it.
+ */
+import Base from '@/layouts/Base.astro';
+import QuotePanel from '@/components/QuotePanel.astro';
+import QuoteFormInline from '@/components/QuoteFormInline';
+import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import ServiceLinks from '@/components/ServiceLinks';
+import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
+import { HUBS, hubPath, type Hub } from '@/data/hubs';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+
+export function getStaticPaths() {
+  return HUBS.map((hub) => ({ params: { hub: hub.slug }, props: { hub } }));
+}
+
+const { hub } = Astro.props as { hub: Hub };
+const path = hubPath(hub);
+const byZone = (zone: Zone) =>
+  SUBURBS.filter((s) => s.zone === zone).sort((a, b) => a.name.localeCompare(b.name));
+const suburbCount = hub.zones.reduce((n, z) => n + byZone(z).length, 0);
+const otherHubs = HUBS.filter((h) => h.slug !== hub.slug);
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Air Conditioning Installation, Servicing and Repairs',
+  name: `Air Conditioning ${hub.label}`,
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  areaServed: {
+    '@type': 'AdministrativeArea',
+    name: `${hub.label}, Sydney`,
+    containedInPlace: { '@type': 'City', name: 'Sydney' },
+  },
+};
+---
+
+<Base
+  title={hub.title}
+  description={hub.description}
+  path={path}
+  jsonLd={[
+    serviceLd,
+    breadcrumbJsonLd([
+      { name: 'Service Areas', path: '/service-areas' },
+      { name: hub.label, path },
+    ]),
+    faqJsonLd(hub.faqs),
+  ]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/service-areas" class="hover:text-foreground transition-colors">Service Areas</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-foreground" aria-current="page">{hub.label}</li>
+        </ol>
+      </nav>
+      <p class="eyebrow mb-4">Service areas · {hub.label}</p>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">{hub.h1}</h1>
+      <p class="text-muted-foreground text-lg max-w-3xl mb-8">{hub.tagline}</p>
+      <CtaRow client:idle quoteHref="#quote" location={`hub-hero-${hub.slug}`} />
+      <div class="mt-10">
+        <TrustBadges layout="row" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <div class="max-w-3xl space-y-5 text-muted-foreground text-base sm:text-lg leading-relaxed">
+        {hub.intro.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">What changes the job on {hub.name}</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {hub.notes.map((n) => (
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold mb-2">{n.title}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{n.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Air conditioning services on {hub.name}</h2>
+      <ServiceLinks />
+    </div>
+  </section>
+
+  {hub.zones.map((zone) => (
+    <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border scroll-mt-28">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">
+          {ZONES[zone].label}
+          <span class="ml-3 align-middle text-sm font-medium text-muted-foreground">{byZone(zone).length} suburbs</span>
+        </h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {byZone(zone).map((s) => (
+            <a
+              href={`/service-area/${s.slug}`}
+              class="group flex flex-col justify-between rounded-2xl border border-border bg-card/90 p-5 transition-all hover:border-primary/40 hover:bg-card"
+            >
+              <div>
+                <h3 class="text-lg font-semibold transition-colors group-hover:text-primary">Air Conditioning {s.name}</h3>
+                <p class="mt-1 text-sm text-muted-foreground">{s.tagline}</p>
+              </div>
+              <span class="mt-4 text-xs font-medium uppercase tracking-wider text-primary">{s.name} {s.postcode} →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">{hub.label} air conditioning FAQs</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {hub.faqs.map((f) => (
+          <div class="glass-card p-6">
+            <h3 class="font-semibold mb-2">{f.q}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-8 text-sm text-muted-foreground">
+        Elsewhere in Sydney:{' '}
+        {otherHubs.map((h, i) => (
+          <>
+            <a href={hubPath(h)} class="text-primary hover:underline">{h.label}</a>{i < otherHubs.length - 1 ? ' · ' : ''}
+          </>
+        ))}
+        {' · '}
+        <a href="/service-areas" class="text-primary hover:underline">All {SUBURBS.length} suburbs</a>
+      </p>
+    </div>
+  </section>
+
+  <QuotePanel
+    id="quote"
+    eyebrow="Free quote"
+    heading={`Air conditioning on ${hub.name}? Start here.`}
+    subheading={`Tell us the suburb, the property and what you need — install, service or repair — and we will confirm the price before anyone comes out. ${suburbCount} ${hub.label} suburbs covered.`}
+    backdrop="hero"
+    faqs={false}
+  >
+    <QuoteFormInline client:visible source="bottom-quote" />
+  </QuotePanel>
+</Base>

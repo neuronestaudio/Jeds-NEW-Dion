@@ -1,57 +1,52 @@
 import { motion } from 'framer-motion';
-import { Star, MapPin, Quote } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
+import { DISPLAYED_REVIEWS, GOOGLE_PROFILE, type Review } from '@/data/reviews';
 
-const reviews = [
-  {
-    name: 'Michael Thompson',
-    location: 'Parramatta',
-    rating: 5,
-    text: 'Excellent service from start to finish. The team was professional, punctual and left everything spotless. Our new ducted system is perfect.',
-  },
-  {
-    name: 'Sarah Chen',
-    location: 'North Sydney',
-    rating: 5,
-    text: 'Quick response for an emergency repair. Fixed our split system same day. Very knowledgeable technicians who explained everything clearly.',
-  },
-  {
-    name: 'David Williams',
-    location: 'Bondi',
-    rating: 5,
-    text: 'Best quote we received and the installation quality exceeded expectations. Highly recommend JED for any aircon work.',
-  },
-  {
-    name: 'Lisa Martinez',
-    location: 'Castle Hill',
-    rating: 5,
-    text: 'Professional team who installed 4 split systems in our new home. Great advice on energy efficiency and very competitive pricing.',
-  },
-  {
-    name: 'James O\'Brien',
-    location: 'Sutherland',
-    rating: 5,
-    text: 'Used JED for our office fit-out. They handled everything from design to installation. Zero issues with the commercial system.',
-  },
-  {
-    name: 'Emma Taylor',
-    location: 'Chatswood',
-    rating: 5,
-    text: 'Annual maintenance service keeps our system running perfectly. Always on time and thorough with their inspections.',
-  },
-];
+/**
+ * Real Google reviews, from src/data/reviews.ts. The header shows the
+ * listing's actual rating and count; the cards are the 4- and 5-star
+ * reviews, each with the reviewer's own star rating and Google's relative
+ * date, so the strip reads like the listing it came from.
+ */
 
-/** One full pass of the six reviews. Slow enough to read a card as it goes by. */
-const SCROLL_DURATION_S = 55;
+/** One full pass of the reviews. Slow enough to read a card as it goes by. */
+const SCROLL_DURATION_S = 11 * DISPLAYED_REVIEWS.length;
 
-function ReviewCard({ review }: { review: (typeof reviews)[number] }) {
+function Stars({ n, className = 'h-4 w-4' }: { n: number; className?: string }) {
+  return (
+    <span className="flex" aria-label={`${n} out of 5 stars`} role="img">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Star
+          key={i}
+          aria-hidden="true"
+          className={`${className} ${i <= n ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/15'}`}
+        />
+      ))}
+    </span>
+  );
+}
+
+function GoogleG({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47a5.57 5.57 0 0 1-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z" />
+      <path fill="#FBBC05" d="M5.27 14.29A7.2 7.2 0 0 1 4.89 12c0-.8.14-1.57.38-2.29V6.62H1.29A12 12 0 0 0 0 12c0 1.94.46 3.77 1.29 5.38l3.98-3.09z" />
+      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" />
+    </svg>
+  );
+}
+
+function ReviewCard({ review }: { review: Review }) {
   return (
     <figure className="mr-4 flex w-[300px] shrink-0 flex-col rounded-2xl border border-border bg-card/90 p-5 transition-colors duration-300 hover:border-primary/30 hover:bg-card sm:mr-5 sm:w-[360px] sm:p-6">
-      <Quote className="mb-3 h-6 w-6 text-primary/20" />
+      <div className="mb-3 flex items-center justify-between">
+        <Quote className="h-6 w-6 text-primary/20" />
+        <GoogleG />
+      </div>
 
-      <div className="mb-3 flex items-center gap-1">
-        {[...Array(review.rating)].map((_, i) => (
-          <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-        ))}
+      <div className="mb-3">
+        <Stars n={review.rating} />
       </div>
 
       <blockquote className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
@@ -60,10 +55,7 @@ function ReviewCard({ review }: { review: (typeof reviews)[number] }) {
 
       <figcaption className="flex items-center justify-between border-t border-border pt-4">
         <span className="text-sm font-semibold">{review.name}</span>
-        <span className="flex items-center gap-1 text-xs text-muted-foreground">
-          <MapPin className="h-3 w-3" />
-          {review.location}
-        </span>
+        <span className="text-xs text-muted-foreground">{review.when}</span>
       </figcaption>
     </figure>
   );
@@ -78,7 +70,7 @@ export function ReviewsSection() {
    */
   const copy = (hidden: boolean) => (
     <div className="flex shrink-0 items-stretch" aria-hidden={hidden || undefined}>
-      {reviews.map((review) => (
+      {DISPLAYED_REVIEWS.map((review) => (
         <ReviewCard key={`${review.name}-${hidden ? 'b' : 'a'}`} review={review} />
       ))}
     </div>
@@ -86,8 +78,7 @@ export function ReviewsSection() {
 
   return (
     // The weave carries no plate of its own, so this section takes the site's
-    // own theme: light in light, dark in dark. It used to force `dark` here
-    // because the old texture was a near-black tile.
+    // own theme: light in light, dark in dark.
     <section id="reviews" className="carbon-weave py-12 sm:py-16 md:py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-10">
         <motion.div
@@ -97,14 +88,18 @@ export function ReviewsSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-12"
         >
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 fill-yellow-400" />
-              ))}
-            </div>
-            <span className="text-xl sm:text-2xl font-bold">5.0</span>
-          </div>
+          <a
+            href={GOOGLE_PROFILE.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 mb-4 rounded-full border border-border bg-card/80 px-4 py-2 hover:border-primary/40 transition-colors"
+            aria-label={`${GOOGLE_PROFILE.rating} out of 5 on Google from ${GOOGLE_PROFILE.count} reviews — open the listing`}
+          >
+            <GoogleG className="h-5 w-5" />
+            <span className="text-xl sm:text-2xl font-bold">{GOOGLE_PROFILE.rating.toFixed(1)}</span>
+            <Stars n={Math.round(GOOGLE_PROFILE.rating)} className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="text-sm text-muted-foreground">{GOOGLE_PROFILE.count} Google reviews</span>
+          </a>
           {/* Two deliberate lines — "Trusted by Sydney" over "Homeowners &
               Businesses" — rather than wherever the column width breaks it. */}
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
@@ -142,18 +137,23 @@ export function ReviewsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-center mt-10"
+          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-8"
         >
           <a
-            href="https://g.page/r/YOUR_GOOGLE_BUSINESS_ID/review"
+            href={GOOGLE_PROFILE.mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
           >
-            View all reviews on Google
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.5 18.75v-1.5c0-2.071 1.679-3.75 3.75-3.75h.75v3l4.5-4.5-4.5-4.5v3h-.75c-3.314 0-6 2.686-6 6v1.5h2.25z" />
-            </svg>
+            Read all {GOOGLE_PROFILE.count} reviews on Google
+          </a>
+          <a
+            href={GOOGLE_PROFILE.reviewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary hover:underline font-medium"
+          >
+            Worked with us? Leave a review
           </a>
         </motion.div>
       </div>

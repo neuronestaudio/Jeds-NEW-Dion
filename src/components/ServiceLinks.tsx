@@ -28,7 +28,7 @@ const SERVICES = [
   {
     icon: Settings,
     title: 'Servicing & Maintenance',
-    href: '/service/aircon-repair',
+    href: '/service/aircon-service',
     blurb: 'Regular servicing to keep efficiency up and warranties valid.',
   },
   {

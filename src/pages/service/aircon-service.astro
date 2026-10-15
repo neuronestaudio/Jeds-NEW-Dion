@@ -1,0 +1,289 @@
+---
+/**
+ * Air conditioning service & maintenance — the page for the largest search
+ * group JED competes in ("air conditioning service", "aircon service sydney",
+ * "air conditioning maintenance sydney") and the landing page for the
+ * Repair & Service search campaign's service keywords.
+ *
+ * Every claim is one the site already makes: manufacturer-trained service
+ * agents, authorised Daikin service agent, price confirmed when you book,
+ * the $200 service call fee currently waived on Daikin service bookings
+ * (src/data/daikin.ts), all major brands serviced, Mon–Sat 7am–6pm, onsite
+ * in 1–2 days. The "what's included" list mirrors the Daikin service page so
+ * the two can't contradict each other.
+ */
+import Base from '@/layouts/Base.astro';
+import QuotePanel from '@/components/QuotePanel.astro';
+import QuoteFormInline from '@/components/QuoteFormInline';
+import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
+import { HUBS, hubPath } from '@/data/hubs';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+
+const path = '/service/aircon-service';
+
+const included = [
+  'Indoor filters removed, cleaned or replaced; fan barrel and evaporator coil cleaned',
+  'Outdoor coil cleaned and fins checked, with the unit cleared of leaf litter and debris',
+  'Refrigerant pressures verified against the model’s own figures, not a rule of thumb',
+  'Condensate drain cleared and tested so the indoor unit does not drip in February',
+  'Electrical connections, terminals and capacitor checked; fan motors and bearings listened to',
+  'Thermostat and controls tested, and the system run through every mode',
+  'Ducted systems: zone motors, dampers and return-air filter checked, airflow balanced across outlets',
+  'A written record of what was found and what was done — the record a warranty claim asks for',
+];
+
+const intervals = [
+  ['Typical home, inland suburb', 'Every 12 months', 'Keeps efficiency up and the manufacturer warranty record current'],
+  ['Beachside or exposed position', 'Every 12 months, more often if very exposed', 'Salt and sand load filters and coils faster than inland air'],
+  ['Ducted system run daily', 'Every 12 months, return-air filters every 3', 'Return-air filters load quickly and choke airflow across the whole house'],
+  ['Shopfront, office or clinic running all day', 'Generally every 6 months', 'Twice the running hours of a home; filters and coils foul in half the time'],
+  ['Holiday home or rarely used unit', 'Every 12 months regardless', 'Seals dry out and drains block when a system sits idle'],
+];
+
+const signs = [
+  { title: 'Weak airflow', body: 'Filters or coil are loaded, or a ducted zone damper has stuck. Airflow drops long before the system stops.' },
+  { title: 'Musty smell on start-up', body: 'Biofilm on a damp evaporator coil or in the drain tray — the service cleans the source, not the symptom.' },
+  { title: 'Water from the indoor unit', body: 'A blocked condensate drain. Cheap to clear at a service; expensive once it has run through a ceiling.' },
+  { title: 'Power bills creeping up', body: 'A system working harder through dirty coils uses more power for less cooling. Servicing is usually paid back in a summer.' },
+  { title: 'Ice on the pipes or coil', body: 'Low airflow or low refrigerant. Both are found and quoted at a service before the compressor pays for them.' },
+  { title: 'Short-cycling or error codes', body: 'Starting and stopping every few minutes, or a code on the controller: the diagnosis happens at the visit and the fix is quoted before any part is replaced.' },
+];
+
+const brands = [
+  'Daikin', 'Haier', 'Mitsubishi Electric', 'Fujitsu', 'Panasonic', 'Samsung', 'LG', 'Carrier', 'Toshiba', 'Hitachi', 'ActronAir', 'Braemar',
+];
+
+const faqs = [
+  {
+    q: 'How often should an air conditioner be serviced?',
+    a: 'Once every 12 months for most Sydney homes, with wall-split filters rinsed monthly through summer. Ducted systems run daily want their return-air filters checked every three months, beachside positions get more exposure to salt and sand, and a commercial system running all day is generally serviced every six months.',
+  },
+  {
+    q: 'What is included in an air conditioning service?',
+    a: 'Filters, evaporator and condenser coils cleaned; refrigerant pressures verified against the model’s figures; condensate drain cleared and tested; electrical connections checked; controls and every operating mode run; and on ducted systems the zones, dampers and return-air filter checked and airflow balanced. You get a written record of what was found.',
+  },
+  {
+    q: 'How much does an air conditioning service cost?',
+    a: 'A standard annual service on a wall split is a fixed-price visit; ducted and multi-head systems are priced by the number of indoor units and zones. We confirm the price when you book, before anyone comes out, and the $200 service call fee is currently waived on Daikin service bookings.',
+  },
+  {
+    q: 'Does regular servicing keep my warranty valid?',
+    a: 'Manufacturers expect a system to be maintained, and a warranty question is far easier when there is a service record to point to. JED is an authorised Daikin service agent, so for Daikin systems the service is done to the standard Daikin trains us to and recorded the way Daikin recognises.',
+  },
+  {
+    q: 'What happens if you find a fault during the service?',
+    a: 'We tell you what it is and what it costs before anything is replaced. A service is a service; if it needs to become a repair, that is your decision with a price in front of you, not a surprise on the invoice.',
+  },
+  {
+    q: 'Can I clean the filters myself between services?',
+    a: 'Yes, and you should — wall-split filters slide out and rinse under a tap, monthly in summer. That is a filter clean, not a service: coils, refrigerant, drains and electrics still need a technician annually.',
+  },
+  {
+    q: 'Do you service brands other than Daikin and Haier?',
+    a: 'Yes. We service and repair all major brands — Mitsubishi Electric, Fujitsu, Panasonic, Samsung, LG, Carrier, Toshiba, Hitachi, ActronAir and Braemar among them. Daikin and Haier are the brands we are certified dealers for and recommend for new installations.',
+  },
+  {
+    q: 'Which areas do you service?',
+    a: 'The North Shore, the Northern Beaches and the Eastern Suburbs, with a page for each of the 116 suburbs we cover, and greater Sydney by arrangement. Service and repair bookings are usually onsite within one to two business days, Monday to Saturday, 7am to 6pm.',
+  },
+];
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Air Conditioning Service and Maintenance',
+  name: 'Air Conditioning Service & Maintenance Sydney',
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  areaServed: [
+    { '@type': 'City', name: 'Sydney' },
+    ...HUBS.map((h) => ({ '@type': 'AdministrativeArea', name: `${h.label}, Sydney` })),
+  ],
+};
+---
+
+<Base
+  title="Air Conditioning Service & Maintenance Sydney | JED"
+  description="Annual aircon service and maintenance across Sydney’s North Shore, Northern Beaches and Eastern Suburbs. Daikin & Haier certified technicians. Price confirmed before we come out."
+  path={path}
+  jsonLd={[
+    serviceLd,
+    breadcrumbJsonLd([
+      { name: 'Services', path: '/services' },
+      { name: 'Service & Maintenance', path },
+    ]),
+    faqJsonLd(faqs),
+  ]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/services" class="hover:text-foreground transition-colors">Services</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-foreground" aria-current="page">Service &amp; Maintenance</li>
+        </ol>
+      </nav>
+      <p class="eyebrow mb-4">Service &amp; maintenance</p>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">
+        Air Conditioning Service &amp; Maintenance in Sydney
+      </h1>
+      <p class="text-muted-foreground text-lg max-w-3xl mb-4">
+        An annual service is the difference between a system that quietly costs more every summer and one that
+        still runs the way it did on day one. JED’s manufacturer-trained technicians service split, multi-head and
+        ducted systems across the North Shore, the Northern Beaches and the Eastern Suburbs — every job priced before
+        we come out, every visit written up.
+      </p>
+      <p class="text-muted-foreground text-base max-w-3xl mb-8">
+        Authorised Daikin service agent. All major brands serviced. Onsite in one to two business days, Mon–Sat 7am–6pm.
+      </p>
+      <CtaRow client:idle quoteHref="#quote" quoteLabel="Book a Service" location="service-hero" />
+      <div class="mt-10">
+        <TrustBadges layout="row" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">What a JED service includes</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        A service is not a filter rinse. Done properly it is the annual check the manufacturers’ own warranty terms
+        expect, and it takes a technician the better part of an hour on a wall split, longer on a ducted system.
+      </p>
+      <div class="glass-card p-6 md:p-8">
+        <ul class="grid gap-3 md:grid-cols-2 text-muted-foreground">
+          {included.map((item) => (
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary"></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">How often should it be serviced?</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        Once a year is the baseline. What moves it is how hard the system works and what the air around it carries.
+      </p>
+      <div class="glass-card overflow-x-auto">
+        <table class="w-full text-sm sm:text-base">
+          <thead>
+            <tr class="text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <th class="px-5 py-4 font-medium">Situation</th>
+              <th class="px-5 py-4 font-medium">Interval</th>
+              <th class="px-5 py-4 font-medium">Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            {intervals.map(([situation, interval, why]) => (
+              <tr class="border-t border-border align-top">
+                <td class="px-5 py-4 font-semibold">{situation}</td>
+                <td class="px-5 py-4 text-primary font-medium whitespace-nowrap">{interval}</td>
+                <td class="px-5 py-4 text-muted-foreground">{why}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">Signs your system is due</h2>
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {signs.map((s) => (
+          <div class="rounded-2xl border border-border bg-card/90 p-5">
+            <h3 class="font-semibold mb-2">{s.title}</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 grid gap-8 lg:grid-cols-2">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">Service, or repair?</h2>
+        <p class="text-muted-foreground leading-relaxed mb-4">
+          A service keeps a working system working. If it is already leaking, not cooling, tripping the breaker or
+          showing an error code, that is a <a href="/service/aircon-repair" class="text-primary hover:underline">repair</a>:
+          we diagnose it on site and give you the price before anything is replaced. If a fault turns up during a
+          service, the same rule applies — you decide, with a quote in front of you.
+        </p>
+        <p class="text-muted-foreground leading-relaxed">
+          Daikin owners: JED is an authorised Daikin service agent, and the $200 service call fee is currently waived
+          on <a href="/daikin/service" class="text-primary hover:underline">Daikin service bookings</a>.
+        </p>
+      </div>
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">Brands we service</h2>
+        <p class="text-muted-foreground leading-relaxed mb-4">
+          Certified dealers for Daikin and Haier; servicing and repairs on every major brand sold in Australia.
+        </p>
+        <ul class="flex flex-wrap gap-2">
+          {brands.map((b) => (
+            <li class="rounded-full border border-border bg-card/90 px-3 py-1 text-sm text-muted-foreground">{b}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-3">Where we service</h2>
+      <p class="text-muted-foreground max-w-3xl mb-6">
+        Three regions, 116 suburbs, each with its own page and the notes that apply there — salt air, strata, heritage
+        frontages, roof space.
+      </p>
+      <div class="grid gap-4 sm:grid-cols-3">
+        {HUBS.map((h) => (
+          <a
+            href={hubPath(h)}
+            class="group rounded-2xl border border-border bg-card/90 p-5 transition-all hover:border-primary/40 hover:bg-card"
+          >
+            <h3 class="text-lg font-semibold transition-colors group-hover:text-primary">Air Conditioning {h.label}</h3>
+            <p class="mt-1 text-sm text-muted-foreground">{h.tagline}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Air conditioning service FAQs</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {faqs.map((f) => (
+          <div class="glass-card p-6">
+            <h3 class="font-semibold mb-2">{f.q}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <QuotePanel
+    id="quote"
+    eyebrow="Book a service"
+    heading="Book an air conditioning service"
+    subheading="Tell us the system, the suburb and roughly when it was last serviced. We confirm the price before anyone comes out and are usually onsite within one to two business days."
+    backdrop="hero"
+    faqs={false}
+  >
+    <QuoteFormInline client:visible source="bottom-quote" />
+  </QuotePanel>
+  <ServiceAreasTeaser />
+</Base>

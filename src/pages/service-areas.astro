@@ -4,6 +4,7 @@ import QuotePanel from '@/components/QuotePanel.astro';
 import QuoteFormInline from '@/components/QuoteFormInline';
 import CtaRow from '@/components/CtaRow';
 import { SUBURBS, ZONES, type Zone } from '@/data/suburbs';
+import { hubForZone, hubPath } from '@/data/hubs';
 import TrustBadges from '@/components/TrustBadges';
 import { breadcrumbJsonLd } from '@/data/site';
 
@@ -54,12 +55,17 @@ const sydneyCount = SUBURBS.length;
     <section id={ZONES[zone].id} class="py-12 md:py-16 border-t border-border scroll-mt-28">
       <div class="container mx-auto px-4 sm:px-6 lg:px-10">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-          {ZONES[zone].label}
+          <a href={hubPath(hubForZone(zone))} class="hover:text-primary transition-colors">{ZONES[zone].label}</a>
           <span class="ml-3 align-middle text-sm font-medium text-muted-foreground">
             {byZone(zone).length} suburbs
           </span>
         </h2>
-        <p class="text-muted-foreground max-w-3xl mb-8">{zoneIntro[zone]}</p>
+        <p class="text-muted-foreground max-w-3xl mb-4">{zoneIntro[zone]}</p>
+        <p class="mb-8">
+          <a href={hubPath(hubForZone(zone))} class="q-kicker inline-flex items-center gap-2 text-[hsl(var(--q-teal))] hover:underline">
+            Air conditioning across {hubForZone(zone).label} →
+          </a>
+        </p>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {byZone(zone).map((s) => (
             <a

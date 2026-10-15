@@ -9,6 +9,7 @@ const footerLinks = {
     { label: 'Split Systems', href: '/service/split-system-installation' },
     { label: 'Ducted AC', href: '/service/ducted-air-conditioning' },
     { label: 'Repairs', href: '/service/aircon-repair' },
+    { label: 'Service & Maintenance', href: '/service/aircon-service' },
     { label: 'Commercial', href: '/services' },
   ],
   company: [
@@ -20,8 +21,9 @@ const footerLinks = {
   ],
   areas: [
     { label: 'All Service Areas', href: '/service-areas' },
-    { label: 'North Shore', href: '/service-areas#north-shore' },
-    { label: 'Eastern Suburbs', href: '/service-areas#eastern-suburbs' },
+    { label: 'North Shore', href: '/service-areas/north-shore' },
+    { label: 'Northern Beaches', href: '/service-areas/northern-beaches' },
+    { label: 'Eastern Suburbs', href: '/service-areas/eastern-suburbs' },
     { label: 'Bondi', href: '/service-area/bondi' },
     { label: 'Chatswood', href: '/service-area/chatswood' },
     { label: 'Mosman', href: '/service-area/mosman' },

@@ -23,6 +23,7 @@ const serviceLinks = [
   { label: 'Split System Installation', href: '/service/split-system-installation' },
   { label: 'Ducted Air Conditioning', href: '/service/ducted-air-conditioning' },
   { label: 'Repairs & Diagnostics', href: '/service/aircon-repair' },
+  { label: 'Service & Maintenance', href: '/service/aircon-service' },
 ];
 
 /** Round control: the phone-size call and menu buttons. */
