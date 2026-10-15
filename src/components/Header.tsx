@@ -20,10 +20,12 @@ const navLinks = [
 const serviceLinks = [
   { label: 'All Services', href: '/services' },
   { label: 'Daikin Specialists', href: '/daikin' },
+  { label: 'Installation', href: '/service/air-conditioning-installation' },
   { label: 'Split System Installation', href: '/service/split-system-installation' },
   { label: 'Ducted Air Conditioning', href: '/service/ducted-air-conditioning' },
   { label: 'Repairs & Diagnostics', href: '/service/aircon-repair' },
   { label: 'Service & Maintenance', href: '/service/aircon-service' },
+  { label: 'Commercial', href: '/service/commercial-air-conditioning' },
 ];
 
 /** Round control: the phone-size call and menu buttons. */

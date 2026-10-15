@@ -6,11 +6,12 @@ const footerLinks = {
   services: [
     { label: 'Daikin Specialists', href: '/daikin' },
     { label: 'Daikin Warranty Repairs', href: '/daikin/warranty' },
+    { label: 'Installation', href: '/service/air-conditioning-installation' },
     { label: 'Split Systems', href: '/service/split-system-installation' },
     { label: 'Ducted AC', href: '/service/ducted-air-conditioning' },
     { label: 'Repairs', href: '/service/aircon-repair' },
     { label: 'Service & Maintenance', href: '/service/aircon-service' },
-    { label: 'Commercial', href: '/services' },
+    { label: 'Commercial', href: '/service/commercial-air-conditioning' },
   ],
   company: [
     { label: 'About Us', href: '/#about' },

@@ -1,0 +1,209 @@
+---
+/**
+ * Commercial air conditioning. JED's core work is residential; commercial is
+ * small-to-medium fit-outs — shopfronts, offices, clinics, cafés, strata
+ * common areas — which is what the business already says on the homepage
+ * carousel ("scalable ducted and multi-split systems planned around your
+ * fit-out and trading hours") and in the OfferCatalog. This page says the
+ * same thing at page length. The photos are JED's own commercial fit-out
+ * shots from the project gallery; no job is described that is not pictured.
+ *
+ * TODO when Anthony supplies them: two or three named jobs (what, where,
+ * size) for a "Recent commercial work" section.
+ */
+import Base from '@/layouts/Base.astro';
+import QuotePanel from '@/components/QuotePanel.astro';
+import QuoteFormInline from '@/components/QuoteFormInline';
+import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import ProcessSteps from '@/components/ProcessSteps';
+import { HUBS, hubPath } from '@/data/hubs';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+import photo1 from '@/assets/Commercial 1.jpeg?url';
+import photo2 from '@/assets/Commercial 2.jpeg?url';
+import photo3 from '@/assets/Commercial 3.jpeg?url';
+import photo4 from '@/assets/commercial 4.jpeg?url';
+
+const path = '/service/commercial-air-conditioning';
+
+const photos = [
+  { src: photo1, alt: 'Commercial air conditioning fit-out by JED Air Conditioning' },
+  { src: photo2, alt: 'Ducted commercial air conditioning installation in progress' },
+  { src: photo3, alt: 'Outdoor condensing units installed for a commercial premises' },
+  { src: photo4, alt: 'Commercial air conditioning plant installed by JED' },
+];
+
+const premises = [
+  { title: 'Shopfronts and retail', body: 'Ducted or cassette systems sized for door traffic and glass frontage, with the outdoor unit placed where the landlord and the strata will accept it.' },
+  { title: 'Offices and clinics', body: 'Zoned ducted or multi-split systems so meeting rooms, consult rooms and open-plan areas are not fighting one thermostat.' },
+  { title: 'Cafés and hospitality', body: 'Systems that cope with kitchen heat load and a full room on a 35-degree day, installed around opening hours.' },
+  { title: 'Strata and body corporate', body: 'Common-area systems, plant-room replacements and the paperwork committees need — specifications, noise data, mounting details.' },
+];
+
+const faqs = [
+  {
+    q: 'What size of commercial job do you take on?',
+    a: 'Small-to-medium fit-outs: a shopfront, an office floor, a clinic, a café, a strata common area or plant room. Ducted, multi-split and cassette systems. For a large multi-storey building with a central plant you need a mechanical services contractor, and we will tell you so.',
+  },
+  {
+    q: 'Can you install outside trading hours?',
+    a: 'Yes. Commercial installs are planned around your trading hours, and the noisy work — core drilling, lifting the outdoor unit — is scheduled for when the premises is closed.',
+  },
+  {
+    q: 'Do you offer a maintenance plan?',
+    a: 'Yes. A system running all day in a shop or office is generally serviced every six months rather than annually: filters and coils foul in half the time. We set the interval when the system is commissioned.',
+  },
+  {
+    q: 'Which brands do you install commercially?',
+    a: 'Daikin and Haier, as certified dealers, and we service and repair all major brands already installed in your premises.',
+  },
+  {
+    q: 'What warranty applies?',
+    a: 'The manufacturer’s warranty on the equipment and JED’s 10-year workmanship warranty on the installation — the same as on a residential job.',
+  },
+];
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Commercial Air Conditioning',
+  name: 'Commercial Air Conditioning Sydney',
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  areaServed: [
+    { '@type': 'City', name: 'Sydney' },
+    ...HUBS.map((h) => ({ '@type': 'AdministrativeArea', name: `${h.label}, Sydney` })),
+  ],
+};
+---
+
+<Base
+  title="Commercial Air Conditioning Sydney | JED Air Conditioning"
+  description="Commercial air conditioning for shopfronts, offices, clinics and strata across Sydney’s North Shore and Eastern Suburbs. Design, installation, service and repairs."
+  path={path}
+  jsonLd={[
+    serviceLd,
+    breadcrumbJsonLd([
+      { name: 'Services', path: '/services' },
+      { name: 'Commercial', path },
+    ]),
+    faqJsonLd(faqs),
+  ]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/services" class="hover:text-foreground transition-colors">Services</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-foreground" aria-current="page">Commercial</li>
+        </ol>
+      </nav>
+      <p class="eyebrow mb-4">Commercial</p>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">Commercial Air Conditioning in Sydney</h1>
+      <p class="text-muted-foreground text-lg max-w-3xl mb-4">
+        Shopfronts, offices, clinics, cafés and strata common areas across the North Shore, the Northern Beaches
+        and the Eastern Suburbs. Ducted, multi-split and cassette systems designed around the fit-out, installed
+        around trading hours, commissioned properly and serviced on a schedule that suits a system running all day.
+      </p>
+      <p class="text-muted-foreground text-base max-w-3xl mb-8">
+        Certified Daikin and Haier dealer. 10-year workmanship warranty. Price confirmed before work starts.
+      </p>
+      <CtaRow client:idle quoteHref="#quote" location="commercial-hero" />
+      <div class="mt-10">
+        <TrustBadges layout="row" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-8">Premises we work in</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {premises.map((p) => (
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold mb-2">{p.title}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{p.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Commercial work by JED</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">From the project gallery: fit-outs and plant installed by our own team.</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {photos.map((p) => (
+          <figure class="overflow-hidden rounded-2xl border border-border bg-card/90">
+            <img src={p.src} alt={p.alt} loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">How a commercial job runs</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        Same five steps as a home, with the fit-out plan and the trading hours in the design from the start.
+      </p>
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 grid gap-8 lg:grid-cols-2">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">Service and repairs for existing systems</h2>
+        <p class="text-muted-foreground leading-relaxed mb-4">
+          Most commercial calls are not new installs. A shop system that has not been serviced in two years, a
+          clinic unit tripping on hot afternoons, a plant room nobody has looked at since the fit-out: we
+          <a href="/service/aircon-repair" class="text-primary hover:underline">diagnose and price the repair</a> before
+          anything is replaced, and put the system on a
+          <a href="/service/aircon-service" class="text-primary hover:underline">six-monthly service</a> afterwards.
+        </p>
+      </div>
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">Where we work</h2>
+        <ul class="space-y-2">
+          {HUBS.map((h) => (
+            <li>
+              <a href={hubPath(h)} class="text-primary hover:underline font-medium">{h.label}</a>
+            </li>
+          ))}
+          <li class="text-sm text-muted-foreground">Greater Sydney by arrangement for commercial work.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Commercial FAQs</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {faqs.map((f) => (
+          <div class="glass-card p-6">
+            <h3 class="font-semibold mb-2">{f.q}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <QuotePanel
+    id="quote"
+    eyebrow="Commercial quote"
+    heading="Quote a commercial job"
+    subheading="Tell us the premises, the floor area and your trading hours. We inspect, design around the fit-out and come back with a price before any work starts."
+    backdrop="hero"
+    faqs={false}
+  >
+    <QuoteFormInline client:visible source="bottom-quote" />
+  </QuotePanel>
+</Base>

@@ -83,7 +83,7 @@ const SERVICES: Service[] = [
     desc: 'Scalable ducted and multi-split systems planned around your fit-out and trading hours.',
     img: commercialImg,
     alt: 'Commercial condensing units in a plant room',
-    href: '/services',
+    href: '/service/commercial-air-conditioning',
   },
 ];
 

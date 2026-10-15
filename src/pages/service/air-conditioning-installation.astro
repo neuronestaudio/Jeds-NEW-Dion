@@ -1,0 +1,262 @@
+---
+/**
+ * Air conditioning installation — the hub for the "installation" search group
+ * ("air conditioning installation sydney", "aircon installation sydney",
+ * 3.4k/month) that the split and ducted pages each only half-answer. It
+ * explains which system fits which home, how a JED install runs, and what
+ * moves the price, then sends people to the split, ducted or Daikin page.
+ *
+ * Claims reuse what the site already says: certified Daikin & Haier dealer,
+ * sized on site, installed to the manufacturer's specification, 10-year
+ * workmanship warranty, splits within a day / ducted 1–2 days, Daikin splits
+ * from $1,500 supplied and installed and ducted from roughly $9,000 for a
+ * single-storey home (src/data/daikin.ts), quote back within 24 hours.
+ */
+import Base from '@/layouts/Base.astro';
+import QuotePanel from '@/components/QuotePanel.astro';
+import QuoteFormInline from '@/components/QuoteFormInline';
+import CtaRow from '@/components/CtaRow';
+import TrustBadges from '@/components/TrustBadges';
+import ProcessSteps from '@/components/ProcessSteps';
+import ServiceAreasTeaser from '@/components/ServiceAreasTeaser.astro';
+import { HUBS, hubPath } from '@/data/hubs';
+import { BUSINESS_ID, SITE, breadcrumbJsonLd, faqJsonLd } from '@/data/site';
+
+const path = '/service/air-conditioning-installation';
+
+const systems = [
+  {
+    title: 'Split system',
+    fit: 'One room, a studio, an apartment, an extension.',
+    body: 'A wall unit inside, a condenser outside, a short pipe run between them. Installed within a day. The right answer for a bedroom, a living room or an apartment where the strata allows one outdoor unit.',
+    href: '/service/split-system-installation',
+    label: 'Split system installation',
+  },
+  {
+    title: 'Multi-head split',
+    fit: 'Several rooms, no roof space.',
+    body: 'One outdoor unit running two to five indoor heads. Terraces, top-floor apartments and homes with no ceiling cavity get room-by-room control without a condenser on every wall.',
+    href: '/service/split-system-installation',
+    label: 'Multi-head systems',
+  },
+  {
+    title: 'Ducted',
+    fit: 'The whole house, out of sight.',
+    body: 'A single unit in the roof, outlets in every room, zoned so you condition the rooms in use. Needs roof space and a design done from the floor plan. Installed in one to two days.',
+    href: '/service/ducted-air-conditioning',
+    label: 'Ducted air conditioning',
+  },
+];
+
+const priceFactors = [
+  ['Capacity and series', 'A 2.5 kW bedroom unit and a 7 kW living-room unit are different machines; premium series cost more than standard ones.'],
+  ['Pipe run and position', 'A back-to-back install (indoor and outdoor unit on either side of the same wall) is the baseline. Long runs, roof-mounted condensers and brackets add labour and materials.'],
+  ['Electrical', 'Most splits run on an existing circuit; larger units and ducted systems need a dedicated circuit, and some switchboards need work first.'],
+  ['Roof space and zoning', 'Ducted pricing moves with the number of outlets and zones, the duct-run length and how easy the ceiling cavity is to work in.'],
+  ['Strata and heritage', 'Apartment installs need body-corporate approval; heritage streets restrict where the outdoor unit can go. Neither changes the equipment, both can change the position and the paperwork.'],
+  ['Access', 'Steep blocks, upper floors with no balcony and tight side passages take longer and sometimes need lifting gear.'],
+];
+
+const faqs = [
+  {
+    q: 'How long does an air conditioning installation take?',
+    a: 'A standard split system is installed within a day. Ducted systems take one to two days depending on the floor plan and the number of outlets. Multi-head systems sit in between. We confirm the timing when we quote.',
+  },
+  {
+    q: 'What size air conditioner do I need?',
+    a: 'It depends on the room’s floor area, ceiling height, insulation, window area and orientation — not just the square metres. We size on site from those factors and the manufacturer’s selection data, which is why we inspect before we quote.',
+  },
+  {
+    q: 'What does an installation cost?',
+    a: 'Daikin wall splits start from $1,500 supplied and installed for a standard back-to-back install of a smaller unit; ducted systems start from roughly $9,000 for a single-storey home. Capacity, pipe runs, electrical work, zoning and access move the price, and the quote you get is the price you pay.',
+  },
+  {
+    q: 'Which brands do you install?',
+    a: 'We are certified dealers for Daikin and Haier and install both to the manufacturer’s specification. That matters for the warranty: an authorised dealer is accountable to the manufacturer for how the unit was fitted.',
+  },
+  {
+    q: 'Do I need strata approval for an apartment install?',
+    a: 'Almost always, because the outdoor unit touches common property. We supply the unit specifications, noise data and mounting details committees ask for, so the approval does not hold the job up.',
+  },
+  {
+    q: 'What warranty do I get?',
+    a: 'Two: the manufacturer’s warranty on the equipment, and JED’s 10-year workmanship warranty on the installation itself. They cover different things — the second one is what pays for a poorly brazed joint or a badly set condensate run, which equipment cover never does.',
+  },
+  {
+    q: 'How soon can you install?',
+    a: 'We inspect first and the quote comes back within 24 hours of the visit. Installation is then booked around your dates; split systems can usually go in within the week.',
+  },
+];
+
+const serviceLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Air Conditioning Installation',
+  name: 'Air Conditioning Installation Sydney',
+  url: `${SITE.url}${path}`,
+  provider: { '@id': BUSINESS_ID },
+  areaServed: [
+    { '@type': 'City', name: 'Sydney' },
+    ...HUBS.map((h) => ({ '@type': 'AdministrativeArea', name: `${h.label}, Sydney` })),
+  ],
+};
+---
+
+<Base
+  title="Air Conditioning Installation Sydney | Daikin & Haier | JED"
+  description="Split, multi-head and ducted air conditioning installation across Sydney’s North Shore, Beaches and Eastern Suburbs. Sized on site, 10-year workmanship warranty."
+  path={path}
+  jsonLd={[
+    serviceLd,
+    breadcrumbJsonLd([
+      { name: 'Services', path: '/services' },
+      { name: 'Installation', path },
+    ]),
+    faqJsonLd(faqs),
+  ]}
+>
+  <section class="relative py-16 md:py-24 section-glow">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 relative">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-muted-foreground">
+        <ol class="flex flex-wrap items-center gap-1.5">
+          <li><a href="/" class="hover:text-foreground transition-colors">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/services" class="hover:text-foreground transition-colors">Services</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-foreground" aria-current="page">Installation</li>
+        </ol>
+      </nav>
+      <p class="eyebrow mb-4">Installation</p>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-5 max-w-4xl">Air Conditioning Installation in Sydney</h1>
+      <p class="text-muted-foreground text-lg max-w-3xl mb-4">
+        A system performs the way the brochure promises only when the install matches the engineering: the right
+        capacity for the room, the outdoor unit positioned for airflow and service access, refrigerant lines sized
+        and charged properly, and commissioning done rather than skipped. JED installs split, multi-head and ducted
+        systems across the North Shore, the Northern Beaches and the Eastern Suburbs — sized on site, installed to
+        the manufacturer’s specification, backed by a 10-year workmanship warranty.
+      </p>
+      <p class="text-muted-foreground text-base max-w-3xl mb-8">
+        Certified Daikin and Haier dealer. Quote back within 24 hours of the site visit.
+      </p>
+      <CtaRow client:idle quoteHref="#quote" location="installation-hero" />
+      <div class="mt-10">
+        <TrustBadges layout="row" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Which system fits the home</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        Three ways to air condition a Sydney home. The house usually decides, not the brochure.
+      </p>
+      <div class="grid gap-5 md:grid-cols-3">
+        {systems.map((s) => (
+          <a href={s.href} class="group glass-card p-6 flex flex-col transition-colors hover:border-primary/40">
+            <h3 class="text-xl font-semibold mb-1 transition-colors group-hover:text-primary">{s.title}</h3>
+            <p class="text-sm text-primary font-medium mb-3">{s.fit}</p>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed flex-1">{s.body}</p>
+            <span class="mt-4 text-xs font-medium uppercase tracking-wider text-primary">{s.label} →</span>
+          </a>
+        ))}
+      </div>
+      <p class="mt-6 text-sm text-muted-foreground">
+        Buying Daikin? The <a href="/daikin/installation" class="text-primary hover:underline">Daikin installation page</a>
+        covers series, sizing and what a certified dealer changes; the
+        <a href="/daikin/cost-guide" class="text-primary hover:underline">Daikin cost guide</a> has indicative prices by size.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">How a JED install runs</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        The same five steps on every job, from a bedroom split to a six-zone ducted system.
+      </p>
+      <ProcessSteps />
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">What moves the price</h2>
+      <p class="text-muted-foreground max-w-3xl mb-8">
+        Two quotes for “a 5 kW split” can be a thousand dollars apart and both be honest. This is what the
+        difference usually is.
+      </p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {priceFactors.map(([title, body]) => (
+          <div class="rounded-2xl border border-border bg-card/90 p-5">
+            <h3 class="font-semibold mb-2">{title}</h3>
+            <p class="text-sm text-muted-foreground leading-relaxed">{body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border bg-card/20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10 grid gap-8 lg:grid-cols-2">
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">What is included</h2>
+        <ul class="space-y-2 text-muted-foreground">
+          {[
+            'Site inspection and sizing from the room, not a rule of thumb',
+            'Supply of the unit, brackets, pipework, drain and electrical connection',
+            'Installation to the manufacturer’s specification and Australian standards',
+            'Vacuum, pressure test, charge and full commissioning in every mode',
+            'Manufacturer warranty registration and a walkthrough of the controls',
+            'JED’s 10-year workmanship warranty on the installation',
+          ].map((item) => (
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary"></span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="glass-card p-6 md:p-8">
+        <h2 class="text-2xl font-semibold mb-3">Where we install</h2>
+        <p class="text-muted-foreground leading-relaxed mb-4">
+          Three regions, 116 suburbs, each with its own page on what changes the job there — salt air, strata,
+          heritage frontages, roof space, bush blocks.
+        </p>
+        <ul class="space-y-2">
+          {HUBS.map((h) => (
+            <li>
+              <a href={hubPath(h)} class="text-primary hover:underline font-medium">Air conditioning installation — {h.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12 md:py-16 border-t border-border">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-10">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-8">Installation FAQs</h2>
+      <div class="grid gap-5 md:grid-cols-2">
+        {faqs.map((f) => (
+          <div class="glass-card p-6">
+            <h3 class="font-semibold mb-2">{f.q}</h3>
+            <p class="text-muted-foreground text-sm sm:text-base leading-relaxed">{f.a}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <QuotePanel
+    id="quote"
+    eyebrow="Free quote"
+    heading="Get an installation quote"
+    subheading="Tell us the property, the rooms and roughly what you have in mind. We inspect, size it on site and the quote is back within 24 hours."
+    backdrop="hero"
+    faqs={false}
+  >
+    <QuoteFormInline client:visible source="bottom-quote" />
+  </QuotePanel>
+  <ServiceAreasTeaser />
+</Base>

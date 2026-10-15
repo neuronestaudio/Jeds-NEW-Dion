@@ -34,7 +34,7 @@ const SERVICES = [
   {
     icon: Building,
     title: 'Commercial Air Conditioning',
-    href: '/services',
+    href: '/service/commercial-air-conditioning',
     blurb: 'Offices, retail and strata — design, installation and commissioning.',
   },
 ];

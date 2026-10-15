@@ -49,6 +49,18 @@ const services = [
     title: 'Service & Maintenance',
     blurb: 'Annual servicing that keeps efficiency up and the warranty record current.',
   },
+  {
+    href: '/service/air-conditioning-installation',
+    code: 'IN',
+    title: 'Installation',
+    blurb: 'Split, multi-head or ducted: which fits the home, how the install runs, what moves the price.',
+  },
+  {
+    href: '/service/commercial-air-conditioning',
+    code: 'CO',
+    title: 'Commercial',
+    blurb: 'Shopfronts, offices, clinics and strata — designed around the fit-out and trading hours.',
+  },
 ];
 ---
 
@@ -65,7 +77,7 @@ const services = [
       <p class="text-muted-foreground text-lg max-w-2xl mb-10">
         Installation, repairs, and maintenance for residential and commercial properties.
       </p>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {
           services.map((s) => (
             <a
