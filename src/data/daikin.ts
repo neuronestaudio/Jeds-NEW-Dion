@@ -11,7 +11,7 @@
  *
  * Every claim is one the business already makes elsewhere on the site or one
  * agreed on the 13 September client call (10-year workmanship warranty, the
- * waived $200 service call, split systems from $1,500 supplied and installed).
+ * waived $200 service call, split systems from $1,650 supplied and installed).
  * Prices are indicative ranges, never quotes.
  */
 
@@ -107,7 +107,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
         rows: [
           { label: 'Best for', a: 'One to four rooms, apartments, extensions, retrofits with no roof access', b: 'Whole-home comfort, new builds, homes with usable roof space' },
           { label: 'Typical Sydney install', a: 'Half a day per unit; multi-head one to two days', b: 'One to two days including zoning and commissioning' },
-          { label: 'Indicative cost', a: 'From $1,500 supplied and installed per split', b: 'From roughly $9,000 for a single-storey home' },
+          { label: 'Indicative cost', a: 'From $1,650 supplied and installed per split', b: 'From roughly $9,000 for a single-storey home' },
           { label: 'Running cost', a: 'Lowest — you only cool the room you are in', b: 'Efficient when zoned properly; wasteful when run as one open zone' },
           { label: 'Visual impact', a: 'A wall unit per room, outdoor unit(s) outside', b: 'Ceiling grilles only; one outdoor unit' },
         ],
@@ -165,7 +165,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
     navLabel: 'Installation',
     title: 'Daikin Air Conditioning Installation Sydney | Certified Installers | JED',
     description:
-      'Daikin installation in Sydney by a certified Daikin dealer. Split systems from $1,500 supplied and installed, multi-head and ducted — sized on site, installed to Daikin’s specification, 10-year workmanship warranty.',
+      'Daikin installation in Sydney by a certified Daikin dealer. Split systems from $1,650 supplied and installed, multi-head and ducted — sized on site, installed to Daikin’s specification, 10-year workmanship warranty.',
     eyebrow: 'Daikin installation',
     h1: 'Daikin Installation',
     h1Accent: 'done to Daikin’s specification',
@@ -202,7 +202,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
       },
       {
         type: 'callout',
-        heading: 'Daikin split systems from $1,500 supplied and installed',
+        heading: 'Daikin split systems from $1,650 supplied and installed',
         body: 'The current offer for a standard back-to-back Daikin wall split. Multi-head and ducted are quoted on the site assessment. Every install includes the 10-year JED workmanship warranty.',
         cta: { label: 'See the Daikin cost guide', href: '/daikin/cost-guide' },
       },
@@ -562,7 +562,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
       },
       {
         type: 'callout',
-        heading: 'Daikin splits from $1,500 supplied and installed',
+        heading: 'Daikin splits from $1,650 supplied and installed',
         body: 'The current offer for a standard back-to-back Daikin wall split, installed by a certified Daikin dealer with a 10-year workmanship warranty. Multi-head systems are quoted on site.',
         cta: { label: 'What changes the price', href: '/daikin/cost-guide' },
       },
@@ -582,7 +582,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
       },
       {
         q: 'How much does a Daikin split system cost installed in Sydney?',
-        a: 'From $1,500 supplied and installed for a standard back-to-back install of a smaller unit, rising with capacity, series and site factors such as long pipe runs, brackets and electrical work. The Daikin cost guide has indicative ranges by size.',
+        a: 'From $1,650 supplied and installed for a standard back-to-back install of a smaller unit, rising with capacity, series and site factors such as long pipe runs, brackets and electrical work. The Daikin cost guide has indicative ranges by size.',
       },
       {
         q: 'Do Daikin split systems heat as well as cool?',
@@ -736,7 +736,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
         heading: 'Current Daikin offers through JED',
         intro: 'Agreed offers, not sale-weekend pricing. All subject to a free on-site assessment.',
         items: [
-          { title: 'Daikin splits from $1,500 supplied and installed', body: 'For a standard back-to-back Daikin wall split installed by a certified dealer, including the 10-year JED workmanship warranty.' },
+          { title: 'Daikin splits from $1,650 supplied and installed', body: 'For a standard back-to-back Daikin wall split installed by a certified dealer, including the 10-year JED workmanship warranty.' },
           { title: '10-year workmanship warranty on every install', body: 'On top of Daikin’s manufacturer warranty — the installation is covered for ten years, so there is no gap between the equipment warranty and the work.' },
           { title: 'Warranty agent on call', body: 'Buy through JED and the Daikin warranty agent for your area is the business you already know — booked directly, no manufacturer queue.' },
         ],
@@ -846,7 +846,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
     navLabel: 'Cost guide',
     title: 'Daikin Air Conditioning Cost Sydney 2026 | Installed Prices by Size | JED',
     description:
-      'What a Daikin air conditioner costs installed in Sydney: split systems from $1,500, multi-head and ducted ranges by size, and the site factors that move a quote. Indicative 2026 pricing from a certified Daikin dealer.',
+      'What a Daikin air conditioner costs installed in Sydney: split systems from $1,650, multi-head and ducted ranges by size, and the site factors that move a quote. Indicative 2026 pricing from a certified Daikin dealer.',
     eyebrow: 'Daikin cost guide',
     h1: 'What a Daikin Costs',
     h1Accent: 'installed in Sydney',
@@ -863,13 +863,13 @@ export const DAIKIN_PAGES: DaikinPage[] = [
         intro: 'Standard back-to-back installation of a single wall split, Sydney, 2026. Series (Cora / Alira X / Zena) moves the figure within each band.',
         columns: ['Capacity', 'Suits', 'Indicative supplied & installed'],
         rows: [
-          ['2.0–2.5 kW', 'Bedroom, study', 'From $1,500 to about $2,300'],
+          ['2.0–2.5 kW', 'Bedroom, study', 'From $1,650 to about $2,300'],
           ['3.5 kW', 'Large bedroom, small living', '$1,900 – $2,900'],
           ['5.0–6.0 kW', 'Living room', '$2,400 – $3,600'],
           ['7.1–8.0 kW', 'Open-plan living', '$3,000 – $4,600'],
           ['9.4 kW', 'Large open-plan', '$3,800 – $5,200'],
         ],
-        note: '“From $1,500 supplied and installed” is JED’s current offer for a standard back-to-back Daikin wall split. Long pipe runs, brackets, roof positions and electrical work are additional and itemised.',
+        note: '“From $1,650 supplied and installed” is JED’s current offer for a standard back-to-back Daikin wall split. Long pipe runs, brackets, roof positions and electrical work are additional and itemised.',
       },
       {
         type: 'table',
@@ -916,7 +916,7 @@ export const DAIKIN_PAGES: DaikinPage[] = [
     faqs: [
       {
         q: 'How much does a Daikin split system cost installed in Sydney?',
-        a: 'Indicatively from $1,500 supplied and installed for a standard back-to-back install of a smaller unit, up to around $5,000 for a large-capacity premium unit, with pipe runs, brackets and electrical work additional. Multi-head systems start around $5,000 for two rooms.',
+        a: 'Indicatively from $1,650 supplied and installed for a standard back-to-back install of a smaller unit, up to around $5,000 for a large-capacity premium unit, with pipe runs, brackets and electrical work additional. Multi-head systems start around $5,000 for two rooms.',
       },
       {
         q: 'How much does Daikin ducted cost in Sydney?',
